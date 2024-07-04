@@ -1,0 +1,1153 @@
+openapi: 3.0.0
+info:
+  title: RBAC API with Swagger
+  version: 1.0.0
+  description: RBAC documented with Swagger
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: User
+    description: User endpoint manager by Admin role
+  - name: Role
+    description: Role endpoint manager by Admin role
+  - name: Permission
+    description: Permission endpoint manager by Admin role
+  - name: Address
+    description: Address info of user
+paths:
+  /api/v1/auth/signup:
+    post:
+      summary: Create new user
+      tags: [ Auth ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpReq'
+      responses:
+        200:
+          description: Successful signup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUpRes'
+  /api/v1/auth/login:
+    post:
+      summary: User login
+      tags: [ Auth ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginReq'
+      responses:
+        200:
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginRes'
+  /api/v1/auth/refresh-token:
+    post:
+      summary: Refresh access token
+      tags: [ Auth ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenReq'
+      responses:
+        200:
+          description: Successful token refresh
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenRes'
+  /api/v1/users:
+    get:
+      summary: Get all list users
+      tags: [ User ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: firstName
+          required: false
+          schema:
+            type: string
+          description: Filter users by first name
+        - in: query
+          name: lastName
+          required: false
+          schema:
+            type: string
+          description: Filter users by last name
+        - in: query
+          name: isActive
+          required: false
+          schema:
+            type: boolean
+          description: Filter users by active status
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllUsersRes'
+  /api/v1/users/{id}:
+    get:
+      summary: Get user details by id
+      tags: [ User ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserDetailsRes'
+    patch:
+      summary: Update user details by id
+      tags: [ User ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateUserRes'
+    delete:
+      summary: Soft delete user by id
+      tags: [ User ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUserRes'
+
+  /api/v1/users/{id}/roles:
+    post:
+      summary: Assign new role to user
+      tags: [ User ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignRoleReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignRoleRes'
+    delete:
+      summary: Delete role assign to user
+      tags: [ User ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteRoleAssignReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRoleAssignRes'
+
+  /api/v1/roles:
+    get:
+      summary: Get all roles
+      tags: [ Role ]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllRolesRes'
+    post:
+      summary: Create new role to users
+      tags: [ Role ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleRes'
+
+  /api/v1/roles/{id}:
+    get:
+      summary: Get role details by id
+      tags: [ Role ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the role to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRoleDetailsRes'
+    delete:
+      summary: Delete role by id
+      tags: [ Role ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the role to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRoleRes'
+  /api/v1/roles/{id}/permissions:
+    post:
+      summary: Assign new permission to role
+      tags: [ Role ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the role to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignPermissionReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignPermissionRes'
+    delete:
+      summary: Delete permission assign to role
+      tags: [ Role ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the role to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAssignPermissionReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAssignPermissionRes'
+  /api/v1/permissions:
+    get:
+      summary: Get all permissions
+      tags: [ Permission ]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllPermissionsRes'
+    post:
+      summary: Create new permission
+      tags: [ Permission ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePermissionReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePermissionRes'
+  /api/v1/permissions/{id}:
+    get:
+      summary: Get permission details by id
+      tags: [ Permission ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the permission to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPermissionDetailsRes'
+    delete:
+      summary: Delete permission by id
+      tags: [ Permission ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the permission to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePermissionRes'
+  /api/v1/address:
+    post:
+      summary: Create address for user
+      tags: [ Address ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAddressReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAddressRes'
+  /api/v1/address/{id}:
+    get:
+      summary: Create address for user
+      tags: [ Address ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the address to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAddressDetailsRes'
+    put:
+      summary: Update some field address for user
+      tags: [ Address ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the address to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAddressReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateAddressRes'
+    delete:
+      summary: Delete address by id
+      tags: [ Address ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the address to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAddressRes'
+components:
+  schemas:
+    SignUpReq:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    SignUpRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+    LoginReq:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: 'Cristina37@hotmail.com'
+        password:
+          type: string
+          format: password
+          example: 'test'
+    LoginRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+    RefreshTokenReq:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    RefreshTokenRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            accessToken:
+              type: string
+    GetAllUsersRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            users:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  email:
+                    type: string
+                    format: email
+                  isActive:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    GetUserDetailsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                isActive:
+                  type: boolean
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                roles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      permissions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            name:
+                              type: string
+                            description:
+                              type: string
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+    UpdateUserReq:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    UpdateUserRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                isActive:
+                  type: boolean
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    DeleteUserRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    AssignRoleReq:
+      type: object
+      properties:
+        roleName:
+          type: string
+    AssignRoleRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    DeleteRoleAssignReq:
+      type: object
+      properties:
+        roleName:
+          type: string
+    DeleteRoleAssignRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    RoleReq:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    RoleRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        role:
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+            description:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    GetRoleDetailsRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        role:
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+            description:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            permissions:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    GetAllRolesRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              description:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+    DeleteRoleRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+    AssignPermissionReq:
+      type: object
+      properties:
+        permissionName:
+          type: string
+          enum:
+            - read
+            - write
+            - update
+            - delete
+    AssignPermissionRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+    DeleteAssignPermissionReq:
+      type: object
+      properties:
+        permissionName:
+          type: string
+          enum:
+            - read
+            - write
+            - update
+            - delete
+    DeleteAssignPermissionRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+    GetAllPermissionsRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              description:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+    CreatePermissionReq:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    CreatePermissionRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    GetPermissionDetailsRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DeletePermissionRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+    CreateAddressReq:
+      type: object
+      properties:
+        street:
+          type: string
+        district:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        phone:
+          type: string
+    CreateAddressRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        address:
+          type: object
+          properties:
+            id:
+              type: number
+            street:
+              type: string
+            district:
+              type: string
+            city:
+              type: string
+            country:
+              type: string
+            phone:
+              type: string
+            userId:
+              type: number
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    GetAddressDetailsRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        address:
+          type: object
+          properties:
+            id:
+              type: number
+            userId:
+              type: number
+            street:
+              type: string
+            district:
+              type: string
+            city:
+              type: string
+            country:
+              type: string
+            phone:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                isActive:
+                  type: boolean
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    UpdateAddressReq:
+      type: object
+      properties:
+        street:
+          type: string
+        district:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        phone:
+          type: string
+    UpdateAddressRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        address:
+          type: object
+          properties:
+            id:
+              type: number
+            userId:
+              type: number
+            street:
+              type: string
+            district:
+              type: string
+            city:
+              type: string
+            country:
+              type: string
+            phone:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    DeleteAddressRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

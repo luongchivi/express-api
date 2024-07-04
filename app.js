@@ -1,0 +1,41 @@
+require('dotenv').config({ path: `${process.cwd()}/.env` });
+const express = require('express');
+const morgan = require('morgan');
+const routes = require('./src/routes/index');
+const errorHandler = require('./src/middleware/errorHandler');
+const paginationDefaults = require('./src/middleware/paginationDefaults');
+const swaggerUi = require('swagger-ui-express');
+const fs = require('fs');
+const yaml = require('js-yaml');
+const printRoutes = require('./src/middleware/printRoutes');
+const { buildResponseMessage } = require('./src/routes/shared');
+
+let app = express();
+const PORT = process.env.APP_PORT || 4000;
+
+app.use(express.json());
+app.use(morgan('dev'));
+
+// Apply pagination defaults middleware globally
+app.use(paginationDefaults);
+
+// Route init
+app = routes(app);
+
+// Print routes to console
+printRoutes(app._router);
+
+// Load Swagger YAML file
+const swaggerDocument = yaml.load(fs.readFileSync('./docs/swagger.yaml', 'utf8'));
+
+// Swagger setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('*', (req, res, _next) => {
+  return buildResponseMessage(res,'Resource Not Found.', 404);
+});
+
+// Error handler middleware
+app.use(errorHandler);
+
+app.listen(PORT, () => console.log(`Server up and running at http://localhost:${PORT}`));
