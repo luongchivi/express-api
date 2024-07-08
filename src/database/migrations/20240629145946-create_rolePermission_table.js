@@ -4,6 +4,7 @@ const { getTableNameForMigrations,
   DB_TABLE_NAMES
 } = require('../constants');
 const { DataTypes } = require('sequelize');
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, _Sequelize) {

@@ -123,7 +123,18 @@ function parseQueryParams(query, filterableFields = {})  {
           where[field] = query[field] === 'true' ? true : false;
           break;
         case 'number':
-          where[field] = parseFloat(query[field]);
+          const numberFilter = query[field].split(',');
+          if (numberFilter.length === 1) {
+            where[field] = numberFilter;
+          } else if (numberFilter.length === 2) {
+            const [startNumber, endNumber] = numberFilter;
+            where[field] = {
+              [Op.gte]: startNumber,
+              [Op.lte]: endNumber,
+            };
+          } else {
+            throw new Error('Invalid number format.');
+          }
           break;
         case 'date':
           const dateFilter = query[field].split(',');
@@ -145,6 +156,8 @@ function parseQueryParams(query, filterableFields = {})  {
                 new Date(query[field]).setUTCHours(23, 59, 59, 999)
               ]
             };
+          } else {
+            throw new Error('Invalid date format');
           }
           break;
         // Add more cases as needed

@@ -1,5 +1,8 @@
 const Joi = require('joi');
-const { createResultsSchemaResponse, createMessageSchemaResponse } = require('../shared');
+const {
+  createResultsSchemaResponse,
+  createMessageSchemaResponse
+} = require('../shared');
 
 const createRoleReq = Joi.object({
   name: Joi.string().required(),

@@ -48,6 +48,10 @@ const getAllUsersQuery = createSchemaQuery({
   createdAt: Joi.string().optional()
 });
 
+const getCurrentUserRes = createResultsSchemaResponse({
+  user: Joi.object().required()
+});
+
 module.exports = {
   idParam,
   getUserDetailsRes,
@@ -59,5 +63,6 @@ module.exports = {
   softDeleteUserRes,
   deleteRoleAssignReq,
   deleteRoleAssignRes,
-  getAllUsersQuery
+  getAllUsersQuery,
+  getCurrentUserRes
 }

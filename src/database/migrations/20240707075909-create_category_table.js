@@ -1,0 +1,47 @@
+'use strict';
+
+const { getTableNameForMigrations,
+  DB_TABLE_NAMES
+} = require('../constants');
+const { DataTypes } = require('sequelize');
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY), {
+        id: {
+          type: DataTypes.INTEGER,
+          autoIncrement: true,
+          primaryKey: true,
+          allowNull: false
+        },
+        name: {
+          type: DataTypes.STRING,
+          unique: true,
+          allowNull: false,
+        },
+        description: {
+          type: DataTypes.STRING,
+        },
+        image_url: {
+          type: DataTypes.STRING,
+        },
+        created_at: {
+          type: DataTypes.DATE,
+          allowNull: false
+        },
+        updated_at: {
+          type: DataTypes.DATE,
+          allowNull: false
+        }
+      }, { transaction: t });
+    })
+  },
+
+  async down (queryInterface, Sequelize) {
+    return queryInterface.sequelize.transaction(async (t) => {
+      await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY), { transaction: t });
+    })
+  }
+};

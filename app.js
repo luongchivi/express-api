@@ -9,10 +9,12 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const printRoutes = require('./src/middleware/printRoutes');
 const { buildResponseMessage } = require('./src/routes/shared');
+const cookieParser = require('cookie-parser');
 
 let app = express();
 const PORT = process.env.APP_PORT || 4000;
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('dev'));
 

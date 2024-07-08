@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getAllUsers,
   getUserDetails,
+  getCurrentUser,
   updateUser,
   softDelete,
   assignRole,
@@ -25,7 +26,8 @@ const {
   softDeleteUserRes,
   deleteRoleAssignReq,
   deleteRoleAssignRes,
-  getAllUsersQuery
+  getAllUsersQuery,
+  getCurrentUserRes
 } = require('./userSchema');
 const {
   verifyPermission,
@@ -41,6 +43,15 @@ router.get(
   validateQuery(getAllUsersQuery),
   validateResponse(getAllUsersRes),
   getAllUsers
+);
+
+// GET /api/v1/users/current-user
+router.get(
+  '/current-user',
+  verifyRole(['User']),
+  verifyPermission('read'),
+  validateResponse(getCurrentUserRes),
+  getCurrentUser
 );
 
 // GET /api/v1/users/{id}

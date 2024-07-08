@@ -52,9 +52,12 @@ const verifyToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return buildErrorResponse(res, 'Internal Server Error.', {
-      errorMessage: error,
-    }, 500)
+    if (error.name === 'JsonWebTokenError') {
+      return buildResponseMessage(res, 'Invalid Token.', 403);
+    } else if (error.name === 'TokenExpiredError') {
+      return buildResponseMessage(res, 'Token Expired.', 401);
+    }
+    return buildErrorResponse(res, 'Internal Server Error.', { errorMessage: error.message }, 500);
   }
 };
 

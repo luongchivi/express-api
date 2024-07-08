@@ -45,6 +45,20 @@ module.exports = {
         // soft delete
         deleted_at: {
           type: DataTypes.DATE
+        },
+        refresh_token: {
+          type: DataTypes.STRING
+        },
+        password_reset_token: {
+          type: DataTypes.STRING
+        },
+        password_reset_token_expires: {
+          type: DataTypes.DATE,
+          allowNull: true
+        },
+        password_changed_at: {
+          type: DataTypes.DATE,
+          allowNull: true
         }
       }, { transaction: t });
     });

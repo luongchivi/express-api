@@ -199,9 +199,42 @@ async function deleteRoleAssign(req, res, next) {
   }
 }
 
+async function getCurrentUser(req, res, next) {
+  try {
+    const { userId, email } = req.userInfo;
+
+    if (!userId || !email) {
+      return buildResponseMessage(res, 'User info in request not found.', 400);
+    }
+
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email
+      },
+      attributes: {
+        exclude: ['password', 'deletedAt']
+      }
+    });
+
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    return buildSuccessResponse(res, 'Current user successfully.', {
+      user
+    }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get current user.';
+    next(error);
+  }
+}
+
 module.exports = {
   getAllUsers,
   getUserDetails,
+  getCurrentUser,
   updateUser,
   softDelete,
   assignRole,

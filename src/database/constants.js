@@ -7,6 +7,10 @@ const DB_TABLE_NAMES = Object.freeze({
   PERMISSION: 'permission',
   USER_ROLE: 'user_role',
   ROLE_PERMISSION: 'role_permission',
+  CATEGORY: 'category',
+  SUPPLIER: 'supplier',
+  PRODUCT: 'product',
+  COUPON: 'coupon',
 });
 
 // inflection.pluralize(tableName): Chuyển đổi tên bảng từ dạng số ít sang số nhiều.

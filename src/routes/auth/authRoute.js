@@ -3,7 +3,9 @@ const router = express.Router();
 const {
   signUp,
   login,
-  refreshToken
+  refreshToken,
+  forgotPassword,
+  resetPassword
 } = require('./authController');
 const {
   signUpReq,
@@ -11,11 +13,17 @@ const {
   loginReq,
   loginRes,
   refreshTokenReq,
-  refreshTokenRes
+  refreshTokenRes,
+  forgotPasswordReq,
+  forgotPasswordRes,
+  resetPasswordReq,
+  resetPasswordRes,
+  resetPasswordParam
 } = require('./authSchema');
 const {
   validateRequest,
-  validateResponse
+  validateResponse,
+  validateParams
 } = require('../../middleware/validationHandler');
 
 
@@ -40,6 +48,23 @@ router.post(
   validateRequest(refreshTokenReq),
   validateResponse(refreshTokenRes),
   refreshToken
+);
+
+// POST /api/v1/auth/forgot-password
+router.post(
+  '/forgot-password',
+  validateRequest(forgotPasswordReq),
+  validateResponse(forgotPasswordRes),
+  forgotPassword
+);
+
+// POST /api/v1/auth/reset-password/{resetToken}
+router.post(
+  '/reset-password/:resetToken',
+  validateParams(resetPasswordParam),
+  validateRequest(resetPasswordReq),
+  validateResponse(resetPasswordRes),
+  resetPassword
 );
 
 module.exports = router;
