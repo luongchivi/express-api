@@ -1,14 +1,15 @@
 const Joi = require('joi');
 const {
   createResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
+
 
 const signUpReq = Joi.object({
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
-  password: Joi.string().required()
+  password: Joi.string().required(),
 });
 
 const signUpRes = createResultsSchemaResponse({
@@ -48,7 +49,7 @@ const resetPasswordReq = Joi.object({
 const resetPasswordRes = createMessageSchemaResponse();
 
 const resetPasswordParam = Joi.object({
-  resetToken : Joi.string().required(),
+  resetToken: Joi.string().required(),
 });
 
 module.exports = {
@@ -62,8 +63,5 @@ module.exports = {
   forgotPasswordRes,
   resetPasswordReq,
   resetPasswordRes,
-  resetPasswordParam
-}
-
-
-
+  resetPasswordParam,
+};

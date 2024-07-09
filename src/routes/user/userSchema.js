@@ -3,32 +3,33 @@ const {
   createResultsSchemaResponse,
   createMessageSchemaResponse,
   createSchemaQuery,
-  createListResultsSchemaResponse
+  createListResultsSchemaResponse,
 } = require('../shared');
 
+
 const idParam = Joi.object({
-  id: Joi.number().required()
+  id: Joi.number().required(),
 });
 
 const getUserDetailsRes = createResultsSchemaResponse({
-  user: Joi.object().required()
+  user: Joi.object().required(),
 });
 
 const getAllUsersRes = createListResultsSchemaResponse({
-  users: Joi.array().required()
+  users: Joi.array().required(),
 });
 
 const updateUserReq = Joi.object({
   firstName: Joi.string().optional(),
-  lastName: Joi.string().optional()
+  lastName: Joi.string().optional(),
 });
 
 const updateUserRes = createResultsSchemaResponse({
-  user: Joi.object().required()
+  user: Joi.object().required(),
 });
 
 const assignRoleReq = Joi.object({
-  roleName: Joi.string().required()
+  roleName: Joi.string().required(),
 });
 
 const assignRoleRes = createMessageSchemaResponse();
@@ -36,7 +37,7 @@ const assignRoleRes = createMessageSchemaResponse();
 const softDeleteUserRes = createMessageSchemaResponse();
 
 const deleteRoleAssignReq = Joi.object({
-  roleName: Joi.string().required()
+  roleName: Joi.string().required(),
 });
 
 const deleteRoleAssignRes = createMessageSchemaResponse();
@@ -45,11 +46,11 @@ const getAllUsersQuery = createSchemaQuery({
   firstName: Joi.string().optional(),
   lastName: Joi.string().optional(),
   isActive: Joi.boolean().optional(),
-  createdAt: Joi.string().optional()
+  createdAt: Joi.string().optional(),
 });
 
 const getCurrentUserRes = createResultsSchemaResponse({
-  user: Joi.object().required()
+  user: Joi.object().required(),
 });
 
 module.exports = {
@@ -64,5 +65,5 @@ module.exports = {
   deleteRoleAssignReq,
   deleteRoleAssignRes,
   getAllUsersQuery,
-  getCurrentUserRes
-}
+  getCurrentUserRes,
+};

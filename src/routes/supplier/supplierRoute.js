@@ -1,22 +1,24 @@
 const express = require('express');
+
+
 const router = express.Router();
 
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
   validateRequest,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   addSupplier,
   getAllSuppliers,
   getSupplierDetails,
   deleteSupplier,
-  updateSupplier
-} = require('../supplier/supplierController');
+  updateSupplier,
+} = require('./supplierController');
 const {
   getAllSuppliersRes,
   addSupplierReq,
@@ -25,8 +27,8 @@ const {
   getSupplierDetailsRes,
   deleteSupplierRes,
   updateSupplierReq,
-  updateSupplierRes
-} = require('../supplier/supplierSchema');
+  updateSupplierRes,
+} = require('./supplierSchema');
 
 
 // GET /api/v1/suppliers
@@ -35,7 +37,7 @@ router.get(
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllSuppliersRes),
-  getAllSuppliers
+  getAllSuppliers,
 );
 
 // POST /api/v1/suppliers
@@ -45,7 +47,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(addSupplierReq),
   validateResponse(addSupplierRes),
-  addSupplier
+  addSupplier,
 );
 
 // GET /api/v1/suppliers/{supplierId}
@@ -55,7 +57,7 @@ router.get(
   verifyPermission('read'),
   validateParams(supplierIdParam),
   validateResponse(getSupplierDetailsRes),
-  getSupplierDetails
+  getSupplierDetails,
 );
 
 // DELETE /api/v1/suppliers/{supplierId}
@@ -65,7 +67,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(supplierIdParam),
   validateResponse(deleteSupplierRes),
-  deleteSupplier
+  deleteSupplier,
 );
 
 // PUT /api/v1/suppliers/{supplierId}
@@ -76,7 +78,7 @@ router.put(
   validateParams(supplierIdParam),
   validateRequest(updateSupplierReq),
   validateResponse(updateSupplierRes),
-  updateSupplier
+  updateSupplier,
 );
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   getAllUsers,
@@ -7,13 +9,13 @@ const {
   updateUser,
   softDelete,
   assignRole,
-  deleteRoleAssign
+  deleteRoleAssign,
 } = require('./userController');
 const {
   validateParams,
   validateResponse,
   validateRequest,
-  validateQuery
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
   getAllUsersRes,
@@ -27,11 +29,11 @@ const {
   deleteRoleAssignReq,
   deleteRoleAssignRes,
   getAllUsersQuery,
-  getCurrentUserRes
+  getCurrentUserRes,
 } = require('./userSchema');
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 
 
@@ -42,7 +44,7 @@ router.get(
   verifyPermission('read'),
   validateQuery(getAllUsersQuery),
   validateResponse(getAllUsersRes),
-  getAllUsers
+  getAllUsers,
 );
 
 // GET /api/v1/users/current-user
@@ -51,7 +53,7 @@ router.get(
   verifyRole(['User']),
   verifyPermission('read'),
   validateResponse(getCurrentUserRes),
-  getCurrentUser
+  getCurrentUser,
 );
 
 // GET /api/v1/users/{id}
@@ -61,7 +63,7 @@ router.get(
   verifyPermission('read'),
   validateParams(idParam),
   validateResponse(getUserDetailsRes),
-  getUserDetails
+  getUserDetails,
 );
 
 // PATCH /api/v1/users/{id}
@@ -72,7 +74,7 @@ router.patch(
   validateParams(idParam),
   validateRequest(updateUserReq),
   validateResponse(updateUserRes),
-  updateUser
+  updateUser,
 );
 
 // DELETE /api/v1/users/{id}
@@ -82,7 +84,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(idParam),
   validateResponse(softDeleteUserRes),
-  softDelete
+  softDelete,
 );
 
 // POST /api/v1/users/{id}/roles
@@ -93,7 +95,7 @@ router.post(
   validateParams(idParam),
   validateRequest(assignRoleReq),
   validateResponse(assignRoleRes),
-  assignRole
+  assignRole,
 );
 
 // DELETE /api/v1/users/{id}/roles
@@ -104,7 +106,7 @@ router.delete(
   validateParams(idParam),
   validateRequest(deleteRoleAssignReq),
   validateResponse(deleteRoleAssignRes),
-  deleteRoleAssign
+  deleteRoleAssign,
 );
 
 module.exports = router;

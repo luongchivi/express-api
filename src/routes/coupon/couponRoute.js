@@ -1,21 +1,23 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
   validateRequest,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   getAllCoupons,
   addCoupon,
   getCouponDetails,
   updateCoupon,
-  deleteCoupon
-} = require('../coupon/couponController');
+  deleteCoupon,
+} = require('./couponController');
 const {
   addCouponReq,
   addCouponRes,
@@ -24,8 +26,8 @@ const {
   getCouponDetailsRes,
   deleteCouponRes,
   updateCouponReq,
-  updateCouponRes
-} = require('../coupon/couponSchema');
+  updateCouponRes,
+} = require('./couponSchema');
 
 
 // GET /api/v1/coupons
@@ -34,7 +36,7 @@ router.get(
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllCouponsRes),
-  getAllCoupons
+  getAllCoupons,
 );
 
 // POST /api/v1/coupons
@@ -44,7 +46,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(addCouponReq),
   validateResponse(addCouponRes),
-  addCoupon
+  addCoupon,
 );
 
 // GET /api/v1/coupons/{couponId}
@@ -54,7 +56,7 @@ router.get(
   verifyPermission('read'),
   validateParams(couponIdParam),
   validateResponse(getCouponDetailsRes),
-  getCouponDetails
+  getCouponDetails,
 );
 
 // PUT /api/v1/coupons/{couponId}
@@ -65,7 +67,7 @@ router.put(
   validateParams(couponIdParam),
   validateRequest(updateCouponReq),
   validateResponse(updateCouponRes),
-  updateCoupon
+  updateCoupon,
 );
 
 // DELETE /api/v1/coupons/{couponId}
@@ -75,7 +77,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(couponIdParam),
   validateResponse(deleteCouponRes),
-  deleteCoupon
+  deleteCoupon,
 );
 
 module.exports = router;

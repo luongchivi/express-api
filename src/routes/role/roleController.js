@@ -4,9 +4,10 @@ const PermissionModel = require('../../database/models/permission');
 const sequelize = require('../../../config/database');
 const {
   buildResponseMessage,
-  buildSuccessResponse
+  buildSuccessResponse,
 } = require('../shared');
 const UserRoleModel = require('../../database/models/userRole');
+
 
 async function createRole(req, res, next) {
   const transaction = await sequelize.transaction();
@@ -17,7 +18,7 @@ async function createRole(req, res, next) {
     await transaction.commit();
 
     return buildSuccessResponse(res, 'Role added successfully.', {
-      role: newRole
+      role: newRole,
     }, 201);
   } catch (error) {
     await transaction.rollback();
@@ -36,9 +37,9 @@ async function getRoleDetails(req, res, next) {
         as: 'permissions',
         attributes: { exclude: [UserRoleModel] },
         through: { attributes: [] },
-      }
+      },
     });
-    if(!role) {
+    if (!role) {
       return buildResponseMessage(res, 'Role not found.', 404);
     }
     return buildSuccessResponse(res, 'Get role successfully.', {
@@ -55,7 +56,7 @@ async function deleteRole(req, res, next) {
   try {
     const { roleId } = req.params;
     const role = await RoleModel.findByPk(roleId);
-    if(!role) {
+    if (!role) {
       return buildResponseMessage(res, 'Role not found.', 404);
     }
     await role.destroy();
@@ -93,8 +94,8 @@ async function assignPermission(req, res, next) {
 
     const permission = await PermissionModel.findOne({
       where: {
-        name: permissionName
-      }
+        name: permissionName,
+      },
     });
 
     if (!permission) {
@@ -127,8 +128,8 @@ async function deletePermissionAssign(req, res, next) {
 
     const permission = await PermissionModel.findOne({
       where: {
-        name: permissionName
-      }
+        name: permissionName,
+      },
     });
 
     if (!permission) {
@@ -139,7 +140,7 @@ async function deletePermissionAssign(req, res, next) {
       where: {
         roleId: role.id,
         permissionId: permission.id,
-      }
+      },
     });
 
     return buildResponseMessage(res, 'Delete permission assign to role successfully.', 200);
@@ -156,5 +157,5 @@ module.exports = {
   deleteRole,
   getAllRoles,
   assignPermission,
-  deletePermissionAssign
+  deletePermissionAssign,
 };

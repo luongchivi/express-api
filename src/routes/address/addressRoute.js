@@ -1,15 +1,17 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   addAddress,
   getAddress,
   updateAddress,
-  deleteAddress
+  deleteAddress,
 } = require('./addressController');
 const {
   validateRequest,
   validateResponse,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   addAddressReq,
@@ -18,11 +20,11 @@ const {
   getAddressRes,
   updateAddressReq,
   updateAddressRes,
-  deleteAddressRes
+  deleteAddressRes,
 } = require('./addressSchema');
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 
 
@@ -33,7 +35,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(addAddressReq),
   validateResponse(addAddressRes),
-  addAddress
+  addAddress,
 );
 
 // GET /api/v1/address/{addressId}
@@ -43,7 +45,7 @@ router.get(
   verifyPermission('read'),
   validateParams(addressIdParam),
   validateResponse(getAddressRes),
-  getAddress
+  getAddress,
 );
 
 // PUT /api/v1/address/{addressId}
@@ -54,7 +56,7 @@ router.put(
   validateParams(addressIdParam),
   validateRequest(updateAddressReq),
   validateResponse(updateAddressRes),
-  updateAddress
+  updateAddress,
 );
 
 // DELETE /api/v1/address/{addressId}
@@ -64,7 +66,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(addressIdParam),
   validateResponse(deleteAddressRes),
-  deleteAddress
+  deleteAddress,
 );
 
 module.exports = router;

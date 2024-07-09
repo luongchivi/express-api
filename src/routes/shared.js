@@ -6,8 +6,8 @@ function buildResponseMessage(res, message, statusCode = 200) {
   return res.status(statusCode).json({
     results: {
       statusCode,
-      message
-    }
+      message,
+    },
   });
 }
 
@@ -16,9 +16,9 @@ function buildSuccessResponse(res, message, data = {}, statusCode = 200) {
     results: {
       statusCode,
       message,
-      ...data
-    }
-  })
+      ...data,
+    },
+  });
 }
 
 function buildResultListResponse(
@@ -28,8 +28,8 @@ function buildResultListResponse(
   pageSize,
   totalItemsFiltered,
   totalItemsUnfiltered,
-  data= {},
-  statusCode = 200
+  data = {},
+  statusCode = 200,
 ) {
   const totalPages = Math.ceil(totalItemsFiltered / pageSize);
 
@@ -42,9 +42,9 @@ function buildResultListResponse(
       totalPages,
       totalItemsFiltered,
       totalItemsUnfiltered,
-      ...data
-    }
-  })
+      ...data,
+    },
+  });
 }
 
 function buildErrorResponse(res, message, data = {}, statusCode = 500) {
@@ -52,9 +52,9 @@ function buildErrorResponse(res, message, data = {}, statusCode = 500) {
     results: {
       statusCode,
       message,
-      ...data
-    }
-  })
+      ...data,
+    },
+  });
 }
 
 function createListResultsSchemaResponse(schema = {}) {
@@ -67,9 +67,9 @@ function createListResultsSchemaResponse(schema = {}) {
       totalPages: Joi.number().required(),
       totalItemsFiltered: Joi.number().required(),
       totalItemsUnfiltered: Joi.number().required(),
-      ...schema
-    })
-  })
+      ...schema,
+    }),
+  });
 }
 
 function createResultsSchemaResponse(schema = {}) {
@@ -77,18 +77,18 @@ function createResultsSchemaResponse(schema = {}) {
     results: Joi.object({
       statusCode: Joi.number().required(),
       message: Joi.string().required(),
-      ...schema
-    })
-  })
+      ...schema,
+    }),
+  });
 }
 
 function createMessageSchemaResponse() {
   return Joi.object({
     results: Joi.object({
       statusCode: Joi.number().required(),
-      message: Joi.string().required()
-    })
-  })
+      message: Joi.string().required(),
+    }),
+  });
 }
 
 function createSchemaQuery(schema = {}) {
@@ -97,14 +97,14 @@ function createSchemaQuery(schema = {}) {
     pageSize: Joi.number().optional(),
     sortBy: Joi.string().optional(),
     sortOrder: Joi.string().optional(),
-    ...schema
-  })
+    ...schema,
+  });
 }
 
-function parseQueryParams(query, filterableFields = {})  {
+function parseQueryParams(query, filterableFields = {}) {
   const pageSize = parseInt(query.pageSize, 10);
   const page = parseInt(query.page, 10);
-  const sortBy = query.sortBy;
+  const { sortBy } = query;
   const sortOrder = query.sortOrder.toUpperCase();
 
   const offset = (page - 1) * pageSize;
@@ -120,7 +120,7 @@ function parseQueryParams(query, filterableFields = {})  {
           where[field] = { [Op.like]: `%${query[field]}%` };
           break;
         case 'boolean':
-          where[field] = query[field] === 'true' ? true : false;
+          where[field] = query[field] === 'true';
           break;
         case 'number':
           const numberFilter = query[field].split(',');
@@ -144,17 +144,17 @@ function parseQueryParams(query, filterableFields = {})  {
             validateDate(endDate);
             where[field] = {
               [Op.between]: [
-                new Date(startDate).setUTCHours(0,0,0,0),
-                new Date(endDate).setUTCHours(23, 59, 59, 999)
-              ]
+                new Date(startDate).setUTCHours(0, 0, 0, 0),
+                new Date(endDate).setUTCHours(23, 59, 59, 999),
+              ],
             };
           } else if (dateFilter.length === 1) {
             validateDate(query[field]);
             where[field] = {
               [Op.between]: [
-                new Date(query[field]).setUTCHours(0,0,0,0),
-                new Date(query[field]).setUTCHours(23, 59, 59, 999)
-              ]
+                new Date(query[field]).setUTCHours(0, 0, 0, 0),
+                new Date(query[field]).setUTCHours(23, 59, 59, 999),
+              ],
             };
           } else {
             throw new Error('Invalid date format');
@@ -170,9 +170,9 @@ function parseQueryParams(query, filterableFields = {})  {
   const order = [[sortBy, sortOrder]];
 
   return { where, order, limit, offset };
-};
+}
 
-const validateDate = (dateString) => {
+const validateDate = dateString => {
   const schema = Joi.date().iso();
 
   const { error } = schema.validate(dateString);

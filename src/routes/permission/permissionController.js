@@ -1,6 +1,7 @@
 const PermissionModel = require('../../database/models/permission');
-const { buildSuccessResponse,
-  buildResponseMessage
+const {
+  buildSuccessResponse,
+  buildResponseMessage,
 } = require('../shared');
 
 
@@ -23,7 +24,7 @@ async function getAllPermissions(req, res, next) {
     const permissions = await PermissionModel.findAll();
     return buildSuccessResponse(res, 'Get all permissions successfully.', {
       permissions,
-    })
+    });
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get all permissions';
@@ -42,7 +43,7 @@ async function getPermissionDetails(req, res, next) {
 
     return buildSuccessResponse(res, 'Get permission details successfully.', {
       permission,
-    })
+    });
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get permission details';
@@ -71,5 +72,5 @@ module.exports = {
   addPermission,
   getAllPermissions,
   getPermissionDetails,
-  deletePermission
-}
+  deletePermission,
+};

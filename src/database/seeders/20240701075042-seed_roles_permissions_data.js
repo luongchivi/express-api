@@ -1,6 +1,5 @@
-'use strict';
+const { DB_TABLE_NAMES, getTableNameForMigrations } = require('../constants');
 
-const { DB_TABLE_NAMES, getTableNameForMigrations } = require('../../database/constants');
 
 const roles = [
   {
@@ -12,7 +11,7 @@ const roles = [
     id: 2,
     name: 'User',
     description: 'User role',
-  }
+  },
 ];
 
 const permissions = [
@@ -41,72 +40,66 @@ const permissions = [
 const permissionsOfUserAndAdmin = [
   {
     role_id: 2, // 'User'
-    permission_id: 1 // 'read'
+    permission_id: 1, // 'read'
   },
   {
     role_id: 2, // 'User'
-    permission_id: 2 // 'write'
+    permission_id: 2, // 'write'
   },
   {
     role_id: 2, // 'User'
-    permission_id: 3 // 'update'
+    permission_id: 3, // 'update'
   },
   {
     role_id: 1, // 'Admin'
-    permission_id: 1 // 'read'
+    permission_id: 1, // 'read'
   },
   {
     role_id: 1, // 'Admin'
-    permission_id: 2 // 'write'
+    permission_id: 2, // 'write'
   },
   {
     role_id: 1, // 'Admin'
-    permission_id: 3 // 'update'
+    permission_id: 3, // 'update'
   },
   {
     role_id: 1, // 'Admin'
-    permission_id: 4 // 'delete'
-  }
+    permission_id: 4, // 'delete'
+  },
 ];
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, _Sequelize) {
-    return queryInterface.sequelize.transaction(async (t) => {
-      const dataRoles = roles.map(i => {
-        return {
-          ...i,
-          created_at: new Date(),
-          updated_at: new Date(),
-        }
-      });
+  async up(queryInterface, _Sequelize) {
+    return queryInterface.sequelize.transaction(async t => {
+      const dataRoles = roles.map(i => ({
+        ...i,
+        created_at: new Date(),
+        updated_at: new Date(),
+      }));
 
-      const dataPermissions = permissions.map(i => {
-        return {
-          ...i,
-          created_at: new Date(),
-          updated_at: new Date(),
-        }
-      })
+      const dataPermissions = permissions.map(i => ({
+        ...i,
+        created_at: new Date(),
+        updated_at: new Date(),
+      }));
 
-      const permissionsOfUserAndAdminData = permissionsOfUserAndAdmin.map(i => {
-        return {
-          ...i,
-          created_at: new Date(),
-          updated_at: new Date(),
-        }
-      })
+      const permissionsOfUserAndAdminData = permissionsOfUserAndAdmin.map(i => ({
+        ...i,
+        created_at: new Date(),
+        updated_at: new Date(),
+      }));
       await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.ROLE), dataRoles, { transaction: t });
       await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.PERMISSION), dataPermissions, { transaction: t });
       await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.ROLE_PERMISSION), permissionsOfUserAndAdminData, { transaction: t });
-    })
+    });
   },
 
-  async down (queryInterface, _Sequelize) {
-    return queryInterface.sequelize.transaction(async (t) => {
+  async down(queryInterface, _Sequelize) {
+    return queryInterface.sequelize.transaction(async t => {
       await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.ROLE), null, { transaction: t });
       await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.PERMISSION), null, { transaction: t });
       await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.ROLE_PERMISSION), null, { transaction: t });
-    })
-  }
+    });
+  },
 };

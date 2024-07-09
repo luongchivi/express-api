@@ -1,5 +1,6 @@
 const inflection = require('inflection');
 
+
 const DB_TABLE_NAMES = Object.freeze({
   ADDRESS: 'address',
   USER: 'user',
@@ -11,6 +12,10 @@ const DB_TABLE_NAMES = Object.freeze({
   SUPPLIER: 'supplier',
   PRODUCT: 'product',
   COUPON: 'coupon',
+  ORDER: 'order',
+  ORDER_ITEM: 'order_item',
+  CART: 'cart',
+  CART_ITEM: 'cart_item',
 });
 
 // inflection.pluralize(tableName): Chuyển đổi tên bảng từ dạng số ít sang số nhiều.
@@ -21,5 +26,5 @@ function getTableNameForMigrations(tableName) {
 
 module.exports = {
   DB_TABLE_NAMES,
-  getTableNameForMigrations
+  getTableNameForMigrations,
 };

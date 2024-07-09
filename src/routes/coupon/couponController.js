@@ -1,8 +1,9 @@
 const CouponModel = require('../../database/models/coupon');
 const {
   buildSuccessResponse,
-  buildResponseMessage
+  buildResponseMessage,
 } = require('../shared');
+
 
 async function addCoupon(req, res, next) {
   try {
@@ -73,8 +74,9 @@ async function updateCoupon(req, res, next) {
       return buildResponseMessage(res, 'Category not found.', 404);
     }
     await coupon.update(payload);
+    await coupon.reload();
     return buildSuccessResponse(res, 'Update coupon successfully.', {
-      coupon
+      coupon,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -88,5 +90,5 @@ module.exports = {
   addCoupon,
   getCouponDetails,
   updateCoupon,
-  deleteCoupon
+  deleteCoupon,
 };

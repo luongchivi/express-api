@@ -1,8 +1,9 @@
 const Joi = require('joi');
 const {
   createResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
+
 
 const createRoleReq = Joi.object({
   name: Joi.string().required(),
@@ -51,5 +52,5 @@ module.exports = {
   assignPermissionReq,
   assignPermissionRes,
   deletePermissionAssignReq,
-  deletePermissionAssignRes
-}
+  deletePermissionAssignRes,
+};

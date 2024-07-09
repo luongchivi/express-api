@@ -1,8 +1,9 @@
 const Joi = require('joi');
 const {
   createResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
+
 
 const addAddressReq = Joi.object({
   street: Joi.string().optional(),
@@ -34,7 +35,7 @@ const updateAddressReq = Joi.object({
 
 const updateAddressRes = createResultsSchemaResponse({
   address: Joi.object().required(),
-})
+});
 
 const deleteAddressRes = createMessageSchemaResponse();
 
@@ -45,5 +46,5 @@ module.exports = {
   getAddressRes,
   updateAddressReq,
   updateAddressRes,
-  deleteAddressRes
-}
+  deleteAddressRes,
+};

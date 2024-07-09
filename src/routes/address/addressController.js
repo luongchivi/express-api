@@ -2,19 +2,20 @@ const AddressModel = require('../../database/models/address');
 const UserModel = require('../../database/models/user');
 const {
   buildSuccessResponse,
-  buildResponseMessage
+  buildResponseMessage,
 } = require('../shared');
+
 
 async function addAddress(req, res, next) {
   try {
     const { userId } = req.userInfo;
     const newAddress = await AddressModel.create({
       ...req.body,
-      userId
+      userId,
     });
 
     return buildSuccessResponse(res, 'Address added successfully.', {
-      address: newAddress
+      address: newAddress,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -32,9 +33,9 @@ async function getAddress(req, res, next) {
         model: UserModel,
         as: 'user',
         attributes: {
-          exclude: ['password', 'deletedAt']
-        }
-      }
+          exclude: ['password', 'deletedAt'],
+        },
+      },
     });
 
     if (!address) {
@@ -54,7 +55,7 @@ async function getAddress(req, res, next) {
 async function updateAddress(req, res, next) {
   try {
     const { addressId } = req.params;
-    const body = req.body;
+    const { body } = req;
 
     const address = await AddressModel.findByPk(addressId);
 
@@ -63,7 +64,7 @@ async function updateAddress(req, res, next) {
     }
 
     await address.update(body);
-
+    await address.reload();
     return buildSuccessResponse(res, 'Update new address successfully.', {
       address,
     }, 200);
@@ -98,5 +99,5 @@ module.exports = {
   addAddress,
   getAddress,
   updateAddress,
-  deleteAddress
+  deleteAddress,
 };

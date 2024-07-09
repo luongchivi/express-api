@@ -1,21 +1,23 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
   validateRequest,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   addCategory,
   getAllCategories,
   getCategoryDetails,
   deleteCategory,
-  updateCategory
-} = require('../category/categoryController');
+  updateCategory,
+} = require('./categoryController');
 const {
   addCategoryReq,
   addCategoryRes,
@@ -24,8 +26,8 @@ const {
   getCategoryDetailsRes,
   deleteCategoryRes,
   updateCategoryReq,
-  updateCategoryRes
-} = require('../category/categorySchema');
+  updateCategoryRes,
+} = require('./categorySchema');
 
 
 // GET /api/v1/categories
@@ -34,7 +36,7 @@ router.get(
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllCategoriesRes),
-  getAllCategories
+  getAllCategories,
 );
 
 // POST /api/v1/categories
@@ -44,7 +46,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(addCategoryReq),
   validateResponse(addCategoryRes),
-  addCategory
+  addCategory,
 );
 
 // GET /api/v1/categories/{categoryId}
@@ -54,7 +56,7 @@ router.get(
   verifyPermission('read'),
   validateParams(categoryIdParam),
   validateResponse(getCategoryDetailsRes),
-  getCategoryDetails
+  getCategoryDetails,
 );
 
 // PUT /api/v1/categories/{categoryId}
@@ -65,7 +67,7 @@ router.put(
   validateParams(categoryIdParam),
   validateRequest(updateCategoryReq),
   validateResponse(updateCategoryRes),
-  updateCategory
+  updateCategory,
 );
 
 // DELETE /api/v1/categories/{categoryId}
@@ -75,7 +77,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(categoryIdParam),
   validateResponse(deleteCategoryRes),
-  deleteCategory
+  deleteCategory,
 );
 
 module.exports = router;

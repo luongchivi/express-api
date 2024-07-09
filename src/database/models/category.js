@@ -1,18 +1,17 @@
-'use strict';
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../config/database');
 const {
   DB_TABLE_NAMES,
-  getTableNameForMigrations
-} = require('../../database/constants');
+  getTableNameForMigrations,
+} = require('../constants');
+
 
 const Category = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
@@ -27,15 +26,15 @@ const Category = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.CATEG
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   timestamps: true,
-  underscored: true
+  underscored: true,
 });
 
 module.exports = Category;

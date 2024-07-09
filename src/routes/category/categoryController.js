@@ -1,8 +1,9 @@
 const CategoryModel = require('../../database/models/category');
 const {
   buildSuccessResponse,
-  buildResponseMessage
+  buildResponseMessage,
 } = require('../shared');
+
 
 async function addCategory(req, res, next) {
   try {
@@ -73,8 +74,9 @@ async function updateCategory(req, res, next) {
       return buildResponseMessage(res, 'Category not found.', 404);
     }
     await category.update(payload);
+    await category.reload();
     return buildSuccessResponse(res, 'Update category successfully.', {
-      category
+      category,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -88,5 +90,5 @@ module.exports = {
   getAllCategories,
   getCategoryDetails,
   deleteCategory,
-  updateCategory
+  updateCategory,
 };

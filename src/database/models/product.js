@@ -1,56 +1,48 @@
-'use strict';
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../config/database');
 const {
   DB_TABLE_NAMES,
-  getTableNameForMigrations
-} = require('../../database/constants');
+  getTableNameForMigrations,
+} = require('../constants');
 const Supplier = require('./supplier');
 const Category = require('./category');
+
 
 const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUCT), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
   },
   supplierId: {
     type: DataTypes.INTEGER,
-    references: {
-      model: getTableNameForMigrations(DB_TABLE_NAMES.SUPPLIER),
-      key: 'id'
-    }
   },
   categoryId: {
     type: DataTypes.INTEGER,
-    references: {
-      model: getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY),
-      key: 'id'
-    }
   },
   name: {
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
-    trim: true
+    trim: true,
   },
   slug: {
     type: DataTypes.STRING,
     unique: true,
     lowercase: true,
-    required: true
+    required: true,
   },
   description: {
     type: DataTypes.STRING,
   },
   imageUrl: {
-    type: DataTypes.STRING,
+    type: DataTypes.ARRAY(DataTypes.STRING),
+    defaultValue: [],
   },
   unitPrice: {
     type: DataTypes.FLOAT,
-    required: true
+    required: true,
   },
   unitsInStock: {
     type: DataTypes.INTEGER,
@@ -60,30 +52,30 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
   },
   unitsSold: {
     type: DataTypes.INTEGER,
-    defaultValue: 0
+    defaultValue: 0,
   },
   discount: {
-    type: DataTypes.FLOAT
+    type: DataTypes.FLOAT,
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   timestamps: true,
-  underscored: true
+  underscored: true,
 });
 
 // Many to One, Product và Supplier nhiều sản phẩn cùng cung cấp tại 1 nhà phân phối
-Product.belongsTo(Supplier, { foreignKey: 'supplierId', as: 'supplier' })
-Supplier.hasMany(Product, { foreignKey: 'supplierId', as: 'suppliers' })
+Product.belongsTo(Supplier, { foreignKey: 'supplierId', as: 'supplier' });
+Supplier.hasMany(Product, { foreignKey: 'supplierId', as: 'products' });
 
 // Many to One, Product và Category nhiều sản phẩm ứng với 1 danh mục
-Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' })
-Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' })
+Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
+Category.hasMany(Product, { foreignKey: 'categoryId', as: 'products' });
 
 module.exports = Product;

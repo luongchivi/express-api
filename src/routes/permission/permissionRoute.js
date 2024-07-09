@@ -1,15 +1,17 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   addPermission,
   getAllPermissions,
   getPermissionDetails,
-  deletePermission
-} = require('../permission/permissionController');
+  deletePermission,
+} = require('./permissionController');
 const {
   validateRequest,
   validateResponse,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   addPermissionReq,
@@ -17,11 +19,11 @@ const {
   getAllPermissionsRes,
   permissionIdParam,
   getPermissionDetailsRes,
-  deletePermissionRes
-} = require('../permission/permissionSchema');
+  deletePermissionRes,
+} = require('./permissionSchema');
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 
 
@@ -31,7 +33,7 @@ router.get(
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllPermissionsRes),
-  getAllPermissions
+  getAllPermissions,
 );
 
 // POST /api/v1/permissions
@@ -41,7 +43,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(addPermissionReq),
   validateResponse(addPermissionRes),
-  addPermission
+  addPermission,
 );
 
 // GET /api/v1/permissions/{permissionId}
@@ -51,7 +53,7 @@ router.get(
   verifyPermission('read'),
   validateParams(permissionIdParam),
   validateResponse(getPermissionDetailsRes),
-  getPermissionDetails
+  getPermissionDetails,
 );
 
 // DELETE /api/v1/permissions/{permissionId}
@@ -61,7 +63,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(permissionIdParam),
   validateResponse(deletePermissionRes),
-  deletePermission
+  deletePermission,
 );
 
 module.exports = router;

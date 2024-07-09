@@ -1,45 +1,43 @@
-'use strict';
-
+const { DataTypes } = require('sequelize');
 const {
   getTableNameForMigrations,
-  DB_TABLE_NAMES
+  DB_TABLE_NAMES,
 } = require('../constants');
-const { DataTypes } = require('sequelize');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, _Sequelize) {
-    return queryInterface.sequelize.transaction(async (t) => {
+    return queryInterface.sequelize.transaction(async t => {
       await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.ROLE), {
         id: {
           type: DataTypes.INTEGER,
           autoIncrement: true,
           primaryKey: true,
-          allowNull: false
+          allowNull: false,
         },
         name: {
           type: DataTypes.STRING,
           allowNull: false,
-          unique: true
+          unique: true,
         },
         description: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
         },
         created_at: {
           type: DataTypes.DATE,
-          allowNull: false
+          allowNull: false,
         },
         updated_at: {
           type: DataTypes.DATE,
-          allowNull: false
-        }
+          allowNull: false,
+        },
       }, { transaction: t });
     });
   },
 
   async down(queryInterface, _Sequelize) {
-    return queryInterface.sequelize.transaction(async (t) => {
+    return queryInterface.sequelize.transaction(async t => {
       await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.ROLE), { transaction: t });
     });
-  }
+  },
 };

@@ -1,43 +1,42 @@
-'use strict';
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../config/database');
 const {
   DB_TABLE_NAMES,
-  getTableNameForMigrations
-} = require('../../database/constants');
+  getTableNameForMigrations,
+} = require('../constants');
+
 
 const Coupon = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.COUPON), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   discount: {
     type: DataTypes.FLOAT,
-    allowNull: false
+    allowNull: false,
   },
   expiry: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   timestamps: true,
-  underscored: true
+  underscored: true,
 });
 
 module.exports = Coupon;

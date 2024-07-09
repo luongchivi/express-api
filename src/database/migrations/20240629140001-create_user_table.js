@@ -1,10 +1,8 @@
-'use strict';
-
+const { DataTypes } = require('sequelize');
 const {
   getTableNameForMigrations,
-  DB_TABLE_NAMES
+  DB_TABLE_NAMES,
 } = require('../constants');
-const { DataTypes } = require('sequelize');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -15,51 +13,51 @@ module.exports = {
           type: DataTypes.INTEGER,
           autoIncrement: true,
           primaryKey: true,
-          allowNull: false
+          allowNull: false,
         },
         first_name: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
         },
         last_name: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
         },
         email: {
           type: DataTypes.STRING,
-          unique: true
+          unique: true,
         },
         password: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
         },
         is_active: {
           type: DataTypes.BOOLEAN,
-          defaultValue: true
+          defaultValue: true,
         },
         created_at: {
           type: DataTypes.DATE,
-          allowNull: false
+          allowNull: false,
         },
         updated_at: {
           type: DataTypes.DATE,
-          allowNull: false
+          allowNull: false,
         },
         // soft delete
         deleted_at: {
-          type: DataTypes.DATE
+          type: DataTypes.DATE,
         },
         refresh_token: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
         },
         password_reset_token: {
-          type: DataTypes.STRING
+          type: DataTypes.STRING,
         },
         password_reset_token_expires: {
           type: DataTypes.DATE,
-          allowNull: true
+          allowNull: true,
         },
         password_changed_at: {
           type: DataTypes.DATE,
-          allowNull: true
-        }
+          allowNull: true,
+        },
       }, { transaction: t });
     });
   },
@@ -68,5 +66,5 @@ module.exports = {
     return queryInterface.sequelize.transaction(async t => {
       await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.USER), { transaction: t });
     });
-  }
+  },
 };

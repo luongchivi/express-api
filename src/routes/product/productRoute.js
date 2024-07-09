@@ -1,21 +1,25 @@
+require('dotenv').config({ path: `${process.cwd()}/.env` });
 const express = require('express');
+
+
 const router = express.Router();
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
   validateRequest,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   getAllProducts,
   addProduct,
   getProductDetails,
   updateProduct,
-  deleteProduct
-} = require('../product/productController');
+  deleteProduct,
+  uploadImagesProduct,
+} = require('./productController');
 const {
   getAllProductsRes,
   addProductReq,
@@ -24,8 +28,10 @@ const {
   updateProductReq,
   updateProductRes,
   getProductDetailsRes,
-  deleteProductRes
-} = require('../product/productSchema');
+  deleteProductRes,
+  uploadImagesProductRes,
+} = require('./productSchema');
+const uploadCloud = require('../../lib/cloudinary');
 
 
 // GET /api/v1/products
@@ -34,7 +40,7 @@ router.get(
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllProductsRes),
-  getAllProducts
+  getAllProducts,
 );
 
 // POST /api/v1/products
@@ -44,7 +50,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(addProductReq),
   validateResponse(addProductRes),
-  addProduct
+  addProduct,
 );
 
 // GET /api/v1/categories/{categoryId}
@@ -54,7 +60,7 @@ router.get(
   verifyPermission('read'),
   validateParams(productIdParam),
   validateResponse(getProductDetailsRes),
-  getProductDetails
+  getProductDetails,
 );
 
 // PUT /api/v1/categories/{categoryId}
@@ -65,7 +71,7 @@ router.put(
   validateParams(productIdParam),
   validateRequest(updateProductReq),
   validateResponse(updateProductRes),
-  updateProduct
+  updateProduct,
 );
 
 // DELETE /api/v1/categories/{categoryId}
@@ -75,7 +81,18 @@ router.delete(
   verifyPermission('delete'),
   validateParams(productIdParam),
   validateResponse(deleteProductRes),
-  deleteProduct
+  deleteProduct,
+);
+
+// POST /api/v1/products/{productId}/image-upload
+router.post(
+  '/:productId/image-upload',
+  verifyRole(['Admin']),
+  verifyPermission('write'),
+  validateParams(productIdParam),
+  uploadCloud.array('images', parseInt(process.env.UPLOAD_MAX, 10)),
+  validateResponse(uploadImagesProductRes),
+  uploadImagesProduct,
 );
 
 

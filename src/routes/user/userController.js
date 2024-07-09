@@ -7,13 +7,14 @@ const {
   buildSuccessResponse,
   buildResponseMessage,
   parseQueryParams,
-  buildResultListResponse
+  buildResultListResponse,
 } = require('../shared');
+
 
 async function getAllUsers(req, res, next) {
   try {
-    const currentPage = parseInt(req.query.page);
-    const pageSize = parseInt(req.query.pageSize);
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
 
     const filterableFields = {
       firstName: 'string',
@@ -23,14 +24,19 @@ async function getAllUsers(req, res, next) {
       createdAt: 'date',
     };
 
-    const { where, order, limit, offset } = parseQueryParams(req.query, filterableFields);
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
 
     const users = await UserModel.findAndCountAll({
       where,
       order,
       limit,
       offset,
-      attributes: { exclude: ['password', 'deletedAt'] }
+      attributes: { exclude: ['password', 'deletedAt'] },
     });
 
     const totalItemsFiltered = users.count;
@@ -44,9 +50,10 @@ async function getAllUsers(req, res, next) {
       totalItemsFiltered,
       totalItemsUnfiltered,
       {
-        users: users.rows
+        users: users.rows,
       },
-      200);
+      200,
+    );
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get all users.';
@@ -60,7 +67,7 @@ async function getUserDetails(req, res, next) {
 
     const user = await UserModel.findByPk(id, {
       attributes: {
-        exclude: ['password', 'deletedAt']
+        exclude: ['password', 'deletedAt'],
       },
       include: {
         model: RoleModel,
@@ -72,8 +79,8 @@ async function getUserDetails(req, res, next) {
           as: 'permissions',
           attributes: { exclude: [RolePermissionModel] },
           through: { attributes: [] },
-        }
-      }
+        },
+      },
     });
 
     if (!user) {
@@ -81,7 +88,7 @@ async function getUserDetails(req, res, next) {
     }
 
     return buildSuccessResponse(res, 'Get user details successfully.', {
-      user
+      user,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -97,17 +104,17 @@ async function updateUser(req, res, next) {
 
     const user = await UserModel.findByPk(id, {
       attributes: {
-        exclude: ['password', 'deletedAt']
-      }
+        exclude: ['password', 'deletedAt'],
+      },
     });
     if (!user) {
       return buildResponseMessage(res, 'User not found.', 404);
     }
 
     await user.update(payload);
-
+    await user.reload();
     return buildSuccessResponse(res, 'Update user successfully.', {
-      user
+      user,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -143,8 +150,8 @@ async function assignRole(req, res, next) {
 
     const role = await RoleModel.findOne({
       where: {
-        name: roleName
-      }
+        name: roleName,
+      },
     });
 
     if (!role) {
@@ -153,7 +160,7 @@ async function assignRole(req, res, next) {
 
     await UserRoleModel.create({
       userId: user.id,
-      roleId: role.id
+      roleId: role.id,
     });
 
     return buildResponseMessage(res, 'Assign new role to user successfully.', 200);
@@ -176,8 +183,8 @@ async function deleteRoleAssign(req, res, next) {
 
     const role = await RoleModel.findOne({
       where: {
-        name: roleName
-      }
+        name: roleName,
+      },
     });
 
     if (!role) {
@@ -187,8 +194,8 @@ async function deleteRoleAssign(req, res, next) {
     await UserRoleModel.destroy({
       where: {
         userId: user.id,
-        roleId: role.id
-      }
+        roleId: role.id,
+      },
     });
 
     return buildResponseMessage(res, 'Delete role assign to user successfully.', 200);
@@ -201,7 +208,10 @@ async function deleteRoleAssign(req, res, next) {
 
 async function getCurrentUser(req, res, next) {
   try {
-    const { userId, email } = req.userInfo;
+    const {
+      userId,
+      email,
+    } = req.userInfo;
 
     if (!userId || !email) {
       return buildResponseMessage(res, 'User info in request not found.', 400);
@@ -210,11 +220,11 @@ async function getCurrentUser(req, res, next) {
     const user = await UserModel.findOne({
       where: {
         id: userId,
-        email
+        email,
       },
       attributes: {
-        exclude: ['password', 'deletedAt']
-      }
+        exclude: ['password', 'deletedAt'],
+      },
     });
 
     if (!user) {
@@ -222,7 +232,7 @@ async function getCurrentUser(req, res, next) {
     }
 
     return buildSuccessResponse(res, 'Current user successfully.', {
-      user
+      user,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -238,5 +248,5 @@ module.exports = {
   updateUser,
   softDelete,
   assignRole,
-  deleteRoleAssign
+  deleteRoleAssign,
 };

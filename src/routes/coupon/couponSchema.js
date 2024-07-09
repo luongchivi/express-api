@@ -2,8 +2,9 @@ const Joi = require('joi');
 const {
   createResultsSchemaResponse,
   createListResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
+
 
 const addCouponReq = Joi.object({
   name: Joi.string().required(),
@@ -12,11 +13,11 @@ const addCouponReq = Joi.object({
 });
 
 const addCouponRes = createResultsSchemaResponse({
-  coupon: Joi.object().required()
+  coupon: Joi.object().required(),
 });
 
 const getAllCouponsRes = createListResultsSchemaResponse({
-  coupons: Joi.array()
+  coupons: Joi.array(),
 });
 
 const couponIdParam = Joi.object({
@@ -24,7 +25,7 @@ const couponIdParam = Joi.object({
 });
 
 const getCouponDetailsRes = createResultsSchemaResponse({
-  coupon: Joi.object().required()
+  coupon: Joi.object().required(),
 });
 
 const deleteCouponRes = createMessageSchemaResponse();
@@ -36,7 +37,7 @@ const updateCouponReq = Joi.object({
 });
 
 const updateCouponRes = createResultsSchemaResponse({
-  coupon: Joi.object().required()
+  coupon: Joi.object().required(),
 });
 
 module.exports = {
@@ -47,5 +48,5 @@ module.exports = {
   getCouponDetailsRes,
   deleteCouponRes,
   updateCouponReq,
-  updateCouponRes
-}
+  updateCouponRes,
+};

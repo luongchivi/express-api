@@ -1,40 +1,39 @@
-'use strict';
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../config/database');
 const {
   DB_TABLE_NAMES,
-  getTableNameForMigrations
-} = require('../../database/constants');
+  getTableNameForMigrations,
+} = require('../constants');
 const Permission = require('./permission');
 const RolePermission = require('./rolePermission');
+
 
 const Role = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ROLE), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
   },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   description: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   timestamps: true,
-  underscored: true
+  underscored: true,
 });
 
 Role.belongsToMany(Permission, {
@@ -42,7 +41,7 @@ Role.belongsToMany(Permission, {
   through: { model: RolePermission, unique: true },
   foreignKey: 'roleId',
   onDelete: 'CASCADE',
-  onUpdate: 'CASCADE'
+  onUpdate: 'CASCADE',
 });
 
 Permission.belongsToMany(Role, {
@@ -50,7 +49,7 @@ Permission.belongsToMany(Role, {
   through: { model: RolePermission, unique: true },
   foreignKey: 'permissionId',
   onDelete: 'CASCADE',
-  onUpdate: 'CASCADE'
+  onUpdate: 'CASCADE',
 });
 
 module.exports = Role;

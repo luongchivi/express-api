@@ -2,7 +2,7 @@ const Joi = require('joi');
 const {
   createResultsSchemaResponse,
   createListResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
 
 
@@ -20,11 +20,11 @@ const addSupplierReq = Joi.object({
 });
 
 const addSupplierRes = createResultsSchemaResponse({
-  supplier: Joi.object().required()
+  supplier: Joi.object().required(),
 });
 
 const getAllSuppliersRes = createListResultsSchemaResponse({
-  suppliers: Joi.array()
+  suppliers: Joi.array(),
 });
 
 const supplierIdParam = Joi.object({
@@ -32,7 +32,7 @@ const supplierIdParam = Joi.object({
 });
 
 const getSupplierDetailsRes = createResultsSchemaResponse({
-  supplier: Joi.object().required()
+  supplier: Joi.object().required(),
 });
 
 const deleteSupplierRes = createMessageSchemaResponse();
@@ -51,7 +51,7 @@ const updateSupplierReq = Joi.object({
 });
 
 const updateSupplierRes = createResultsSchemaResponse({
-  supplier: Joi.object().required()
+  supplier: Joi.object().required(),
 });
 
 module.exports = {
@@ -62,5 +62,5 @@ module.exports = {
   getSupplierDetailsRes,
   deleteSupplierRes,
   updateSupplierReq,
-  updateSupplierRes
-}
+  updateSupplierRes,
+};

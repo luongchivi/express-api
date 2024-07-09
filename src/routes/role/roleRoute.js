@@ -1,4 +1,6 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   createRole,
@@ -6,12 +8,12 @@ const {
   deleteRole,
   getAllRoles,
   assignPermission,
-  deletePermissionAssign
-} = require('../role/roleController');
+  deletePermissionAssign,
+} = require('./roleController');
 const {
   validateRequest,
   validateResponse,
-  validateParams
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   createRoleReq,
@@ -23,11 +25,11 @@ const {
   assignPermissionReq,
   assignPermissionRes,
   deletePermissionAssignReq,
-  deletePermissionAssignRes
-} = require('../role/roleSchema');
+  deletePermissionAssignRes,
+} = require('./roleSchema');
 const {
   verifyPermission,
-  verifyRole
+  verifyRole,
 } = require('../../middleware/authHandler');
 
 
@@ -37,7 +39,7 @@ router.get(
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllRolesRes),
-  getAllRoles
+  getAllRoles,
 );
 
 // POST /api/v1/roles
@@ -47,7 +49,7 @@ router.post(
   verifyPermission('write'),
   validateRequest(createRoleReq),
   validateResponse(createRoleRes),
-  createRole
+  createRole,
 );
 
 // GET /api/v1/roles/{roleId}
@@ -57,7 +59,7 @@ router.get(
   verifyPermission('read'),
   validateParams(roleIdParam),
   validateResponse(getRoleDetailsRes),
-  getRoleDetails
+  getRoleDetails,
 );
 
 // DELETE /api/v1/roles/{roleId}
@@ -67,7 +69,7 @@ router.delete(
   verifyPermission('delete'),
   validateParams(roleIdParam),
   validateResponse(deleteRoleRes),
-  deleteRole
+  deleteRole,
 );
 
 // POST /api/v1/roles/{roleId}/permissions
@@ -78,7 +80,7 @@ router.post(
   validateParams(roleIdParam),
   validateRequest(assignPermissionReq),
   validateResponse(assignPermissionRes),
-  assignPermission
+  assignPermission,
 );
 
 // DELETE /api/v1/roles/{roleId}/permissions
@@ -89,7 +91,7 @@ router.delete(
   validateParams(roleIdParam),
   validateRequest(deletePermissionAssignReq),
   validateResponse(deletePermissionAssignRes),
-  deletePermissionAssign
+  deletePermissionAssign,
 );
 
 module.exports = router;

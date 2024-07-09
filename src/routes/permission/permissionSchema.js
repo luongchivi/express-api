@@ -1,14 +1,15 @@
 const Joi = require('joi');
 const {
   createResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
+
 
 const permissionName = Object.freeze({
   READ: 'read',
   WRITE: 'write',
   DELETE: 'delete',
-  UPDATE: 'update'
+  UPDATE: 'update',
 });
 
 const addPermissionReq = Joi.object({
@@ -41,5 +42,5 @@ module.exports = {
   permissionIdParam,
   getPermissionDetailsRes,
   deletePermissionRes,
-  permissionName
-}
+  permissionName,
+};

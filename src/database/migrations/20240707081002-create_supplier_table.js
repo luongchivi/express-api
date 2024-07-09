@@ -1,32 +1,31 @@
-'use strict';
-
-const { getTableNameForMigrations,
-  DB_TABLE_NAMES
-} = require('../constants');
 const { DataTypes } = require('sequelize');
+const {
+  getTableNameForMigrations,
+  DB_TABLE_NAMES,
+} = require('../constants');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, _Sequelize) {
-    return queryInterface.sequelize.transaction(async (t) => {
+  async up(queryInterface, _Sequelize) {
+    return queryInterface.sequelize.transaction(async t => {
       await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.SUPPLIER), {
         id: {
           type: DataTypes.INTEGER,
           autoIncrement: true,
           primaryKey: true,
-          allowNull: false
+          allowNull: false,
         },
         company_name: {
           type: DataTypes.STRING,
           unique: true,
           allowNull: false,
-          trim: true
+          trim: true,
         },
         contact_name: {
           type: DataTypes.STRING,
           unique: true,
           lowercase: true,
-          required: true
+          required: true,
         },
         address: {
           type: DataTypes.STRING,
@@ -54,19 +53,19 @@ module.exports = {
         },
         created_at: {
           type: DataTypes.DATE,
-          allowNull: false
+          allowNull: false,
         },
         updated_at: {
           type: DataTypes.DATE,
-          allowNull: false
-        }
+          allowNull: false,
+        },
       }, { transaction: t });
-    })
+    });
   },
 
-  async down (queryInterface, _Sequelize) {
-    return queryInterface.sequelize.transaction(async (t) => {
+  async down(queryInterface, _Sequelize) {
+    return queryInterface.sequelize.transaction(async t => {
       await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.SUPPLIER), { transaction: t });
-    })
-  }
+    });
+  },
 };

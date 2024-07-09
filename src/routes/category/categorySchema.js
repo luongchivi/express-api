@@ -2,8 +2,9 @@ const Joi = require('joi');
 const {
   createResultsSchemaResponse,
   createListResultsSchemaResponse,
-  createMessageSchemaResponse
+  createMessageSchemaResponse,
 } = require('../shared');
+
 
 const addCategoryReq = Joi.object({
   name: Joi.string().required(),
@@ -12,11 +13,11 @@ const addCategoryReq = Joi.object({
 });
 
 const addCategoryRes = createResultsSchemaResponse({
-  category: Joi.object().required()
+  category: Joi.object().required(),
 });
 
 const getAllCategoriesRes = createListResultsSchemaResponse({
-  categories: Joi.array()
+  categories: Joi.array(),
 });
 
 const categoryIdParam = Joi.object({
@@ -24,7 +25,7 @@ const categoryIdParam = Joi.object({
 });
 
 const getCategoryDetailsRes = createResultsSchemaResponse({
-  category: Joi.object().required()
+  category: Joi.object().required(),
 });
 
 const deleteCategoryRes = createMessageSchemaResponse();
@@ -36,7 +37,7 @@ const updateCategoryReq = Joi.object({
 });
 
 const updateCategoryRes = createResultsSchemaResponse({
-  category: Joi.object().required()
+  category: Joi.object().required(),
 });
 
 module.exports = {
@@ -47,5 +48,5 @@ module.exports = {
   getCategoryDetailsRes,
   deleteCategoryRes,
   updateCategoryReq,
-  updateCategoryRes
-}
+  updateCategoryRes,
+};

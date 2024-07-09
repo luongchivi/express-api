@@ -1,30 +1,31 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const { Op } = require('sequelize');
 const UserModel = require('../../database/models/user');
 const UserRoleModel = require('../../database/models/userRole');
 const RoleModel = require('../../database/models/role');
-const bcrypt = require('bcrypt');
 const {
   generateAccessToken,
-  generateFreshToken
+  generateFreshToken,
 } = require('../../middleware/authHandler');
-const jwt = require('jsonwebtoken');
 const {
   buildResponseMessage,
-  buildSuccessResponse
+  buildSuccessResponse,
 } = require('../shared');
 const sendMail = require('../../lib/sendMail');
-const crypto = require('crypto');
-const { Op } = require('sequelize');
+
 
 async function signUp(req, res, next) {
   try {
     const newUser = await UserModel.create({
-      ...req.body
+      ...req.body,
     });
 
     const userRole = await RoleModel.findOne({
       where: {
-        name: 'User'
-      }
+        name: 'User',
+      },
     });
 
     if (!userRole) {
@@ -33,26 +34,26 @@ async function signUp(req, res, next) {
 
     await UserRoleModel.create({
       userId: newUser.id,
-      roleId: userRole.id
+      roleId: userRole.id,
     });
 
     const {
       id,
-      email
+      email,
     } = newUser;
     const {
       password: _,
-      deletedAt,
+      deletedAt: _deleteAt,
       ...rest
     } = newUser.dataValues;
 
     const accessToken = generateAccessToken({
       userId: id,
-      email
+      email,
     });
     const refreshToken = generateFreshToken({
       userId: id,
-      email
+      email,
     });
 
     return buildSuccessResponse(res, 'SignUp successfully.', {
@@ -71,7 +72,7 @@ async function login(req, res, next) {
   try {
     const {
       email,
-      password
+      password,
     } = req.body;
     const user = await UserModel.findOne({
       where: { email },
@@ -88,11 +89,11 @@ async function login(req, res, next) {
 
     const accessToken = generateAccessToken({
       userId: user.id,
-      email
+      email,
     });
     const refreshToken = generateFreshToken({
       userId: user.id,
-      email
+      email,
     });
 
     // save refreshToken into database
@@ -104,13 +105,13 @@ async function login(req, res, next) {
       refreshToken,
       {
         httpOnly: true,
-        maxAge: 7 * 24 * 60 * 1000
-      }
+        maxAge: 7 * 24 * 60 * 1000,
+      },
     );
 
     return buildSuccessResponse(res, 'Login successfully.', {
       accessToken,
-      refreshToken
+      refreshToken,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -130,12 +131,12 @@ async function refreshToken(req, res, next) {
     const refreshTokenDecoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
     const {
       userId,
-      email
+      email,
     } = refreshTokenDecoded;
 
     const newAccessToken = generateAccessToken({
       userId,
-      email
+      email,
     });
 
     return buildSuccessResponse(res, 'Generate new accessToken successfully.', {
@@ -153,8 +154,8 @@ async function forgotPassword(req, res, next) {
     const { email } = req.body;
     const user = await UserModel.findOne({
       where: {
-        email
-      }
+        email,
+      },
     });
 
     if (!user) {
@@ -176,9 +177,8 @@ async function forgotPassword(req, res, next) {
     const result = await sendMail(email, html);
     if (result && result.accepted && result.accepted.length > 0) {
       return buildResponseMessage(res, 'Send mail for reset password successfully.', 200);
-    } else {
-      return buildResponseMessage(res, 'Failed to send reset password email.', 500);
     }
+    return buildResponseMessage(res, 'Failed to send reset password email.', 500);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Request forgot password failed.';
@@ -198,9 +198,9 @@ async function resetPassword(req, res, next) {
         passwordResetToken,
         passwordResetTokenExpires: {
           [Op.gt]: Date.now(),
-          [Op.not]: null
-        }
-      }
+          [Op.not]: null,
+        },
+      },
     });
 
     if (!user) {
@@ -225,5 +225,5 @@ module.exports = {
   login,
   refreshToken,
   forgotPassword,
-  resetPassword
+  resetPassword,
 };

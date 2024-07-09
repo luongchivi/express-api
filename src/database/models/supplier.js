@@ -1,30 +1,29 @@
-'use strict';
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../../config/database');
 const {
   DB_TABLE_NAMES,
-  getTableNameForMigrations
-} = require('../../database/constants');
+  getTableNameForMigrations,
+} = require('../constants');
+
 
 const Supplier = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.SUPPLIER), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
   },
   companyName: {
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
-    trim: true
+    trim: true,
   },
   contactName: {
     type: DataTypes.STRING,
     unique: true,
     lowercase: true,
-    required: true
+    required: true,
   },
   address: {
     type: DataTypes.STRING,
@@ -52,15 +51,15 @@ const Supplier = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.SUPPL
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 }, {
   timestamps: true,
-  underscored: true
+  underscored: true,
 });
 
 module.exports = Supplier;

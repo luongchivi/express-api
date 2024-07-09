@@ -1,8 +1,10 @@
 const SupplierModel = require('../../database/models/supplier');
+const ProductModel = require('../../database/models/product');
 const {
   buildSuccessResponse,
-  buildResponseMessage
+  buildResponseMessage,
 } = require('../shared');
+
 
 async function addSupplier(req, res, next) {
   try {
@@ -34,7 +36,12 @@ async function getAllSuppliers(req, res, next) {
 async function getSupplierDetails(req, res, next) {
   try {
     const { supplierId } = req.params;
-    const supplier = await SupplierModel.findByPk(supplierId);
+    const supplier = await SupplierModel.findByPk(supplierId, {
+      include: {
+        model: ProductModel,
+        as: 'products',
+      },
+    });
 
     if (!supplier) {
       return buildResponseMessage(res, 'No found supplier.', 404);
@@ -80,8 +87,8 @@ async function updateSupplier(req, res, next) {
 
     await supplier.update(payload);
     return buildSuccessResponse(res, 'Update supplier successfully.', {
-      supplier
-    },200);
+      supplier,
+    }, 200);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to update supplier.';
@@ -94,5 +101,5 @@ module.exports = {
   getAllSuppliers,
   getSupplierDetails,
   deleteSupplier,
-  updateSupplier
+  updateSupplier,
 };

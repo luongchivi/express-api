@@ -1,4 +1,5 @@
-require('dotenv').config({path: `${process.cwd()}/.env`});
+require('dotenv').config({ path: `${process.cwd()}/.env` });
+
 
 module.exports = (req, res, next) => {
   req.query.pageSize = req.query.pageSize || process.env.PAGE_SIZE;
