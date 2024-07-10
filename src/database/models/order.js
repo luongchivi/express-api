@@ -10,6 +10,8 @@ const {
 } = require('../../routes/order/orderSchema');
 const User = require('./user');
 const OrderItem = require('./orderItem');
+const OrderCoupon = require('./orderCoupon');
+const Coupon = require('./coupon');
 
 
 const Order = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), {
@@ -55,5 +57,22 @@ User.hasMany(Order, { foreignKey: 'userId', as: 'orders' });
 // One to Many, Order và OrderItem, 1 Order có thể có 1 hoặc nhiều OrderItem
 OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
 Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'orderItems' });
+
+// Many to Many, Order và Coupon thông qua bảng trung gian OrderCoupon
+Order.belongsToMany(Coupon, {
+  as: 'coupons',
+  through: { model: OrderCoupon, unique: true },
+  foreignKey: 'orderId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Coupon.belongsToMany(Order, {
+  as: 'orders',
+  through: { model: OrderCoupon, unique: true },
+  foreignKey: 'couponId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
 
 module.exports = Order;

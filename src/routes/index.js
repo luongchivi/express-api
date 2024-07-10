@@ -8,6 +8,7 @@ const supplierRouter = require('./supplier/supplierRoute');
 const productRouter = require('./product/productRoute');
 const couponRouter = require('./coupon/couponRoute');
 const cartRouter = require('./cart/cartRoute');
+const orderRouter = require('./order/orderRoute');
 const { verifyToken } = require('../middleware/authHandler');
 
 
@@ -27,6 +28,7 @@ function routes(app) {
   app.use('/api/v1/permissions', verifyToken, permissionRouter);
   app.use('/api/v1/address', verifyToken, addressRouter);
   app.use('/api/v1/cart', verifyToken, cartRouter);
+  app.use('/api/v1/orders', verifyToken, orderRouter);
 
   return app;
 }

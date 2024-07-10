@@ -23,8 +23,10 @@ async function addToCart(req, res, next) {
         id: userId,
         email,
       },
+      transaction,
     });
     if (!user) {
+      await transaction.rollback();
       return buildResponseMessage(res, 'User not found.', 404);
     }
 
@@ -35,6 +37,7 @@ async function addToCart(req, res, next) {
     // Kiểm tra sản phẩm có tồn tại hay không
     const product = await ProductModel.findByPk(productId);
     if (!product) {
+      await transaction.rollback();
       return buildResponseMessage(res, 'Product not found.', 404);
     }
 
@@ -51,11 +54,11 @@ async function addToCart(req, res, next) {
     // Tìm giỏ hàng của người dùng hoặc tạo giỏ hàng mới nếu chưa tồn tại
     if (!cart) {
       cart = await CartModel.create({ userId }, { transaction });
-      await cart.reload({ transaction });
+      await cart.reload({ include: [{ model: CartItemModel, as: 'items' }], transaction });
     }
 
     // Tìm sản phẩm trong giỏ hàng
-    let cartItem = await CartItemModel.findOne({
+    const cartItem = await CartItemModel.findOne({
       where: {
         cartId: cart.id,
         productId,
@@ -69,7 +72,7 @@ async function addToCart(req, res, next) {
       await cartItem.save({ transaction });
       await cartItem.reload({ transaction });
     } else {
-      cartItem = await CartItemModel.create({
+      await CartItemModel.create({
         cartId: cart.id,
         productId,
         quantity,
@@ -95,7 +98,94 @@ async function addToCart(req, res, next) {
   }
 }
 
+async function updateQuantityProductInCart(req, res, next) {
+  const transaction = await sequelize.transaction();
+  try {
+    const { userId, email } = req.userInfo;
+    const { productId, quantity } = req.body;
+
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+      transaction,
+    });
+    if (!user) {
+      await transaction.rollback();
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    // Kiểm tra sản phẩm có tồn tại hay không
+    const product = await ProductModel.findByPk(productId);
+    if (!product) {
+      await transaction.rollback();
+      return buildResponseMessage(res, 'Product not found.', 404);
+    }
+
+    const cart = await CartModel.findOne({
+      where: {
+        userId,
+      },
+      include: {
+        model: CartItemModel,
+        as: 'items',
+      },
+      transaction,
+    });
+
+    if (!cart) {
+      await transaction.rollback();
+      return buildResponseMessage(res, 'Cart is empty.', 400);
+    }
+
+    const cartItem = await CartItemModel.findOne({
+      where: {
+        cartId: cart.id,
+        productId,
+      },
+      transaction,
+    });
+
+    if (!cartItem) {
+      await transaction.rollback();
+      return buildResponseMessage(res, 'Item not found.', 404);
+    }
+
+    await cartItem.update({
+      quantity,
+      totalPrice: quantity * product.unitPrice,
+    }, { transaction });
+    await cartItem.reload({ transaction });
+
+    const cartItemsInCart = await CartItemModel.findAll({
+      where: { cartId: cart.id },
+      transaction,
+    });
+
+    // Cập nhật lại giá tiền của giỏ hàng cart
+    const newTotalQuantityCart = cartItemsInCart.reduce((sum, item) => sum + item.quantity, 0);
+    const newTotalPriceCart = cartItemsInCart.reduce((sum, item) => sum + item.totalPrice, 0);
+
+    await cart.update({
+      totalQuantity: newTotalQuantityCart,
+      totalPrice: newTotalPriceCart,
+    }, { transaction });
+
+    await cart.reload({ transaction });
+    await transaction.commit();
+    return buildSuccessResponse(res, 'Update quantity product in cart successfully.', {
+      cart,
+    }, 200);
+  } catch (error) {
+    await transaction.rollback();
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to update quantity product in cart.';
+    next(error);
+  }
+}
 
 module.exports = {
   addToCart,
+  updateQuantityProductInCart,
 };

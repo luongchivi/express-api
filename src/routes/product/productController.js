@@ -87,16 +87,20 @@ async function addProduct(req, res, next) {
     const { categoryId, supplierId, name } = payload;
     payload.slug = slugify(name.toLowerCase());
 
-    const category = await CategoryModel.findByPk(categoryId);
+    if (categoryId) {
+      const category = await CategoryModel.findByPk(categoryId);
 
-    if (!category) {
-      return buildResponseMessage(res, 'Not found category.', 404);
+      if (!category) {
+        return buildResponseMessage(res, 'Not found category.', 404);
+      }
     }
 
-    const supplier = await SupplierModel.findByPk(supplierId);
+    if (supplierId) {
+      const supplier = await SupplierModel.findByPk(supplierId);
 
-    if (!supplier) {
-      return buildResponseMessage(res, 'Not found supplier.', 404);
+      if (!supplier) {
+        return buildResponseMessage(res, 'Not found supplier.', 404);
+      }
     }
 
     const product = await ProductModel.create(payload);

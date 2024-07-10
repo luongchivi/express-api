@@ -4,10 +4,9 @@ const {
   DB_TABLE_NAMES,
   getTableNameForMigrations,
 } = require('../constants');
-const Product = require('./product');
 
 
-const OrderItem = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDER_ITEM), {
+const OrderCoupon = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDER_COUPON), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -18,20 +17,8 @@ const OrderItem = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDE
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  productId: {
+  couponId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  unitPrice: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
-  totalPrice: {
-    type: DataTypes.FLOAT,
     allowNull: false,
   },
   createdAt: {
@@ -47,8 +34,5 @@ const OrderItem = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDE
   underscored: true,
 });
 
-// Product và OrderItem, One to Many,
-OrderItem.belongsTo(Product, { foreignKey: 'orderId', as: 'product' });
-Product.hasMany(OrderItem, { foreignKey: 'productId', as: 'orderItems' });
 
-module.exports = OrderItem;
+module.exports = OrderCoupon;

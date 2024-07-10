@@ -16,6 +16,7 @@ const DB_TABLE_NAMES = Object.freeze({
   ORDER_ITEM: 'order_item',
   CART: 'cart',
   CART_ITEM: 'cart_item',
+  ORDER_COUPON: 'order_coupon',
 });
 
 // inflection.pluralize(tableName): Chuyển đổi tên bảng từ dạng số ít sang số nhiều.

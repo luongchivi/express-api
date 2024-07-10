@@ -11,33 +11,33 @@ const {
   validateRequest,
 } = require('../../middleware/validationHandler');
 const {
-  getAllOrders,
-  addOrder,
+  // getAllOrders,
+  checkoutOrder,
 } = require('./orderController');
 const {
-  getAllOrdersRes,
-  addOrderReq,
-  addOrderRes,
+  // getAllOrdersRes,
+  checkoutOrderReq,
+  checkoutOrderRes,
 } = require('./orderSchema');
 
 
 // GET /api/v1/orders
-router.get(
-  '/',
-  verifyRole(['Admin']),
-  verifyPermission('read'),
-  validateResponse(getAllOrdersRes),
-  getAllOrders,
-);
+// router.get(
+//   '/',
+//   verifyRole(['Admin']),
+//   verifyPermission('read'),
+//   validateResponse(getAllOrdersRes),
+//   getAllOrders,
+// );
 
-// POST /api/v1/orders
+// POST /api/v1/orders/check-out
 router.post(
-  '/',
+  '/check-out',
   verifyRole(['Admin', 'User']),
   verifyPermission('write'),
-  validateRequest(addOrderReq),
-  validateResponse(addOrderRes),
-  addOrder,
+  validateRequest(checkoutOrderReq),
+  validateResponse(checkoutOrderRes),
+  checkoutOrder,
 );
 
 module.exports = router;

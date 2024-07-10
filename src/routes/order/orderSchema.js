@@ -1,3 +1,7 @@
+const Joi = require('joi');
+const { createMessageSchemaResponse } = require('../shared');
+
+
 const paymentType = Object.freeze({
   PAYPAL: 'PayPal',
   BANK_TRANSFER: 'Bank Transfer',
@@ -10,7 +14,16 @@ const orderStatus = Object.freeze({
   SUCCEEDED: 'Succeeded',
 });
 
+const checkoutOrderReq = Joi.object({
+  paymentType: Joi.string().valid(...Object.values(paymentType)).required(),
+  // couponCodes: Joi.array().items(Joi.string()).optional(),
+});
+
+const checkoutOrderRes = createMessageSchemaResponse();
+
 module.exports = {
   paymentType,
   orderStatus,
+  checkoutOrderReq,
+  checkoutOrderRes,
 };

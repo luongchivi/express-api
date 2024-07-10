@@ -13,7 +13,7 @@ const Coupon = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.COUPON)
     primaryKey: true,
     allowNull: false,
   },
-  name: {
+  code: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
