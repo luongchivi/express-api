@@ -6,9 +6,12 @@ const OrderItemModel = require('../../database/models/orderItem');
 const {
   buildResponseMessage,
   buildSuccessResponse,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 const sequelize = require('../../../config/database');
 const { orderStatus } = require('./orderSchema');
+const { Op } = require('sequelize');
 
 
 async function checkoutOrder(req, res, next) {
@@ -104,17 +107,69 @@ async function checkoutOrder(req, res, next) {
   }
 }
 
-// async function getAllOrders(req, res, next) {
-//   try {
-//
-//   } catch (error) {
-//     error.statusCode = 400;
-//     error.messageErrorAPI = 'Failed to get all list orders.';
-//     next(error);
-//   }
-// }
+async function getAllOrderOfUser(req, res, next) {
+  try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
+
+    const filterableFields = {
+      orderStatus: 'enum',
+      paymentType: 'enum',
+      totalAmount: 'number',
+      createdAt: 'date',
+    };
+
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    const orders = await OrderModel.findAndCountAll({
+      where: {
+        ...where,
+        userId: { [Op.eq]: userId },
+      },
+      order,
+      limit,
+      offset,
+    });
+
+    const totalItemsFiltered = orders.count;
+    const totalItemsUnfiltered = await OrderModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all orders of user successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        orders: orders.rows,
+      },
+      200,
+    );
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get all list orders of user.';
+    next(error);
+  }
+}
 
 module.exports = {
-  // getAllOrders,
+  getAllOrderOfUser,
   checkoutOrder,
 };

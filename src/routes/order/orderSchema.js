@@ -1,5 +1,9 @@
 const Joi = require('joi');
-const { createMessageSchemaResponse } = require('../shared');
+const {
+  createMessageSchemaResponse,
+  createListResultsSchemaResponse,
+  createSchemaQuery
+} = require('../shared');
 
 
 const paymentType = Object.freeze({
@@ -21,9 +25,22 @@ const checkoutOrderReq = Joi.object({
 
 const checkoutOrderRes = createMessageSchemaResponse();
 
+const getAllOrderOfUserRes = createListResultsSchemaResponse({
+  orders: Joi.array().required(),
+});
+
+const getAllOrderOfUserQuery = createSchemaQuery({
+  orderStatus: Joi.string().valid(...Object.values(orderStatus)).optional(),
+  paymentType: Joi.string().valid(...Object.values(paymentType)).optional(),
+  totalAmount: Joi.number().optional(),
+  createdAt: Joi.string().optional(),
+});
+
 module.exports = {
   paymentType,
   orderStatus,
   checkoutOrderReq,
   checkoutOrderRes,
+  getAllOrderOfUserRes,
+  getAllOrderOfUserQuery,
 };

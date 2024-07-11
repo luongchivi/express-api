@@ -9,26 +9,29 @@ const {
 const {
   validateResponse,
   validateRequest,
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
-  // getAllOrders,
+  getAllOrderOfUser,
   checkoutOrder,
 } = require('./orderController');
 const {
-  // getAllOrdersRes,
   checkoutOrderReq,
   checkoutOrderRes,
+  getAllOrderOfUserRes,
+  getAllOrderOfUserQuery,
 } = require('./orderSchema');
 
 
-// GET /api/v1/orders
-// router.get(
-//   '/',
-//   verifyRole(['Admin']),
-//   verifyPermission('read'),
-//   validateResponse(getAllOrdersRes),
-//   getAllOrders,
-// );
+// GET /api/v1/orders/user
+router.get(
+  '/user',
+  verifyRole(['Admin', 'User']),
+  verifyPermission('read'),
+  validateQuery(getAllOrderOfUserQuery),
+  validateResponse(getAllOrderOfUserRes),
+  getAllOrderOfUser,
+);
 
 // POST /api/v1/orders/check-out
 router.post(
