@@ -2,7 +2,7 @@ const Joi = require('joi');
 const {
   createMessageSchemaResponse,
   createListResultsSchemaResponse,
-  createSchemaQuery
+  createSchemaQuery,
 } = require('../shared');
 
 

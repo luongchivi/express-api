@@ -8,47 +8,28 @@ const {
 module.exports = {
   async up(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
-      await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.ADDRESS), {
+      await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.WARD), {
         id: {
           type: DataTypes.INTEGER,
           autoIncrement: true,
           primaryKey: true,
           allowNull: false,
         },
-        user_id: {
-          type: DataTypes.INTEGER,
-          unique: true,
-          references: {
-            model: getTableNameForMigrations(DB_TABLE_NAMES.USER),
-            key: 'id',
-          },
-        },
-        address: {
+        name: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
-        ward_id: {
+        code: {
           type: DataTypes.INTEGER,
-          references: {
-            model: getTableNameForMigrations(DB_TABLE_NAMES.WARD),
-            key: 'id',
-          },
+          allowNull: false,
         },
         district_id: {
           type: DataTypes.INTEGER,
           references: {
             model: getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT),
-            key: 'id',
+            key: 'code',
           },
-        },
-        province_id: {
-          type: DataTypes.INTEGER,
-          references: {
-            model: getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE),
-            key: 'id',
-          },
-        },
-        phone: {
-          type: DataTypes.STRING,
+          allowNull: false,
         },
         created_at: {
           type: DataTypes.DATE,
@@ -64,7 +45,7 @@ module.exports = {
 
   async down(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
-      await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.ADDRESS), { transaction: t });
+      await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.WARD), { transaction: t });
     });
   },
 };

@@ -9,6 +9,9 @@ const productRouter = require('./product/productRoute');
 const couponRouter = require('./coupon/couponRoute');
 const cartRouter = require('./cart/cartRoute');
 const orderRouter = require('./order/orderRoute');
+const provinceRouter = require('./province/provinceRoute');
+const wardRouter = require('./ward/wardRoute');
+const districtRouter = require('./district/districtRoute');
 const { verifyToken } = require('../middleware/authHandler');
 
 
@@ -29,6 +32,9 @@ function routes(app) {
   app.use('/api/v1/address', verifyToken, addressRouter);
   app.use('/api/v1/cart', verifyToken, cartRouter);
   app.use('/api/v1/orders', verifyToken, orderRouter);
+  app.use('/api/v1/provinces', verifyToken, provinceRouter);
+  app.use('/api/v1/districts', verifyToken, districtRouter);
+  app.use('/api/v1/wards', verifyToken, wardRouter);
 
   return app;
 }

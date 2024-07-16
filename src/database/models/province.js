@@ -6,20 +6,21 @@ const {
 } = require('../constants');
 
 
-const OrderCoupon = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDER_COUPON), {
+const Province = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
     allowNull: false,
   },
-  orderId: {
-    type: DataTypes.INTEGER,
+  name: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  couponId: {
+  code: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    unique: true,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -34,5 +35,4 @@ const OrderCoupon = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.OR
   underscored: true,
 });
 
-
-module.exports = OrderCoupon;
+module.exports = Province;

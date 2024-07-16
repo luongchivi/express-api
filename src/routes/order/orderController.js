@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const UserModel = require('../../database/models/user');
 const CartModel = require('../../database/models/cart');
 const CartItemModel = require('../../database/models/cartItem');
@@ -11,7 +12,6 @@ const {
 } = require('../shared');
 const sequelize = require('../../../config/database');
 const { orderStatus } = require('./orderSchema');
-const { Op } = require('sequelize');
 
 
 async function checkoutOrder(req, res, next) {
@@ -64,27 +64,6 @@ async function checkoutOrder(req, res, next) {
     }));
     await OrderItemModel.bulkCreate(orderItems, { transaction });
     await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
-
-    // Nếu có các coupon check coupon đó xem có valid không
-    // const validCoupons = [];
-    // if (couponCodes && couponCodes.length > 0) {
-    //   const now = new Date();
-    //   for (const code of couponCodes) {
-    //     const coupon = await CouponModel.findOne({ where: { code } }, transaction);
-    //     if (!coupon) {
-    //       return buildResponseMessage(res, `Coupon code: ${code} is not existed,`, 404);
-    //     }
-    //     if (coupon.expiry <= now) {
-    //       return buildResponseMessage(res, `Coupon ${code} is expires.`, 400);
-    //     }
-    //     validCoupons.push(coupon);
-    //   }
-    // }
-    //
-    // // Tính lại tổng số tiền khi giảm giá
-    // for (const coupon of validCoupons) {
-    //   totalAmount ;
-    // }
 
     // Xóa toàn bộ sản phẩm trong cart và cartItems
     await CartItemModel.destroy({

@@ -6,31 +6,24 @@ const {
 } = require('../constants');
 
 
-const Address = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ADDRESS), {
+const Ward = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.WARD), {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
     allowNull: false,
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    unique: true,
-  },
-  address: {
+  name: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
-  wardId: {
+  code: {
     type: DataTypes.INTEGER,
+    allowNull: false,
   },
   districtId: {
     type: DataTypes.INTEGER,
-  },
-  provinceId: {
-    type: DataTypes.INTEGER,
-  },
-  phone: {
-    type: DataTypes.STRING,
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -45,4 +38,4 @@ const Address = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ADDRES
   underscored: true,
 });
 
-module.exports = Address;
+module.exports = Ward;
