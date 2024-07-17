@@ -1,30 +1,54 @@
-const GHNExpress = require('../../lib/GHNExpress');
+const DistrictModel = require('../../database/models/district');
 const {
-  buildSuccessResponse,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 
 
 async function getAllDistricts(req, res, next) {
   try {
-    const { provinceId } = req.query;
-    const newGHNExpress = new GHNExpress();
-    const resultGetDistrict = await newGHNExpress.getDistrict({
-      province_id: provinceId,
-    });
-    const { data } = resultGetDistrict;
-    const results = data.map((item, index) => ({
-      id: index,
-      name: item.DistrictName,
-      code: item.DistrictID,
-      provinceId: item.ProvinceID,
-    }));
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
 
-    return buildSuccessResponse(res, 'Get all list provinces successfully', {
-      provinces: results || [],
-    }, 200);
+    const filterableFields = {
+      provinceId: 'number',
+      name: 'string',
+      code: 'number',
+    };
+
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    const districts = await DistrictModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+    });
+
+
+    const totalItemsFiltered = districts.count;
+    const totalItemsUnfiltered = await DistrictModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all list districts successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        districts: districts.rows,
+      },
+      200,
+    );
   } catch (error) {
     error.statusCode = 400;
-    error.messageErrorAPI = 'Failed to get all list provinces.';
+    error.messageErrorAPI = 'Failed to get all list districts.';
     next(error);
   }
 }

@@ -1,16 +1,18 @@
 const Joi = require('joi');
 const {
-  createResultsSchemaResponse,
   createSchemaQuery,
+  createListResultsSchemaResponse,
 } = require('../shared');
 
 
-const getAllWardsRes = createResultsSchemaResponse({
+const getAllWardsRes = createListResultsSchemaResponse({
   wards: Joi.array().items(Joi.object()).required(),
 });
 
 const getAllWardsQuery = createSchemaQuery({
-  districtId: Joi.number().required(),
+  districtId: Joi.number().optional(),
+  name: Joi.string().optional(),
+  code: Joi.number().optional(),
 });
 
 module.exports = {

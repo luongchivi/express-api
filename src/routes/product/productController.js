@@ -86,6 +86,7 @@ async function addProduct(req, res, next) {
     const payload = req.body;
     const { categoryId, supplierId, name } = payload;
     payload.slug = slugify(name.toLowerCase());
+    payload.name = name.trim();
 
     if (categoryId) {
       const category = await CategoryModel.findByPk(categoryId);

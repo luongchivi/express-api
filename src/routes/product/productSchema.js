@@ -14,13 +14,17 @@ const addProductReq = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().optional(),
   imageUrl: Joi.array().items(Joi.string()).optional(),
-  unitPrice: Joi.number().optional(),
+  unitPrice: Joi.number().required(),
   unitsInStock: Joi.number().optional(),
   unitsOnOrder: Joi.number().optional(),
   unitsSold: Joi.number().optional(),
   discount: Joi.number().optional(),
   supplierId: Joi.number().allow(null).optional(),
   categoryId: Joi.number().allow(null).optional(),
+  weight: Joi.number().required(),
+  length: Joi.number().required(),
+  width: Joi.number().required(),
+  height: Joi.number().required(),
 });
 
 const addProductRes = createResultsSchemaResponse({

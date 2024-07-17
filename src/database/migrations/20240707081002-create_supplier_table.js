@@ -19,13 +19,11 @@ module.exports = {
           type: DataTypes.STRING,
           unique: true,
           allowNull: false,
-          trim: true,
         },
         contact_name: {
           type: DataTypes.STRING,
           unique: true,
-          lowercase: true,
-          required: true,
+          allowNull: false,
         },
         address: {
           type: DataTypes.STRING,

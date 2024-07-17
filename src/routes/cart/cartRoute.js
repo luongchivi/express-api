@@ -1,8 +1,5 @@
 const express = require('express');
-
-
 const router = express.Router();
-
 const {
   verifyPermission,
   verifyRole,
@@ -16,6 +13,7 @@ const {
   addToCart,
   updateQuantityProductInCart,
   deleteProductInCart,
+  getCurrentCart,
 } = require('./cartController');
 const {
   addToCartReq,
@@ -24,7 +22,9 @@ const {
   updateQuantityProductInCartReq,
   updateQuantityProductInCartRes,
   deleteProductInCartRes,
+  getCurrentCartRes,
 } = require('./cartSchema');
+
 
 // POST /api/v1/cart/products
 router.post(
@@ -55,6 +55,15 @@ router.delete(
   validateParams(productIdParam),
   validateResponse(deleteProductInCartRes),
   deleteProductInCart,
+);
+
+// GET /api/v1/cart/me
+router.get(
+  '/me',
+  verifyRole(['Admin', 'User']),
+  verifyPermission('read'),
+  validateResponse(getCurrentCartRes),
+  getCurrentCart,
 );
 
 module.exports = router;

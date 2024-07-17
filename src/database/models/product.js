@@ -25,13 +25,11 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
-    trim: true,
   },
   slug: {
     type: DataTypes.STRING,
     unique: true,
-    lowercase: true,
-    required: true,
+    allowNull: false,
   },
   description: {
     type: DataTypes.STRING,
@@ -54,8 +52,37 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  discount: {
+  weight: {
     type: DataTypes.FLOAT,
+    allowNull: false,
+    defaultValue: 25,
+    validate: {
+      max: 50000,
+    },
+  },
+  length: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    defaultValue: 10,
+    validate: {
+      max: 200,
+    },
+  },
+  width: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    defaultValue: 10,
+    validate: {
+      max: 200,
+    },
+  },
+  height: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+    defaultValue: 10,
+    validate: {
+      max: 200,
+    },
   },
   createdAt: {
     type: DataTypes.DATE,

@@ -29,6 +29,10 @@ const deleteProductInCartRes = createResultsSchemaResponse({
   cart: Joi.object().required(),
 });
 
+const getCurrentCartRes = createResultsSchemaResponse({
+  cart: Joi.object().required(),
+})
+
 module.exports = {
   addToCartReq,
   addToCartRes,
@@ -36,4 +40,5 @@ module.exports = {
   updateQuantityProductInCartReq,
   updateQuantityProductInCartRes,
   deleteProductInCartRes,
+  getCurrentCartRes,
 };

@@ -1,23 +1,50 @@
-const GHNExpress = require('../../lib/GHNExpress');
+const ProvinceModel = require('../../database/models/province');
 const {
-  buildSuccessResponse,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 
 
 async function getAllProvinces(req, res, next) {
   try {
-    const newGHNExpress = new GHNExpress();
-    const resultGetProvince = await newGHNExpress.getProvince();
-    const { data } = resultGetProvince;
-    const results = data.map((item, index) => ({
-      id: index,
-      name: item.ProvinceName,
-      code: item.ProvinceID,
-    }));
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
 
-    return buildSuccessResponse(res, 'Get all list provinces successfully', {
-      provinces: results || [],
-    }, 200);
+    const filterableFields = {
+      name: 'string',
+      code: 'number',
+    };
+
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    const provinces = await ProvinceModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+    });
+
+
+    const totalItemsFiltered = provinces.count;
+    const totalItemsUnfiltered = await ProvinceModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all list provinces successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        provinces: provinces.rows,
+      },
+      200,
+    );
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get all list provinces.';

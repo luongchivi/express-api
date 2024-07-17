@@ -35,6 +35,16 @@ const Order = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 
     type: DataTypes.FLOAT,
     allowNull: false,
   },
+  shippingOrderId: {
+    type: DataTypes.STRING,
+  },
+  expectedDeliveryTime: {
+    type: DataTypes.DATE,
+  },
+  shippingFee: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0.0,
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,

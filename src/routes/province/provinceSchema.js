@@ -1,10 +1,10 @@
 const Joi = require('joi');
 const {
-  createResultsSchemaResponse,
+  createListResultsSchemaResponse,
 } = require('../shared');
 
 
-const getAllProvincesRes = createResultsSchemaResponse({
+const getAllProvincesRes = createListResultsSchemaResponse({
   provinces: Joi.array().items(Joi.object()).required(),
 });
 

@@ -1,5 +1,8 @@
 const AddressModel = require('../../database/models/address');
 const UserModel = require('../../database/models/user');
+const ProvinceModel = require('../../database/models/province');
+const DistrictModel = require('../../database/models/district');
+const WardModel = require('../../database/models/ward');
 const {
   buildSuccessResponse,
   buildResponseMessage,
@@ -29,13 +32,27 @@ async function getAddress(req, res, next) {
     const { addressId } = req.params;
 
     const address = await AddressModel.findByPk(addressId, {
-      include: {
-        model: UserModel,
-        as: 'user',
-        attributes: {
-          exclude: ['password', 'deletedAt'],
+      include: [
+        {
+          model: UserModel,
+          as: 'user',
+          attributes: {
+            exclude: ['password', 'deletedAt'],
+          },
         },
-      },
+        {
+          model: ProvinceModel,
+          as: 'province',
+        },
+        {
+          model: DistrictModel,
+          as: 'district',
+        },
+        {
+          model: WardModel,
+          as: 'ward',
+        },
+      ],
     });
 
     if (!address) {

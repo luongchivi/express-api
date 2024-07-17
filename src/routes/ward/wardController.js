@@ -1,27 +1,51 @@
-const GHNExpress = require('../../lib/GHNExpress');
+const WardModel = require('../../database/models/ward');
 const {
-  buildSuccessResponse,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 
 
 async function getAllWards(req, res, next) {
   try {
-    const { districtId } = req.query;
-    const newGHNExpress = new GHNExpress();
-    const resultGetWard = await newGHNExpress.getWard({
-      district_id: districtId,
-    });
-    const { data } = resultGetWard;
-    const results = data.map((item, index) => ({
-      id: index,
-      name: item.WardName,
-      code: parseInt(item.WardCode, 10),
-      districtId: item.DistrictID,
-    }));
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
 
-    return buildSuccessResponse(res, 'Get all list wards successfully', {
-      wards: results || [],
-    }, 200);
+    const filterableFields = {
+      name: 'string',
+      code: 'number',
+      districtId: 'number',
+    };
+
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    const wards = await WardModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+    });
+
+
+    const totalItemsFiltered = wards.count;
+    const totalItemsUnfiltered = await WardModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all list wards successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        wards: wards.rows,
+      },
+      200,
+    );
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get all list wards.';

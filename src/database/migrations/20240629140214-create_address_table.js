@@ -28,10 +28,11 @@ module.exports = {
         },
         ward_id: {
           type: DataTypes.INTEGER,
-          references: {
-            model: getTableNameForMigrations(DB_TABLE_NAMES.WARD),
-            key: 'id',
-          },
+          // references: {
+          //   model: getTableNameForMigrations(DB_TABLE_NAMES.WARD),
+          //   key: 'code',
+          // },
+          // allowNull: false,
         },
         district_id: {
           type: DataTypes.INTEGER,
@@ -39,6 +40,7 @@ module.exports = {
             model: getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT),
             key: 'id',
           },
+          allowNull: false,
         },
         province_id: {
           type: DataTypes.INTEGER,
@@ -46,6 +48,7 @@ module.exports = {
             model: getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE),
             key: 'id',
           },
+          allowNull: false,
         },
         phone: {
           type: DataTypes.STRING,

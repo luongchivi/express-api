@@ -33,13 +33,11 @@ module.exports = {
           type: DataTypes.STRING,
           unique: true,
           allowNull: false,
-          trim: true,
         },
         slug: {
           type: DataTypes.STRING,
           unique: true,
-          lowercase: true,
-          required: true,
+          allowNull: false,
         },
         description: {
           type: DataTypes.STRING,
@@ -50,7 +48,7 @@ module.exports = {
         },
         unit_price: {
           type: DataTypes.FLOAT,
-          required: true,
+          allowNull: false,
         },
         units_in_stock: {
           type: DataTypes.INTEGER,
@@ -62,8 +60,37 @@ module.exports = {
           type: DataTypes.INTEGER,
           defaultValue: 0,
         },
-        discount: {
+        weight: {
           type: DataTypes.FLOAT,
+          allowNull: false,
+          defaultValue: 25,
+          validate: {
+            max: 50000,
+          },
+        },
+        length: {
+          type: DataTypes.FLOAT,
+          allowNull: false,
+          defaultValue: 10,
+          validate: {
+            max: 200,
+          },
+        },
+        width: {
+          type: DataTypes.FLOAT,
+          allowNull: false,
+          defaultValue: 10,
+          validate: {
+            max: 200,
+          },
+        },
+        height: {
+          type: DataTypes.FLOAT,
+          allowNull: false,
+          defaultValue: 10,
+          validate: {
+            max: 200,
+          },
         },
         created_at: {
           type: DataTypes.DATE,

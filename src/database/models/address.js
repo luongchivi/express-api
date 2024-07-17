@@ -4,6 +4,9 @@ const {
   DB_TABLE_NAMES,
   getTableNameForMigrations,
 } = require('../constants');
+const Province = require('./province');
+const District = require('./district');
+const Ward = require('./ward');
 
 
 const Address = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ADDRESS), {
@@ -44,5 +47,17 @@ const Address = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ADDRES
   timestamps: true,
   underscored: true,
 });
+
+// Thiết lập mối quan hệ giữa Address và Province
+Address.belongsTo(Province, { foreignKey: 'provinceId', as: 'province' });
+Province.hasOne(Address, { foreignKey: 'provinceId', as: 'addresses' });
+
+// Thiết lập mối quan hệ giữa Address và District
+Address.belongsTo(District, { foreignKey: 'districtId', as: 'district' });
+District.hasMany(Address, { foreignKey: 'districtId', as: 'addresses' });
+
+// Thiết lập mối quan hệ giữa Address và Ward
+Address.belongsTo(Ward, { foreignKey: 'wardId', as: 'ward' });
+Ward.hasMany(Address, { foreignKey: 'wardId', as: 'addresses' });
 
 module.exports = Address;

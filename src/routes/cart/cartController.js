@@ -268,8 +268,47 @@ async function deleteProductInCart(req, res, next) {
   }
 }
 
+async function getCurrentCart(req, res, next) {
+  try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const cart = await CartModel.findOne({
+      where: {
+        userId,
+      },
+      include: {
+        model: CartItemModel,
+        as: 'items',
+      },
+    });
+
+    if (!cart) {
+      return buildResponseMessage(res, 'Cart is empty.', 400);
+    }
+
+    return buildSuccessResponse(res, 'Get current cart successfully.', {
+      cart,
+    }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get current cart.';
+    next(error);
+  }
+}
+
 module.exports = {
   addToCart,
   updateQuantityProductInCart,
   deleteProductInCart,
+  getCurrentCart,
 };

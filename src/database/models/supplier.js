@@ -17,13 +17,11 @@ const Supplier = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.SUPPL
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
-    trim: true,
   },
   contactName: {
     type: DataTypes.STRING,
     unique: true,
-    lowercase: true,
-    required: true,
+    allowNull: false,
   },
   address: {
     type: DataTypes.STRING,

@@ -22,27 +22,7 @@ class GHNExpress {
       const response = await superagent
         .post(`${this.baseUrl}/v2/shipping-order/create`)
         .set(this.baseHeaders)
-        .send({
-          payment_type_id: 2, // trả sau
-          note: 'Giao hàng nhanh',
-          required_note: 'KHONGCHOXEMHANG',
-          to_name: order.receiverName,
-          to_phone: order.receiverPhone,
-          to_address: order.receiverAddress,
-          to_ward_code: order.receiverWardCode,
-          to_district_id: order.receiverDistrictId,
-          weight: order.weight || 500,
-          length: order.length || 20,
-          width: order.width || 20,
-          height: order.height || 10,
-          service_id: 0,
-          service_type_id: 2,
-          cod_amount: order.codAmount || 0,
-          content: order.content || 'Sản phẩm demo',
-          pick_station_id: 0,
-          insurance_value: order.insuranceValue || 0,
-          coupon: null,
-        });
+        .send(order);
 
       return response.body;
     } catch (error) {
@@ -74,19 +54,7 @@ class GHNExpress {
       const response = await superagent
         .post(`${this.baseUrl}/v2/shipping-order/fee`)
         .set(this.baseHeaders)
-        .send({
-          from_district_id: this.shopDistrictId,
-          service_id: order.serviceId,
-          service_type_id: order.serviceTypeId,
-          to_district_id: order.receiverDistrictId,
-          to_ward_code: order.receiverWardCode,
-          height: order.height || 10,
-          length: order.length || 20,
-          weight: order.weight || 500,
-          width: order.width || 20,
-          insurance_value: order.insuranceValue || 0,
-          coupon: null,
-        });
+        .send(order);
 
       return response.body;
     } catch (error) {
@@ -146,6 +114,20 @@ class GHNExpress {
       return response.body;
     } catch (error) {
       console.error('Error getting ward:', error.response ? error.response.body : error.message);
+      throw error;
+    }
+  }
+
+  async getShop(payload) {
+    try {
+      const response = await superagent
+        .get(`${this.baseUrl}/v2/shop/all`)
+        .set(this.baseHeaders)
+        .send(payload);
+
+      return response.body;
+    } catch (error) {
+      console.error('Error getting shops:', error.response ? error.response.body : error.message);
       throw error;
     }
   }
