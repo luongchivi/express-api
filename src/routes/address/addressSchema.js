@@ -26,10 +26,10 @@ const getAddressRes = createResultsSchemaResponse({
 });
 
 const updateAddressReq = Joi.object({
-  street: Joi.string().optional(),
-  district: Joi.string().optional(),
-  city: Joi.string().optional(),
-  country: Joi.string().optional(),
+  address: Joi.string().optional(),
+  wardId: Joi.number().optional(),
+  districtId: Joi.number().optional(),
+  provinceId: Joi.number().optional(),
   phone: Joi.string().optional(),
 });
 

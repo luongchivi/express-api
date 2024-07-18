@@ -1,21 +1,35 @@
 openapi: 3.0.0
 info:
-  title: RBAC API with Swagger
+  title: Ecommerce Store API with Swagger
   version: 1.0.0
-  description: RBAC documented with Swagger
+  description: Ecommerce Store documented with Swagger
 servers:
   - url: http://localhost:3000
 tags:
   - name: Auth
     description: Authentication endpoints
-  - name: User
-    description: User endpoint manager by Admin role
-  - name: Role
-    description: Role endpoint manager by Admin role
-  - name: Permission
-    description: Permission endpoint manager by Admin role
+  - name: Users
+    description: Users endpoint manager by Admin role
+  - name: Roles
+    description: Roles endpoint manager by Admin role
+  - name: Permissions
+    description: Permissions endpoint manager by Admin role
   - name: Address
     description: Address info of user
+  - name: Products
+    description: Products endpoint
+  - name: Suppliers
+    description: Suppliers endpoint
+  - name: Cart
+    description: Cart endpoint
+  - name: Orders
+    description: Orders endpoint
+  - name: Provinces
+    description: Provinces endpoint
+  - name: Districts
+    description: Districts endpoint
+  - name: Wards
+    description: Wards endpoint
 paths:
   /api/v1/auth/signup:
     post:
@@ -71,7 +85,7 @@ paths:
   /api/v1/users:
     get:
       summary: Get all list users
-      tags: [ User ]
+      tags: [ Users ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -123,7 +137,7 @@ paths:
   /api/v1/users/{id}:
     get:
       summary: Get user details by id
-      tags: [ User ]
+      tags: [ Users ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -141,8 +155,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetUserDetailsRes'
     patch:
-      summary: Update user details by id
-      tags: [ User ]
+      summary: Update user by id
+      tags: [ Users ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -167,7 +181,7 @@ paths:
                 $ref: '#/components/schemas/UpdateUserRes'
     delete:
       summary: Soft delete user by id
-      tags: [ User ]
+      tags: [ Users ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -188,7 +202,7 @@ paths:
   /api/v1/users/{id}/roles:
     post:
       summary: Assign new role to user
-      tags: [ User ]
+      tags: [ Users ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -213,7 +227,7 @@ paths:
                 $ref: '#/components/schemas/AssignRoleRes'
     delete:
       summary: Delete role assign to user
-      tags: [ User ]
+      tags: [ Users ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -240,7 +254,7 @@ paths:
   /api/v1/roles:
     get:
       summary: Get all roles
-      tags: [ Role ]
+      tags: [ Roles ]
       security:
         - bearerAuth: []
       responses:
@@ -252,7 +266,7 @@ paths:
                 $ref: '#/components/schemas/GetAllRolesRes'
     post:
       summary: Create new role to users
-      tags: [ Role ]
+      tags: [ Roles ]
       security:
         - bearerAuth: [ ]
       requestBody:
@@ -272,7 +286,7 @@ paths:
   /api/v1/roles/{id}:
     get:
       summary: Get role details by id
-      tags: [ Role ]
+      tags: [ Roles ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -291,7 +305,7 @@ paths:
                 $ref: '#/components/schemas/GetRoleDetailsRes'
     delete:
       summary: Delete role by id
-      tags: [ Role ]
+      tags: [ Roles ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -311,7 +325,7 @@ paths:
   /api/v1/roles/{id}/permissions:
     post:
       summary: Assign new permission to role
-      tags: [ Role ]
+      tags: [ Roles ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -336,7 +350,7 @@ paths:
                 $ref: '#/components/schemas/AssignPermissionRes'
     delete:
       summary: Delete permission assign to role
-      tags: [ Role ]
+      tags: [ Roles ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -362,7 +376,7 @@ paths:
   /api/v1/permissions:
     get:
       summary: Get all permissions
-      tags: [ Permission ]
+      tags: [ Permissions ]
       security:
         - bearerAuth: [ ]
       responses:
@@ -374,7 +388,7 @@ paths:
                 $ref: '#/components/schemas/GetAllPermissionsRes'
     post:
       summary: Create new permission
-      tags: [ Permission ]
+      tags: [ Permissions ]
       security:
         - bearerAuth: [ ]
       requestBody:
@@ -393,7 +407,7 @@ paths:
   /api/v1/permissions/{id}:
     get:
       summary: Get permission details by id
-      tags: [ Permission ]
+      tags: [ Permissions ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -412,7 +426,7 @@ paths:
                 $ref: '#/components/schemas/GetPermissionDetailsRes'
     delete:
       summary: Delete permission by id
-      tags: [ Permission ]
+      tags: [ Permissions ]
       security:
         - bearerAuth: [ ]
       parameters:
@@ -450,7 +464,7 @@ paths:
                 $ref: '#/components/schemas/CreateAddressRes'
   /api/v1/address/{id}:
     get:
-      summary: Create address for user
+      summary: Create address details for user
       tags: [ Address ]
       security:
         - bearerAuth: [ ]
@@ -469,7 +483,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetAddressDetailsRes'
     put:
-      summary: Update some field address for user
+      summary: Update address for user
       tags: [ Address ]
       security:
         - bearerAuth: [ ]
@@ -512,6 +526,561 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeleteAddressRes'
+  /api/v1/products:
+    post:
+      summary: Create new product
+      tags: [ Products ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProductRes'
+    get:
+      summary: Get all list products
+      tags: [ Products ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: Filter product by name
+        - in: query
+          name: unitPrice
+          required: false
+          schema:
+            type: number
+          description: Filter product by unitPrice
+        - in: query
+          name: unitsInStock
+          required: false
+          schema:
+            type: number
+          description: Filter product by unitsInStock
+        - in: query
+          name: unitsOnOrder
+          required: false
+          schema:
+            type: number
+          description: Filter product by unitsOnOrder
+        - in: query
+          name: unitsSold
+          required: false
+          schema:
+            type: number
+          description: Filter product by unitsSold
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllProductsRes'
+  /api/v1/products/{id}:
+    put:
+      summary: Update product by productId
+      tags: [ Products ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateProductRes'
+    get:
+      summary: Get product details by productId
+      tags: [ Products ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductDetailsRes'
+    delete:
+      summary: Delete product by productId
+      tags: [ Products ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteProductRes'
+  /api/v1/products/{id}/image-upload:
+    post:
+      summary: Upload images of product by productId
+      tags: [ Products ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the product to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Max upload only 10 files
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadImagesProductRes'
+  /api/v1/suppliers:
+    post:
+      summary: Create new supplier
+      tags: [ Suppliers ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSupplierReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSupplierRes'
+    get:
+      summary: Get all list suppliers
+      tags: [ Suppliers ]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllSuppliersRes'
+  /api/v1/suppliers/{id}:
+    put:
+      summary: Update supplier by supplierId
+      tags: [ Suppliers ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the supplier to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSupplierReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateSupplierRes'
+    get:
+      summary: Get supplier details by supplierId
+      tags: [ Suppliers ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the supplier to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSupplierDetailsRes'
+    delete:
+      summary: Delete supplier by supplierId
+      tags: [ Suppliers ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the supplier to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSupplierRes'
+  /api/v1/cart/products:
+    post:
+      summary: Add products to cart
+      tags: [ Cart ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToCartReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddToCartRes'
+  /api/v1/cart/me:
+    get:
+      summary: Get current cart of user
+      tags: [ Cart ]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCurrentCartRes'
+  /api/v1/cart/products/{productId}:
+    patch:
+      summary: Update quantity of product in cart
+      tags: [ Cart ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: productId of the product to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuantityProductInCartReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateQuantityProductInCartRes'
+    delete:
+      summary: Delete product in cart
+      tags: [ Cart ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: productId of the product for delete in cart
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteProductInCartRes'
+  /api/v1/orders/check-out:
+    post:
+      summary: Get all orders of user
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCheckOutReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCheckOutRes'
+  /api/v1/orders/user:
+    get:
+      summary: Get all orders of user
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: orderStatus
+          required: false
+          schema:
+            type: string
+            enum:
+              - Cancelled
+              - Processing
+              - Succeeded
+          description: Filter order by orderStatus
+        - in: query
+          name: paymentType
+          required: false
+          schema:
+            type: string
+            enum:
+              - PayPal
+              - Bank Transfer
+              - Cash on Delivery
+          description: Filter order by paymentType
+        - in: query
+          name: totalAmount
+          required: false
+          schema:
+            type: number
+          description: Filter order by totalAmount
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllOrdersRes'
+  /api/v1/provinces:
+    get:
+      summary: Get all list provinces
+      tags: [ Provinces ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: Filter province by province name
+        - in: query
+          name: code
+          required: false
+          schema:
+            type: string
+          description: Filter province by code
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllProvincesRes'
+  /api/v1/districts:
+    get:
+      summary: Get all list districts
+      tags: [ Districts ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: provinceId
+          required: false
+          schema:
+            type: number
+          description: Filter district by provinceId
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: Filter district by district name
+        - in: query
+          name: code
+          required: false
+          schema:
+            type: string
+          description: Filter district by code
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllDistrictsRes'
+  /api/v1/wards:
+    get:
+      summary: Get all list wards
+      tags: [ Wards ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: districtId
+          required: false
+          schema:
+            type: number
+          description: Filter ward by districtId
+        - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: Filter ward by ward name
+        - in: query
+          name: code
+          required: false
+          schema:
+            type: string
+          description: Filter ward by code
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllWardsRes'
 components:
   schemas:
     SignUpReq:
@@ -804,47 +1373,157 @@ components:
     RoleRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        role:
+        results:
           type: object
           properties:
-            id:
+            statusCode:
               type: number
-            name:
+            message:
               type: string
-            description:
-              type: string
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
+            role:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                description:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
     GetRoleDetailsRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        role:
+        results:
           type: object
           properties:
-            id:
+            statusCode:
               type: number
-            name:
+            message:
               type: string
-            description:
+            role:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                description:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                permissions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+    GetAllRolesRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
               type: string
-            createdAt:
+            roles:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    DeleteRoleRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
               type: string
-              format: date-time
-            updatedAt:
+    AssignPermissionReq:
+      type: object
+      properties:
+        permissionName:
+          type: string
+          enum:
+            - read
+            - write
+            - update
+            - delete
+    AssignPermissionRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
               type: string
-              format: date-time
+    DeleteAssignPermissionReq:
+      type: object
+      properties:
+        permissionName:
+          type: string
+          enum:
+            - read
+            - write
+            - update
+            - delete
+    DeleteAssignPermissionRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    GetAllPermissionsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
             permissions:
               type: array
               items:
@@ -862,95 +1541,6 @@ components:
                   updatedAt:
                     type: string
                     format: date-time
-    GetAllRolesRes:
-      type: object
-      properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        roles:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              description:
-                type: string
-              createdAt:
-                type: string
-                format: date-time
-              updatedAt:
-                type: string
-                format: date-time
-    DeleteRoleRes:
-      type: object
-      properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-    AssignPermissionReq:
-      type: object
-      properties:
-        permissionName:
-          type: string
-          enum:
-            - read
-            - write
-            - update
-            - delete
-    AssignPermissionRes:
-      type: object
-      properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-    DeleteAssignPermissionReq:
-      type: object
-      properties:
-        permissionName:
-          type: string
-          enum:
-            - read
-            - write
-            - update
-            - delete
-    DeleteAssignPermissionRes:
-      type: object
-      properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-    GetAllPermissionsRes:
-      type: object
-      properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        permissions:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              name:
-                type: string
-              description:
-                type: string
-              createdAt:
-                type: string
-                format: date-time
-              updatedAt:
-                type: string
-                format: date-time
     CreatePermissionReq:
       type: object
       properties:
@@ -961,191 +1551,1231 @@ components:
     CreatePermissionRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
     GetPermissionDetailsRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        id:
-          type: integer
-        name:
-          type: string
-        description:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
     DeletePermissionRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
     CreateAddressReq:
       type: object
       properties:
-        street:
+        address:
           type: string
-        district:
-          type: string
-        city:
-          type: string
-        country:
-          type: string
+        wardId:
+          type: number
+        districtId:
+          type: number
+        provinceId:
+          type: number
         phone:
           type: string
     CreateAddressRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        address:
+        results:
           type: object
           properties:
-            id:
+            statusCode:
               type: number
-            street:
+            message:
               type: string
-            district:
-              type: string
-            city:
-              type: string
-            country:
-              type: string
-            phone:
-              type: string
-            userId:
-              type: number
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
-    GetAddressDetailsRes:
-      type: object
-      properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        address:
-          type: object
-          properties:
-            id:
-              type: number
-            userId:
-              type: number
-            street:
-              type: string
-            district:
-              type: string
-            city:
-              type: string
-            country:
-              type: string
-            phone:
-              type: string
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
-            user:
+            address:
               type: object
               properties:
                 id:
-                  type: integer
-                firstName:
+                  type: number
+                address:
                   type: string
-                lastName:
+                wardId:
+                  type: number
+                districtId:
+                  type: number
+                provinceId:
+                  type: number
+                phone:
                   type: string
-                email:
-                  type: string
-                  format: email
-                isActive:
-                  type: boolean
+                userId:
+                  type: number
                 createdAt:
                   type: string
                   format: date-time
                 updatedAt:
                   type: string
                   format: date-time
+    GetAddressDetailsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            address:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                address:
+                  type: string
+                wardId:
+                  type: number
+                districtId:
+                  type: number
+                provinceId:
+                  type: number
+                phone:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    isActive:
+                      type: boolean
+                    refreshToken:
+                      type: string
+                      nullable: true
+                    passwordResetToken:
+                      type: string
+                      nullable: true
+                    passwordResetTokenExpires:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    passwordChangedAt:
+                      type: string
+                      format: date-time
+                      nullable: true
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                province:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    code:
+                      type: number
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                district:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    code:
+                      type: number
+                    provinceId:
+                      type: number
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                ward:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    code:
+                      type: number
+                    districtId:
+                      type: number
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
     UpdateAddressReq:
       type: object
       properties:
-        street:
+        address:
           type: string
-        district:
-          type: string
-        city:
-          type: string
-        country:
-          type: string
+        wardId:
+          type: number
+        districtId:
+          type: number
+        provinceId:
+          type: number
         phone:
           type: string
     UpdateAddressRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
-          type: string
-        address:
+        results:
           type: object
           properties:
-            id:
+            statusCode:
               type: number
-            userId:
-              type: number
-            street:
+            message:
               type: string
-            district:
-              type: string
-            city:
-              type: string
-            country:
-              type: string
-            phone:
-              type: string
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
+            address:
+              type: object
+              properties:
+                id:
+                  type: number
+                address:
+                  type: string
+                wardId:
+                  type: number
+                districtId:
+                  type: number
+                provinceId:
+                  type: number
+                phone:
+                  type: string
+                userId:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
     DeleteAddressRes:
       type: object
       properties:
-        statusCode:
-          type: number
-        message:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    GetAllProvincesRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            provinces:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  code:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    GetAllDistrictsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            districts:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  code:
+                    type: number
+                  provinceId:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    GetAllWardsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            provinces:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  code:
+                    type: number
+                  districtId:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    CreateProductReq:
+      type: object
+      properties:
+        name:
           type: string
+        description:
+          type: string
+        imageUrl:
+          type: array
+          items:
+            type: string
+        unitPrice:
+          type: number
+        unitsInStock:
+          type: number
+        supplierId:
+          type: number
+        categoryId:
+          type: number
+        weight:
+          type: number
+        length:
+          type: number
+        width:
+          type: number
+        height:
+          type: number
+    CreateProductRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            product:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                slug:
+                  type: string
+                description:
+                  type: string
+                imageUrl:
+                  type: array
+                  items:
+                    type: string
+                unitPrice:
+                  type: number
+                unitsInStock:
+                  type: number
+                unitsSold:
+                  type: number
+                unitsOnOrder:
+                  type: number
+                supplierId:
+                  type: number
+                categoryId:
+                  type: number
+                weight:
+                  type: number
+                length:
+                  type: number
+                width:
+                  type: number
+                height:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    UpdateProductReq:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: array
+          items:
+            type: string
+        unitPrice:
+          type: number
+        unitsInStock:
+          type: number
+        supplierId:
+          type: number
+        categoryId:
+          type: number
+        weight:
+          type: number
+        length:
+          type: number
+        width:
+          type: number
+        height:
+          type: number
+    UpdateProductRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            product:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                slug:
+                  type: string
+                description:
+                  type: string
+                imageUrl:
+                  type: array
+                  items:
+                    type: string
+                unitPrice:
+                  type: number
+                unitsInStock:
+                  type: number
+                unitsSold:
+                  type: number
+                unitsOnOrder:
+                  type: number
+                supplierId:
+                  type: number
+                categoryId:
+                  type: number
+                weight:
+                  type: number
+                length:
+                  type: number
+                width:
+                  type: number
+                height:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    GetProductDetailsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            product:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                slug:
+                  type: string
+                description:
+                  type: string
+                imageUrl:
+                  type: array
+                  items:
+                    type: string
+                unitPrice:
+                  type: number
+                unitsInStock:
+                  type: number
+                unitsSold:
+                  type: number
+                unitsOnOrder:
+                  type: number
+                supplierId:
+                  type: number
+                categoryId:
+                  type: number
+                weight:
+                  type: number
+                length:
+                  type: number
+                width:
+                  type: number
+                height:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    GetAllProductsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  slug:
+                    type: string
+                  description:
+                    type: string
+                  imageUrl:
+                    type: array
+                    items:
+                      type: string
+                  unitPrice:
+                    type: number
+                  unitsInStock:
+                    type: number
+                  unitsSold:
+                    type: number
+                  unitsOnOrder:
+                    type: number
+                  supplierId:
+                    type: number
+                  categoryId:
+                    type: number
+                  weight:
+                    type: number
+                  length:
+                    type: number
+                  width:
+                    type: number
+                  height:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    DeleteProductRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    UploadImagesProductRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    CreateSupplierReq:
+      type: object
+      properties:
+        companyName:
+          type: string
+        contactName:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        region:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+        phone:
+          type: string
+        fax:
+          type: string
+        homePage:
+          type: string
+    CreateSupplierRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            supplier:
+              type: object
+              properties:
+                id:
+                  type: number
+                companyName:
+                  type: string
+                contactName:
+                  type: string
+                address:
+                  type: string
+                city:
+                  type: string
+                region:
+                  type: string
+                postalCode:
+                  type: string
+                country:
+                  type: string
+                phone:
+                  type: string
+                fax:
+                  type: string
+                homePage:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    GetAllSuppliersRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            suppliers:
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  companyName:
+                    type: string
+                  contactName:
+                    type: string
+                  address:
+                    type: string
+                  city:
+                    type: string
+                  region:
+                    type: string
+                  postalCode:
+                    type: string
+                  country:
+                    type: string
+                  phone:
+                    type: string
+                  fax:
+                    type: string
+                  homePage:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    UpdateSupplierReq:
+      type: object
+      properties:
+        companyName:
+          type: string
+        contactName:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        region:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+        phone:
+          type: string
+        fax:
+          type: string
+        homePage:
+          type: string
+    UpdateSupplierRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            supplier:
+              type: object
+              properties:
+                id:
+                  type: number
+                companyName:
+                  type: string
+                contactName:
+                  type: string
+                address:
+                  type: string
+                city:
+                  type: string
+                region:
+                  type: string
+                postalCode:
+                  type: string
+                country:
+                  type: string
+                phone:
+                  type: string
+                fax:
+                  type: string
+                homePage:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    GetSupplierDetailsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            supplier:
+              type: object
+              properties:
+                id:
+                  type: number
+                companyName:
+                  type: string
+                contactName:
+                  type: string
+                address:
+                  type: string
+                city:
+                  type: string
+                region:
+                  type: string
+                postalCode:
+                  type: string
+                country:
+                  type: string
+                phone:
+                  type: string
+                fax:
+                  type: string
+                homePage:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    DeleteSupplierRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    AddToCartReq:
+      type: object
+      properties:
+        productId:
+          type: number
+        quantity:
+          type: number
+    AddToCartRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            cart:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                totalQuantity:
+                  type: number
+                totalPrice:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                items:
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      cartId:
+                        type: number
+                      productId:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+    GetCurrentCartRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            cart:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                totalQuantity:
+                  type: number
+                totalPrice:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                items:
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      cartId:
+                        type: number
+                      productId:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+    UpdateQuantityProductInCartReq:
+      type: object
+      properties:
+        quantity:
+          type: number
+    UpdateQuantityProductInCartRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            cart:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                totalQuantity:
+                  type: number
+                totalPrice:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                items:
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      cartId:
+                        type: number
+                      productId:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+    DeleteProductInCartRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            cart:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                totalQuantity:
+                  type: number
+                totalPrice:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                items:
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      cartId:
+                        type: number
+                      productId:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+    GetAllOrdersRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            orders:
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  userId:
+                    type: number
+                  paymentType:
+                    type: string
+                    enum:
+                      - Cancelled
+                      - Processing
+                      - Succeeded
+                  orderStatus:
+                    type: string
+                    enum:
+                      - PayPal
+                      - Bank Transfer
+                      - Cash on Delivery
+                  totalAmount:
+                    type: number
+                  shippingOrderId:
+                    type: string
+                  expectedDeliveryTime:
+                    type: string
+                    format: date-time
+                  shippingFee:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    OrderCheckOutReq:
+      type: object
+      properties:
+        paymentType:
+          type: string
+          enum:
+            - PayPal
+            - Bank Transfer
+            - Cash on Delivery
+    OrderCheckOutRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                paymentType:
+                  type: string
+                  enum:
+                    - Cancelled
+                    - Processing
+                    - Succeeded
+                orderStatus:
+                  type: string
+                  enum:
+                    - PayPal
+                    - Bank Transfer
+                    - Cash on Delivery
+                totalAmount:
+                  type: number
+                shippingOrderId:
+                  type: string
+                expectedDeliveryTime:
+                  type: string
+                  format: date-time
+                shippingFee:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                orderItems:
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      orderId:
+                        type: number
+                      productId:
+                        type: number
+                      quantity:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
   securitySchemes:
     bearerAuth:
       type: http

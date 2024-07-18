@@ -3,6 +3,7 @@ const {
   createListResultsSchemaResponse,
   createResultsSchemaResponse,
   createMessageSchemaResponse,
+  createSchemaQuery,
 } = require('../shared');
 
 
@@ -62,6 +63,15 @@ const uploadImagesProductRes = createResultsSchemaResponse({
   product: Joi.object().required(),
 });
 
+const getAllProductsQuery = createSchemaQuery({
+  name: Joi.string().optional(),
+  unitPrice: Joi.number().optional(),
+  unitsInStock: Joi.number().optional(),
+  unitsOnOrder: Joi.number().optional(),
+  unitsSold: Joi.number().optional(),
+  createdAt: Joi.string().optional(),
+});
+
 module.exports = {
   getAllProductsRes,
   addProductReq,
@@ -72,4 +82,5 @@ module.exports = {
   getProductDetailsRes,
   deleteProductRes,
   uploadImagesProductRes,
+  getAllProductsQuery,
 };

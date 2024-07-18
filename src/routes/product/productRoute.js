@@ -11,6 +11,7 @@ const {
   validateResponse,
   validateRequest,
   validateParams,
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
   getAllProducts,
@@ -30,6 +31,7 @@ const {
   getProductDetailsRes,
   deleteProductRes,
   uploadImagesProductRes,
+  getAllProductsQuery,
 } = require('./productSchema');
 const uploadCloud = require('../../lib/cloudinary');
 
@@ -39,6 +41,7 @@ router.get(
   '/',
   verifyRole(['Admin']),
   verifyPermission('read'),
+  validateQuery(getAllProductsQuery),
   validateResponse(getAllProductsRes),
   getAllProducts,
 );

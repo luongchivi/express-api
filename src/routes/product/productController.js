@@ -21,7 +21,6 @@ async function getAllProducts(req, res, next) {
 
     const filterableFields = {
       name: 'string',
-      discount: 'number',
       unitPrice: 'number',
       unitsInStock: 'number',
       unitsOnOrder: 'number',
@@ -274,9 +273,7 @@ async function uploadImagesProduct(req, res, next) {
     await product.update({ imageUrl: [...imageUrl, ...filesUrl] });
     await product.reload();
 
-    return buildSuccessResponse(res, 'Upload images products successfully.', {
-      product,
-    }, 200);
+    return buildResponseMessage(res, 'Upload images products successfully.',200);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to upload product images.';
