@@ -79,9 +79,9 @@ module.exports = {
 
   async down(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
+      await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.WARD), null, { transaction: t });
       await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT), null, { transaction: t });
       await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE), null, { transaction: t });
-      await queryInterface.bulkDelete(getTableNameForMigrations(DB_TABLE_NAMES.WARD), null, { transaction: t });
     });
   },
 };

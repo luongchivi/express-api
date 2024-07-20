@@ -266,7 +266,71 @@ async function getAllOrderOfUser(req, res, next) {
   }
 }
 
+async function cancelOrder(req, res, next) {
+  const transaction = await sequelize.transaction();
+  try {
+    const { orderId } = req.params;
+    const order = await OrderModel.findByPk(orderId, { transaction });
+    if (!order) {
+      return buildResponseMessage(res, 'Order not found.', 404);
+    }
+    const { shippingOrderId } = order;
+    // Cancel order shipping from GHN
+    const newGHNExpress = new GHNExpress();
+    const resultCancelOrder = await newGHNExpress.cancelOrder(shippingOrderId);
+    console.log(resultCancelOrder);
+    const { code } = resultCancelOrder;
+
+    if (code !== 200) {
+      return buildResponseMessage(res, 'Error when canceling order in GHN Express.', 400);
+    }
+
+    await order.update({
+      orderStatus: orderStatus.CANCELLED,
+      updatedAt: new Date().toISOString(),
+    }, { transaction });
+
+    await transaction.commit();
+    return buildResponseMessage(res, 'Cancel order successfully.', 200);
+  } catch (error) {
+    await transaction.rollback();
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to cancel order.';
+    next(error);
+  }
+}
+
+async function getOrderShippingDetails(req, res, next) {
+  try {
+    const { orderId } = req.params;
+    const order = await OrderModel.findByPk(orderId);
+    if (!order) {
+      return buildResponseMessage(res, 'Order not found.', 404);
+    }
+    const { shippingOrderId } = order;
+
+    const newGHNExpress = new GHNExpress();
+    const resultOrderShippingOrder = await newGHNExpress.getOrderShippingDetails(shippingOrderId);
+    console.log(resultOrderShippingOrder);
+    const { code, data } = resultOrderShippingOrder;
+
+    if (code !== 200) {
+      return buildResponseMessage(res, 'Error when get shipping order details in GHN Express.', 400);
+    }
+
+    return buildSuccessResponse(res, 'Get shipping order details successfully.',{
+      shippingOrder: data,
+    },200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get shipping order details.';
+    next(error);
+  }
+}
+
 module.exports = {
   getAllOrderOfUser,
   checkoutOrder,
+  cancelOrder,
+  getOrderShippingDetails,
 };

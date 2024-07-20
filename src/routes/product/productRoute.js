@@ -39,7 +39,7 @@ const uploadCloud = require('../../lib/cloudinary');
 // GET /api/v1/products
 router.get(
   '/',
-  verifyRole(['Admin']),
+  verifyRole(['Admin', 'User']),
   verifyPermission('read'),
   validateQuery(getAllProductsQuery),
   validateResponse(getAllProductsRes),
@@ -56,7 +56,7 @@ router.post(
   addProduct,
 );
 
-// GET /api/v1/categories/{categoryId}
+// GET /api/v1/products/{productId}
 router.get(
   '/:productId',
   verifyRole(['Admin']),
@@ -66,7 +66,7 @@ router.get(
   getProductDetails,
 );
 
-// PUT /api/v1/categories/{categoryId}
+// PUT /api/v1/products/{productId}
 router.put(
   '/:productId',
   verifyRole(['Admin']),
@@ -77,7 +77,7 @@ router.put(
   updateProduct,
 );
 
-// DELETE /api/v1/categories/{categoryId}
+// DELETE /api/v1/products/{productId}
 router.delete(
   '/:productId',
   verifyRole(['Admin']),

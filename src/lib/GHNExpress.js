@@ -131,6 +131,38 @@ class GHNExpress {
       throw error;
     }
   }
+
+  async cancelOrder(orderCodes) {
+    try {
+      const response = await superagent
+        .get(`${this.baseUrl}/v2/switch-status/cancel`)
+        .set(this.baseHeaders)
+        .send({
+          order_codes: [orderCodes],
+        });
+
+      return response.body;
+    } catch (error) {
+      console.error('Error cancel order:', error.response ? error.response.body : error.message);
+      throw error;
+    }
+  }
+
+  async getOrderShippingDetails(orderCodes) {
+    try {
+      const response = await superagent
+        .post(`${this.baseUrl}/v2/shipping-order/detail`)
+        .set(this.baseHeaders)
+        .send({
+          order_code: orderCodes,
+        });
+
+      return response.body;
+    } catch (error) {
+      console.error('Error get order shipping details:', error.response ? error.response.body : error.message);
+      throw error;
+    }
+  }
 }
 
 module.exports = GHNExpress;

@@ -14,6 +14,7 @@ const getAllProductsRes = createListResultsSchemaResponse({
 const addProductReq = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().optional(),
+  thumbImageUrl: Joi.string().required(),
   imageUrl: Joi.array().items(Joi.string()).optional(),
   unitPrice: Joi.number().required(),
   unitsInStock: Joi.number().optional(),
@@ -39,6 +40,7 @@ const productIdParam = Joi.object({
 const updateProductReq = Joi.object({
   name: Joi.string().optional(),
   description: Joi.string().optional(),
+  thumbImageUrl: Joi.string().optional(),
   imageUrl: Joi.array().items(Joi.string()).optional(),
   unitPrice: Joi.number().optional(),
   unitsInStock: Joi.number().optional(),

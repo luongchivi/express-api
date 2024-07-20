@@ -82,6 +82,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RefreshTokenRes'
+  /api/v1/auth/forgot-password:
+    post:
+      summary: Request forgot password
+      tags: [ Auth ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/forgotPasswordReq'
+      responses:
+        200:
+          description: Successful request forgot password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forgotPasswordRes'
+  /api/v1/auth/reset-password/{resetToken}:
+    post:
+      summary: Request reset password
+      tags: [ Auth ]
+      parameters:
+        - name: resetToken
+          in: path
+          required: true
+          description: resetToken for verify reset password
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPasswordReq'
+      responses:
+        200:
+          description: Successful reset password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resetPasswordRes'
   /api/v1/users:
     get:
       summary: Get all list users
@@ -949,6 +990,46 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAllOrdersRes'
+  /api/v1/orders/{orderId}/cancel-order:
+    post:
+      summary: Cancel order
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: orderId of the order to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelOrderRes'
+  /api/v1/orders/{orderId}/shipping-order:
+    post:
+      summary: Get shipping order details in GHN Express
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: orderId of the order to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingOrderRes'
   /api/v1/provinces:
     get:
       summary: Get all list provinces
@@ -1942,6 +2023,8 @@ components:
           type: string
         description:
           type: string
+        thumbImageUrl:
+          type: string
         imageUrl:
           type: array
           items:
@@ -1983,6 +2066,8 @@ components:
                   type: string
                 description:
                   type: string
+                thumbImageUrl:
+                  type: string
                 imageUrl:
                   type: array
                   items:
@@ -2019,6 +2104,8 @@ components:
         name:
           type: string
         description:
+          type: string
+        thumbImageUrl:
           type: string
         imageUrl:
           type: array
@@ -2060,6 +2147,8 @@ components:
                 slug:
                   type: string
                 description:
+                  type: string
+                thumbImageUrl:
                   type: string
                 imageUrl:
                   type: array
@@ -2111,6 +2200,8 @@ components:
                 slug:
                   type: string
                 description:
+                  type: string
+                thumbImageUrl:
                   type: string
                 imageUrl:
                   type: array
@@ -2174,6 +2265,8 @@ components:
                   slug:
                     type: string
                   description:
+                    type: string
+                  thumbImageUrl:
                     type: string
                   imageUrl:
                     type: array
@@ -2776,6 +2869,311 @@ components:
                       updatedAt:
                         type: string
                         format: date-time
+    forgotPasswordReq:
+      type: object
+      properties:
+        email:
+          type: string
+    forgotPasswordRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    resetPasswordReq:
+      type: object
+      properties:
+        newPassword:
+          type: string
+    resetPasswordRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    CancelOrderRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    ShippingOrderRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            shippingOrder:
+              type: array
+              items:
+                type: object
+                properties:
+                  shop_id:
+                    type: number
+                  client_id:
+                    type: number
+                  return_name:
+                    type: string
+                  return_phone:
+                    type: string
+                  return_address:
+                    type: string
+                  return_ward_code:
+                    type: string
+                  return_district_id:
+                    type: number
+                  return_location:
+                    type: object
+                  from_name:
+                    type: string
+                  from_phone:
+                    type: string
+                  from_hotline:
+                    type: string
+                  from_address:
+                    type: string
+                  from_ward_code:
+                    type: string
+                  from_district_id:
+                    type: number
+                  from_location:
+                    type: object
+                  deliver_station_id:
+                    type: number
+                  to_name:
+                    type: string
+                  to_phone:
+                    type: string
+                  to_address:
+                    type: string
+                  to_ward_code:
+                    type: string
+                  to_district_id:
+                    type: number
+                  to_location:
+                    type: object
+                  weight:
+                    type: number
+                  length:
+                    type: number
+                  width:
+                    type: number
+                  height:
+                    type: number
+                  converted_weight:
+                    type: number
+                  calculate_weight:
+                    type: number
+                  image_ids:
+                    type: string
+                    nullable: true
+                  service_type_id:
+                    type: number
+                  service_id:
+                    type: number
+                  payment_type_id:
+                    type: number
+                  payment_type_ids:
+                    type: array
+                    items:
+                      type: number
+                  custom_service_fee:
+                    type: number
+                  sort_code:
+                    type: string
+                  cod_amount:
+                    type: number
+                  cod_collect_date:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  cod_transfer_date:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  is_cod_transferred:
+                    type: boolean
+                  is_cod_collected:
+                    type: boolean
+                  insurance_value:
+                    type: number
+                  order_value:
+                    type: number
+                  pick_station_id:
+                    type: number
+                  client_order_code:
+                    type: string
+                  cod_failed_amount:
+                    type: number
+                  cod_failed_collect_date:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  required_note:
+                    type: string
+                  content:
+                    type: string
+                  note:
+                    type: string
+                  employee_note:
+                    type: string
+                  seal_code:
+                    type: string
+                  pickup_time:
+                    type: string
+                    format: date-time
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        quantity:
+                          type: number
+                        length:
+                          type: number
+                        width:
+                          type: number
+                        height:
+                          type: number
+                        category:
+                          type: object
+                        weight:
+                          type: number
+                        status:
+                          type: string
+                        item_order_code:
+                          type: string
+                  coupon:
+                    type: string
+                  coupon_campaign_id:
+                    type: number
+                  _id:
+                    type: string
+                  order_code:
+                    type: string
+                  version_no:
+                    type: string
+                  updated_ip:
+                    type: string
+                  updated_employee:
+                    type: number
+                  updated_client:
+                    type: number
+                  updated_source:
+                    type: string
+                  updated_date:
+                    type: string
+                    format: date-time
+                  updated_warehouse:
+                    type: number
+                  created_ip:
+                    type: string
+                  created_employee:
+                    type: number
+                  created_client:
+                    type: number
+                  created_source:
+                    type: string
+                  created_date:
+                    type: string
+                    format: date-time
+                  status:
+                    type: string
+                  internal_process:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      type:
+                        type: string
+                  pick_warehouse_id:
+                    type: number
+                  deliver_warehouse_id:
+                    type: number
+                  current_warehouse_id:
+                    type: number
+                  return_warehouse_id:
+                    type: number
+                  next_warehouse_id:
+                    type: number
+                  current_transport_warehouse_id:
+                    type: number
+                  leadtime:
+                    type: string
+                    format: date-time
+                  order_date:
+                    type: string
+                    format: date-time
+                  data:
+                    type: object
+                  soc_id:
+                    type: string
+                  finish_date:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  is_partial_return:
+                    type: boolean
+                  is_document_return:
+                    type: boolean
+                  pickup_shift:
+                    type: object
+                  transaction_ids:
+                    type: array
+                    items:
+                      type: string
+                  transportation_status:
+                    type: string
+                  transportation_phase:
+                    type: string
+                  extra_service:
+                    type: object
+                    properties:
+                      document_return:
+                        type: string
+                        nullable: true
+                      double_check:
+                        type: boolean
+                  config_fee_id:
+                    type: string
+                  extra_cost_id:
+                    type: string
+                  standard_config_fee_id:
+                    type: string
+                  standard_extra_cost_id:
+                    type: string
+                  is_b2b:
+                    type: boolean
+                  operation_partner:
+                    type: string
+                  process_partner_name:
+                    type: string
+                  type_order:
+                    type: string
+                  type_order_code:
+                    type: string
   securitySchemes:
     bearerAuth:
       type: http

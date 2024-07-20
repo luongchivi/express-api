@@ -40,7 +40,7 @@ module.exports = {
           allowNull: false,
         },
         description: {
-          type: DataTypes.STRING,
+          type: DataTypes.TEXT,
         },
         image_url: {
           type: DataTypes.ARRAY(DataTypes.STRING),
@@ -52,9 +52,13 @@ module.exports = {
         },
         units_in_stock: {
           type: DataTypes.INTEGER,
+          defaultValue: 100,
+          allowNull: false,
         },
         units_on_order: {
           type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false,
         },
         units_sold: {
           type: DataTypes.INTEGER,

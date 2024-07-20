@@ -32,7 +32,11 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
     allowNull: false,
   },
   description: {
+    type: DataTypes.TEXT,
+  },
+  thumbImageUrl: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   imageUrl: {
     type: DataTypes.ARRAY(DataTypes.STRING),
@@ -44,9 +48,13 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
   },
   unitsInStock: {
     type: DataTypes.INTEGER,
+    defaultValue: 100,
+    allowNull: false,
   },
   unitsOnOrder: {
     type: DataTypes.INTEGER,
+    defaultValue: 0,
+    allowNull: false,
   },
   unitsSold: {
     type: DataTypes.INTEGER,

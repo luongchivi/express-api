@@ -1,6 +1,4 @@
 const express = require('express');
-
-
 const router = express.Router();
 const {
   verifyPermission,
@@ -10,16 +8,22 @@ const {
   validateResponse,
   validateRequest,
   validateQuery,
+  validateParams,
 } = require('../../middleware/validationHandler');
 const {
   getAllOrderOfUser,
   checkoutOrder,
+  cancelOrder,
+  getOrderShippingDetails,
 } = require('./orderController');
 const {
   checkoutOrderReq,
   checkoutOrderRes,
   getAllOrderOfUserRes,
   getAllOrderOfUserQuery,
+  orderIdParam,
+  cancelOrderRes,
+  getOrderShippingDetailsRes,
 } = require('./orderSchema');
 
 
@@ -41,6 +45,26 @@ router.post(
   validateRequest(checkoutOrderReq),
   validateResponse(checkoutOrderRes),
   checkoutOrder,
+);
+
+// POST /api/v1/orders/{orderId}/cancel-order
+router.post(
+  '/:orderId/cancel-order',
+  verifyRole(['Admin', 'User']),
+  verifyPermission('write'),
+  validateParams(orderIdParam),
+  validateResponse(cancelOrderRes),
+  cancelOrder,
+);
+
+// POST /api/v1/orders/{orderId}/shipping-order
+router.post(
+  '/:orderId/shipping-order',
+  verifyRole(['Admin', 'User']),
+  verifyPermission('write'),
+  validateParams(orderIdParam),
+  validateResponse(getOrderShippingDetailsRes),
+  getOrderShippingDetails,
 );
 
 module.exports = router;

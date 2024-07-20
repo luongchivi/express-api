@@ -3,6 +3,7 @@ const {
   createMessageSchemaResponse,
   createListResultsSchemaResponse,
   createSchemaQuery,
+  createResultsSchemaResponse,
 } = require('../shared');
 
 
@@ -36,6 +37,16 @@ const getAllOrderOfUserQuery = createSchemaQuery({
   createdAt: Joi.string().optional(),
 });
 
+const orderIdParam = Joi.object({
+  orderId: Joi.number().optional(),
+});
+
+const cancelOrderRes = createMessageSchemaResponse();
+
+const getOrderShippingDetailsRes = createResultsSchemaResponse({
+  shippingOrder: Joi.object().required(),
+});
+
 module.exports = {
   paymentType,
   orderStatus,
@@ -43,4 +54,7 @@ module.exports = {
   checkoutOrderRes,
   getAllOrderOfUserRes,
   getAllOrderOfUserQuery,
+  orderIdParam,
+  cancelOrderRes,
+  getOrderShippingDetailsRes,
 };
