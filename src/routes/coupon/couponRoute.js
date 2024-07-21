@@ -5,6 +5,7 @@ const router = express.Router();
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
@@ -33,8 +34,6 @@ const {
 // GET /api/v1/coupons
 router.get(
   '/',
-  verifyRole(['Admin']),
-  verifyPermission('read'),
   validateResponse(getAllCouponsRes),
   getAllCoupons,
 );
@@ -42,6 +41,7 @@ router.get(
 // POST /api/v1/coupons
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateRequest(addCouponReq),
@@ -52,8 +52,6 @@ router.post(
 // GET /api/v1/coupons/{couponId}
 router.get(
   '/:couponId',
-  verifyRole(['Admin']),
-  verifyPermission('read'),
   validateParams(couponIdParam),
   validateResponse(getCouponDetailsRes),
   getCouponDetails,
@@ -62,6 +60,7 @@ router.get(
 // PUT /api/v1/coupons/{couponId}
 router.put(
   '/:couponId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('update'),
   validateParams(couponIdParam),
@@ -73,6 +72,7 @@ router.put(
 // DELETE /api/v1/coupons/{couponId}
 router.delete(
   '/:couponId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(couponIdParam),

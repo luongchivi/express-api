@@ -25,12 +25,14 @@ const {
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 
 
 // POST /api/v1/address
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('write'),
   validateRequest(addAddressReq),
@@ -41,6 +43,7 @@ router.post(
 // GET /api/v1/address/{addressId}
 router.get(
   '/:addressId',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('read'),
   validateParams(addressIdParam),
@@ -51,6 +54,7 @@ router.get(
 // PUT /api/v1/address/{addressId}
 router.put(
   '/:addressId',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('update'),
   validateParams(addressIdParam),
@@ -62,6 +66,7 @@ router.put(
 // DELETE /api/v1/address/{addressId}
 router.delete(
   '/:addressId',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('delete'),
   validateParams(addressIdParam),

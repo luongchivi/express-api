@@ -6,6 +6,7 @@ const router = express.Router();
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
@@ -39,8 +40,6 @@ const uploadCloud = require('../../lib/cloudinary');
 // GET /api/v1/products
 router.get(
   '/',
-  verifyRole(['Admin', 'User']),
-  verifyPermission('read'),
   validateQuery(getAllProductsQuery),
   validateResponse(getAllProductsRes),
   getAllProducts,
@@ -49,6 +48,7 @@ router.get(
 // POST /api/v1/products
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateRequest(addProductReq),
@@ -59,8 +59,6 @@ router.post(
 // GET /api/v1/products/{productId}
 router.get(
   '/:productId',
-  verifyRole(['Admin']),
-  verifyPermission('read'),
   validateParams(productIdParam),
   validateResponse(getProductDetailsRes),
   getProductDetails,
@@ -69,6 +67,7 @@ router.get(
 // PUT /api/v1/products/{productId}
 router.put(
   '/:productId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('update'),
   validateParams(productIdParam),
@@ -80,6 +79,7 @@ router.put(
 // DELETE /api/v1/products/{productId}
 router.delete(
   '/:productId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(productIdParam),
@@ -90,6 +90,7 @@ router.delete(
 // POST /api/v1/products/{productId}/image-upload
 router.post(
   '/:productId/image-upload',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateParams(productIdParam),

@@ -273,7 +273,7 @@ async function uploadImagesProduct(req, res, next) {
     await product.update({ imageUrl: [...imageUrl, ...filesUrl] });
     await product.reload();
 
-    return buildResponseMessage(res, 'Upload images products successfully.',200);
+    return buildResponseMessage(res, 'Upload images products successfully.', 200);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to upload product images.';

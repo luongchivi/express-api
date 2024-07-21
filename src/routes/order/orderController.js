@@ -88,9 +88,9 @@ async function checkoutOrder(req, res, next) {
     // Kiểm tra số lượng tồn kho cho từng sản phẩm trong giỏ hàng
     let totalWeightPacket = 0.0;
     let totalHeightPacket = 0.0;
-    let allLengthOfItems = [];
-    let allWidthOfItems = [];
-    let items = [];
+    const allLengthOfItems = [];
+    const allWidthOfItems = [];
+    const items = [];
     for (const item of cart.items) {
       const product = await ProductModel.findByPk(item.productId, { transaction });
       if (!product) {
@@ -104,7 +104,7 @@ async function checkoutOrder(req, res, next) {
       totalWeightPacket += product.weight * item.quantity;
       totalHeightPacket += product.height * item.quantity;
       allLengthOfItems.push(product.length);
-      allWidthOfItems.push (product.width);
+      allWidthOfItems.push(product.width);
       items.push({
         name: product.name,
         quantity: item.quantity,
@@ -115,8 +115,8 @@ async function checkoutOrder(req, res, next) {
       });
     }
 
-    let lengthPacket = allLengthOfItems.length > 0 ? Math.max(...allLengthOfItems) : 0;
-    let widthPacket = allWidthOfItems.length > 0 ? Math.max(...allWidthOfItems) : 0;
+    const lengthPacket = allLengthOfItems.length > 0 ? Math.max(...allLengthOfItems) : 0;
+    const widthPacket = allWidthOfItems.length > 0 ? Math.max(...allWidthOfItems) : 0;
 
     // tạo mới newOrder và orderItems
     const totalAmount = cart.totalPrice;
@@ -165,10 +165,10 @@ async function checkoutOrder(req, res, next) {
     const { data } = resultCreateShipment;
 
     await newOrder.update({
-      totalAmount: totalAmount + data?.total_fee,
-      shippingOrderId: data?.order_code,
-      shippingFee: data?.total_fee,
-      expectedDeliveryTime: data?.expected_delivery_time,
+      totalAmount: totalAmount + data.total_fee,
+      shippingOrderId: data.order_code,
+      shippingFee: data.total_fee,
+      expectedDeliveryTime: data.expected_delivery_time,
     }, { transaction });
     await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
 
@@ -176,7 +176,7 @@ async function checkoutOrder(req, res, next) {
     for (const item of cart.items) {
       await ProductModel.update({
         unitsInStock: sequelize.literal(`units_in_stock - ${item.quantity}`),
-        unitsOnOrder: sequelize.literal(`units_on_order + ${item.quantity}`)
+        unitsOnOrder: sequelize.literal(`units_on_order + ${item.quantity}`),
       }, {
         where: { id: item.productId },
         transaction,
@@ -318,9 +318,9 @@ async function getOrderShippingDetails(req, res, next) {
       return buildResponseMessage(res, 'Error when get shipping order details in GHN Express.', 400);
     }
 
-    return buildSuccessResponse(res, 'Get shipping order details successfully.',{
+    return buildSuccessResponse(res, 'Get shipping order details successfully.', {
       shippingOrder: data,
-    },200);
+    }, 200);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get shipping order details.';

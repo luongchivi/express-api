@@ -1,8 +1,11 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
@@ -29,6 +32,7 @@ const {
 // POST /api/v1/cart/products
 router.post(
   '/products',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('read'),
   validateRequest(addToCartReq),
@@ -39,6 +43,7 @@ router.post(
 // PATCH /api/v1/cart/products/{productId}
 router.patch(
   '/products/:productId',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('update'),
   validateParams(productIdParam),
@@ -50,6 +55,7 @@ router.patch(
 // DELETE /api/v1/cart/products/{productId}
 router.delete(
   '/products/:productId',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('delete'),
   validateParams(productIdParam),
@@ -60,6 +66,7 @@ router.delete(
 // GET /api/v1/cart/me
 router.get(
   '/me',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('read'),
   validateResponse(getCurrentCartRes),

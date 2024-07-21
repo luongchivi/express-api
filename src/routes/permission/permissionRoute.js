@@ -24,12 +24,14 @@ const {
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 
 
 // GET /api/v1/permissions
 router.get(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllPermissionsRes),
@@ -39,6 +41,7 @@ router.get(
 // POST /api/v1/permissions
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateRequest(addPermissionReq),
@@ -49,6 +52,7 @@ router.post(
 // GET /api/v1/permissions/{permissionId}
 router.get(
   '/:permissionId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateParams(permissionIdParam),
@@ -59,6 +63,7 @@ router.get(
 // DELETE /api/v1/permissions/{permissionId}
 router.delete(
   '/:permissionId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(permissionIdParam),

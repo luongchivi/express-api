@@ -1,8 +1,11 @@
 const express = require('express');
+
+
 const router = express.Router();
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
@@ -30,6 +33,7 @@ const {
 // GET /api/v1/orders/user
 router.get(
   '/user',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('read'),
   validateQuery(getAllOrderOfUserQuery),
@@ -40,6 +44,7 @@ router.get(
 // POST /api/v1/orders/check-out
 router.post(
   '/check-out',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('write'),
   validateRequest(checkoutOrderReq),
@@ -50,6 +55,7 @@ router.post(
 // POST /api/v1/orders/{orderId}/cancel-order
 router.post(
   '/:orderId/cancel-order',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('write'),
   validateParams(orderIdParam),
@@ -60,6 +66,7 @@ router.post(
 // POST /api/v1/orders/{orderId}/shipping-order
 router.post(
   '/:orderId/shipping-order',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('write'),
   validateParams(orderIdParam),

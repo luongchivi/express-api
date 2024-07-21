@@ -28,13 +28,12 @@ const {
   updateCategoryReq,
   updateCategoryRes,
 } = require('./categorySchema');
+const { verifyToken } = require('../../middleware/authHandler');
 
 
 // GET /api/v1/categories
 router.get(
   '/',
-  verifyRole(['Admin']),
-  verifyPermission('read'),
   validateResponse(getAllCategoriesRes),
   getAllCategories,
 );
@@ -42,6 +41,7 @@ router.get(
 // POST /api/v1/categories
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateRequest(addCategoryReq),
@@ -52,6 +52,7 @@ router.post(
 // GET /api/v1/categories/{categoryId}
 router.get(
   '/:categoryId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateParams(categoryIdParam),
@@ -62,6 +63,7 @@ router.get(
 // PUT /api/v1/categories/{categoryId}
 router.put(
   '/:categoryId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('update'),
   validateParams(categoryIdParam),
@@ -73,6 +75,7 @@ router.put(
 // DELETE /api/v1/categories/{categoryId}
 router.delete(
   '/:categoryId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(categoryIdParam),

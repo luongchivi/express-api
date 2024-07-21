@@ -34,12 +34,14 @@ const {
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 
 
 // GET /api/v1/users
 router.get(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateQuery(getAllUsersQuery),
@@ -50,6 +52,7 @@ router.get(
 // GET /api/v1/users/current-user
 router.get(
   '/current-user',
+  verifyToken,
   verifyRole(['User']),
   verifyPermission('read'),
   validateResponse(getCurrentUserRes),
@@ -59,6 +62,7 @@ router.get(
 // GET /api/v1/users/{id}
 router.get(
   '/:id',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('read'),
   validateParams(idParam),
@@ -69,6 +73,7 @@ router.get(
 // PATCH /api/v1/users/{id}
 router.patch(
   '/:id',
+  verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('update'),
   validateParams(idParam),
@@ -80,6 +85,7 @@ router.patch(
 // DELETE /api/v1/users/{id}
 router.delete(
   '/:id',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(idParam),
@@ -90,6 +96,7 @@ router.delete(
 // POST /api/v1/users/{id}/roles
 router.post(
   '/:id/roles',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateParams(idParam),
@@ -101,6 +108,7 @@ router.post(
 // DELETE /api/v1/users/{id}/roles
 router.delete(
   '/:id/roles',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(idParam),

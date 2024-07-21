@@ -30,12 +30,14 @@ const {
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 
 
 // GET /api/v1/roles
 router.get(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllRolesRes),
@@ -45,6 +47,7 @@ router.get(
 // POST /api/v1/roles
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateRequest(createRoleReq),
@@ -55,6 +58,7 @@ router.post(
 // GET /api/v1/roles/{roleId}
 router.get(
   '/:roleId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateParams(roleIdParam),
@@ -65,6 +69,7 @@ router.get(
 // DELETE /api/v1/roles/{roleId}
 router.delete(
   '/:roleId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(roleIdParam),
@@ -75,6 +80,7 @@ router.delete(
 // POST /api/v1/roles/{roleId}/permissions
 router.post(
   '/:roleId/permissions',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateParams(roleIdParam),
@@ -86,6 +92,7 @@ router.post(
 // DELETE /api/v1/roles/{roleId}/permissions
 router.delete(
   '/:roleId/permissions',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateParams(roleIdParam),

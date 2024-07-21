@@ -6,7 +6,7 @@ const {
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, _Sequelize) {
+  async up(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
       await queryInterface.addColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'shipping_fee', {
         type: DataTypes.FLOAT,
@@ -21,11 +21,11 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, _Sequelize) {
+  async down(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
-      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'shipping_fee',  { transaction: t });
-      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'shipping_order_id',  { transaction: t });
-      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'expected_delivery_time',  { transaction: t });
+      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'shipping_fee', { transaction: t });
+      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'shipping_order_id', { transaction: t });
+      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), 'expected_delivery_time', { transaction: t });
     });
-  }
+  },
 };

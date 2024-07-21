@@ -6,7 +6,7 @@ const {
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, _Sequelize) {
+  async up(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
       await queryInterface.addColumn(getTableNameForMigrations(DB_TABLE_NAMES.PRODUCT), 'thumb_image_url', {
         type: DataTypes.STRING,
@@ -16,9 +16,9 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, _Sequelize) {
+  async down(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
-      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.PRODUCT), 'thumb_image_url',  { transaction: t });
+      await queryInterface.removeColumn(getTableNameForMigrations(DB_TABLE_NAMES.PRODUCT), 'thumb_image_url', { transaction: t });
     });
-  }
+  },
 };

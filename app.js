@@ -10,10 +10,16 @@ const yaml = require('js-yaml');
 const printRoutes = require('./src/middleware/printRoutes');
 const { buildResponseMessage } = require('./src/routes/shared');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 let app = express();
 const PORT = process.env.APP_PORT || 4000;
 
+// Cors config
+app.use(cors({
+  origin: process.env.URL_SERVER,
+  methods: ['*'],
+}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan('dev'));

@@ -6,6 +6,7 @@ const router = express.Router();
 const {
   verifyPermission,
   verifyRole,
+  verifyToken,
 } = require('../../middleware/authHandler');
 const {
   validateResponse,
@@ -34,6 +35,7 @@ const {
 // GET /api/v1/suppliers
 router.get(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateResponse(getAllSuppliersRes),
@@ -43,6 +45,7 @@ router.get(
 // POST /api/v1/suppliers
 router.post(
   '/',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
   validateRequest(addSupplierReq),
@@ -53,6 +56,7 @@ router.post(
 // GET /api/v1/suppliers/{supplierId}
 router.get(
   '/:supplierId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
   validateParams(supplierIdParam),
@@ -63,6 +67,7 @@ router.get(
 // DELETE /api/v1/suppliers/{supplierId}
 router.delete(
   '/:supplierId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(supplierIdParam),
@@ -73,6 +78,7 @@ router.delete(
 // PUT /api/v1/suppliers/{supplierId}
 router.put(
   '/:supplierId',
+  verifyToken,
   verifyRole(['Admin']),
   verifyPermission('delete'),
   validateParams(supplierIdParam),
