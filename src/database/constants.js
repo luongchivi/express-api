@@ -20,6 +20,7 @@ const DB_TABLE_NAMES = Object.freeze({
   WARD: 'ward',
   DISTRICT: 'district',
   PROVINCE: 'province',
+  REVIEW: 'review',
 });
 
 // inflection.pluralize(tableName): Chuyển đổi tên bảng từ dạng số ít sang số nhiều.

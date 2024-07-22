@@ -23,7 +23,7 @@ module.exports = {
         description: {
           type: DataTypes.STRING,
         },
-        image_url: {
+        images_url: {
           type: DataTypes.STRING,
         },
         created_at: {

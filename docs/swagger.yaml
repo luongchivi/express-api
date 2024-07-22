@@ -30,6 +30,8 @@ tags:
     description: Districts endpoint
   - name: Wards
     description: Wards endpoint
+  - name: Reviews
+    description: Reviews endpoint
 paths:
   /api/v1/auth/signup:
     post:
@@ -576,7 +578,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/CreateProductReq'
       responses:
@@ -658,7 +660,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/UpdateProductReq'
       responses:
@@ -706,39 +708,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DeleteProductRes'
-  /api/v1/products/{id}/image-upload:
-    post:
-      summary: Upload images of product by productId
-      tags: [ Products ]
-      security:
-        - bearerAuth: [ ]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Id of the product to retrieve
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                images:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: Max upload only 10 files
-      responses:
-        200:
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadImagesProductRes'
   /api/v1/suppliers:
     post:
       summary: Create new supplier
@@ -1162,6 +1131,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAllWardsRes'
+  /api/v1/reviews/{productId}:
+    post:
+      summary: Add new reviews for product
+      tags: [ Reviews ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: productId of the product to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddReviewReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddReviewRes'
 components:
   schemas:
     SignUpReq:
@@ -2023,12 +2018,16 @@ components:
           type: string
         description:
           type: string
-        thumbImageUrl:
+        thumbImage:
           type: string
-        imageUrl:
+          format: binary
+          description: Max upload image is 1 file
+        images:
           type: array
           items:
             type: string
+            format: binary
+            description: Max upload image is 10 files
         unitPrice:
           type: number
         unitsInStock:
@@ -2066,12 +2065,14 @@ components:
                   type: string
                 description:
                   type: string
-                thumbImageUrl:
+                thumbImage:
                   type: string
-                imageUrl:
+                  format: binary
+                images:
                   type: array
                   items:
                     type: string
+                    format: binary
                 unitPrice:
                   type: number
                 unitsInStock:
@@ -2105,12 +2106,16 @@ components:
           type: string
         description:
           type: string
-        thumbImageUrl:
+        thumbImage:
           type: string
-        imageUrl:
+          format: binary
+          description: Max upload image is 1 file
+        images:
           type: array
           items:
             type: string
+            format: binary
+            description: Max upload image is 10 files
         unitPrice:
           type: number
         unitsInStock:
@@ -2150,7 +2155,7 @@ components:
                   type: string
                 thumbImageUrl:
                   type: string
-                imageUrl:
+                imagesUrl:
                   type: array
                   items:
                     type: string
@@ -2203,7 +2208,7 @@ components:
                   type: string
                 thumbImageUrl:
                   type: string
-                imageUrl:
+                imagesUrl:
                   type: array
                   items:
                     type: string
@@ -2268,7 +2273,7 @@ components:
                     type: string
                   thumbImageUrl:
                     type: string
-                  imageUrl:
+                  imagesUrl:
                     type: array
                     items:
                       type: string
@@ -3174,6 +3179,52 @@ components:
                     type: string
                   type_order_code:
                     type: string
+    AddReviewReq:
+      type: object
+      properties:
+        rating:
+          type: number
+        comment:
+          type: string
+        feedbackImages:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: Max uploads image is 10 files
+    AddReviewRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            review:
+              type: object
+              properties:
+                id:
+                  type: number
+                rating:
+                  type: number
+                comment:
+                  type: string
+                userId:
+                  type: number
+                productId:
+                  type: number
+                feedbackImagesUrl:
+                  type: array
+                  items:
+                    type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
   securitySchemes:
     bearerAuth:
       type: http

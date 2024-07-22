@@ -14,13 +14,10 @@ const getAllProductsRes = createListResultsSchemaResponse({
 const addProductReq = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().optional(),
-  thumbImageUrl: Joi.string().required(),
-  imageUrl: Joi.array().items(Joi.string()).optional(),
   unitPrice: Joi.number().required(),
   unitsInStock: Joi.number().optional(),
   unitsOnOrder: Joi.number().optional(),
   unitsSold: Joi.number().optional(),
-  discount: Joi.number().optional(),
   supplierId: Joi.number().allow(null).optional(),
   categoryId: Joi.number().allow(null).optional(),
   weight: Joi.number().required(),
@@ -40,15 +37,16 @@ const productIdParam = Joi.object({
 const updateProductReq = Joi.object({
   name: Joi.string().optional(),
   description: Joi.string().optional(),
-  thumbImageUrl: Joi.string().optional(),
-  imageUrl: Joi.array().items(Joi.string()).optional(),
   unitPrice: Joi.number().optional(),
   unitsInStock: Joi.number().optional(),
   unitsOnOrder: Joi.number().optional(),
   unitsSold: Joi.number().optional(),
-  discount: Joi.number().optional(),
   supplierId: Joi.number().allow(null).optional(),
   categoryId: Joi.number().allow(null).optional(),
+  weight: Joi.number().optional(),
+  length: Joi.number().optional(),
+  width: Joi.number().optional(),
+  height: Joi.number().optional(),
 });
 
 const updateProductRes = createResultsSchemaResponse({
@@ -61,10 +59,6 @@ const getProductDetailsRes = createResultsSchemaResponse({
 
 const deleteProductRes = createMessageSchemaResponse();
 
-const uploadImagesProductRes = createResultsSchemaResponse({
-  product: Joi.object().required(),
-});
-
 const getAllProductsQuery = createSchemaQuery({
   name: Joi.string().optional(),
   unitPrice: Joi.number().optional(),
@@ -73,6 +67,11 @@ const getAllProductsQuery = createSchemaQuery({
   unitsSold: Joi.number().optional(),
   createdAt: Joi.string().optional(),
 });
+
+const formDataFieldsUploadConfig = [
+  { name: 'thumbImage', maxCount: 1 }, // 1 ảnh thumbnail
+  { name: 'images', maxCount: 10 }, // Tối đa 10 ảnh
+];
 
 module.exports = {
   getAllProductsRes,
@@ -83,6 +82,6 @@ module.exports = {
   updateProductRes,
   getProductDetailsRes,
   deleteProductRes,
-  uploadImagesProductRes,
   getAllProductsQuery,
+  formDataFieldsUploadConfig,
 };

@@ -12,6 +12,7 @@ const orderRouter = require('./order/orderRoute');
 const provinceRouter = require('./province/provinceRoute');
 const wardRouter = require('./ward/wardRoute');
 const districtRouter = require('./district/districtRoute');
+const reviewRouter = require('./review/reviewRoute');
 
 
 function routes(app) {
@@ -34,6 +35,7 @@ function routes(app) {
   app.use('/api/v1/provinces', provinceRouter);
   app.use('/api/v1/districts', districtRouter);
   app.use('/api/v1/wards', wardRouter);
+  app.use('/api/v1/reviews', reviewRouter);
 
   return app;
 }

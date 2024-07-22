@@ -20,7 +20,6 @@ const {
   getProductDetails,
   updateProduct,
   deleteProduct,
-  uploadImagesProduct,
 } = require('./productController');
 const {
   getAllProductsRes,
@@ -31,10 +30,10 @@ const {
   updateProductRes,
   getProductDetailsRes,
   deleteProductRes,
-  uploadImagesProductRes,
   getAllProductsQuery,
+  formDataFieldsUploadConfig,
 } = require('./productSchema');
-const uploadCloud = require('../../lib/cloudinary');
+const formDataFields = require('../../middleware/formDataHandler');
 
 
 // GET /api/v1/products
@@ -51,6 +50,7 @@ router.post(
   verifyToken,
   verifyRole(['Admin']),
   verifyPermission('write'),
+  formDataFields(formDataFieldsUploadConfig),
   validateRequest(addProductReq),
   validateResponse(addProductRes),
   addProduct,
@@ -71,6 +71,7 @@ router.put(
   verifyRole(['Admin']),
   verifyPermission('update'),
   validateParams(productIdParam),
+  formDataFields(formDataFieldsUploadConfig),
   validateRequest(updateProductReq),
   validateResponse(updateProductRes),
   updateProduct,
@@ -85,18 +86,6 @@ router.delete(
   validateParams(productIdParam),
   validateResponse(deleteProductRes),
   deleteProduct,
-);
-
-// POST /api/v1/products/{productId}/image-upload
-router.post(
-  '/:productId/image-upload',
-  verifyToken,
-  verifyRole(['Admin']),
-  verifyPermission('write'),
-  validateParams(productIdParam),
-  uploadCloud.array('images', parseInt(process.env.UPLOAD_MAX, 10)),
-  validateResponse(uploadImagesProductRes),
-  uploadImagesProduct,
 );
 
 

@@ -21,7 +21,7 @@ const Category = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.CATEG
   description: {
     type: DataTypes.STRING,
   },
-  imageUrl: {
+  imagesUrl: {
     type: DataTypes.STRING,
   },
   createdAt: {

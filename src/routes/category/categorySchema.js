@@ -8,7 +8,7 @@ const {
 const addCategoryReq = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().optional(),
-  imageUrl: Joi.string().optional(),
+  imagesUrl: Joi.string().optional(),
 });
 
 const addCategoryRes = createResultsSchemaResponse({
@@ -32,7 +32,7 @@ const deleteCategoryRes = createMessageSchemaResponse();
 const updateCategoryReq = Joi.object({
   name: Joi.string().optional(),
   description: Joi.string().optional(),
-  imageUrl: Joi.string().optional(),
+  imagesUrl: Joi.string().optional(),
 });
 
 const updateCategoryRes = createResultsSchemaResponse({

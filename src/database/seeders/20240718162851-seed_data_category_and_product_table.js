@@ -25,7 +25,7 @@ module.exports = {
         const dataProducts = products.map((item, index) => ({
           id: index + 1,
           ...item,
-          image_url: `{${item.image_url.join(',')}}`,
+          images_url: `{${item.images_url.join(',')}}`,
           name: `${item.name} ${index + 1}`,
           slug: slugify(`${item.name} ${index + 1}`.toLowerCase()),
         }));

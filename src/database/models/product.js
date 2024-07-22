@@ -36,9 +36,8 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
   },
   thumbImageUrl: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
-  imageUrl: {
+  imagesUrl: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     defaultValue: [],
   },
@@ -91,6 +90,14 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
     validate: {
       max: 200,
     },
+  },
+  averageRating: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+    validate: {
+      max: 5,
+    },
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,

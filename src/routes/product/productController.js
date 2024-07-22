@@ -12,6 +12,12 @@ const {
   parseQueryParams,
   buildResultListResponse,
 } = require('../shared');
+const {
+  uploadImages,
+  uploadImage,
+  deleteImages,
+  deleteImage,
+} = require('../../lib/cloudinary');
 
 
 async function getAllProducts(req, res, next) {
@@ -101,6 +107,24 @@ async function addProduct(req, res, next) {
       if (!supplier) {
         return buildResponseMessage(res, 'Not found supplier.', 404);
       }
+    }
+
+    const { thumbImage, images } = req.files;
+
+    if (images) {
+      let imagesUrl = [];
+      if (images.length > 0) {
+        imagesUrl = await uploadImages(images, 'ecommerce_products_images');
+      }
+      payload.imagesUrl = imagesUrl;
+    }
+
+    if (thumbImage) {
+      let thumbImageUrl;
+      if (thumbImage.length > 0) {
+        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_image');
+      }
+      payload.thumbImageUrl = thumbImageUrl;
     }
 
     const product = await ProductModel.create(payload);
@@ -207,6 +231,26 @@ async function updateProduct(req, res, next) {
       return buildResponseMessage(res, 'Not found product.', 404);
     }
 
+    // Update image in cloudinary
+    const { thumbImage, images } = req.files;
+    if (images) {
+      await deleteImages(product.imagesUrl, 'ecommerce_products_images');
+      let imagesUrl = [];
+      if (images.length > 0) {
+        imagesUrl = await uploadImages(images, 'ecommerce_products_images');
+      }
+      payload.imagesUrl = imagesUrl;
+    }
+
+    if (thumbImage) {
+      await deleteImage(product.thumbImageUrl, 'ecommerce_products_thumb_image');
+      let thumbImageUrl;
+      if (thumbImage.length > 0) {
+        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_image');
+      }
+      payload.thumbImageUrl = thumbImageUrl;
+    }
+
     await product.update(payload, { transaction });
     await product.reload({ transaction });
 
@@ -259,33 +303,10 @@ async function updateProduct(req, res, next) {
   }
 }
 
-async function uploadImagesProduct(req, res, next) {
-  try {
-    const { productId } = req.params;
-    const product = await ProductModel.findByPk(productId);
-    if (!product) {
-      return buildResponseMessage(res, 'Not found product.', 404);
-    }
-
-    const { imageUrl } = product;
-    const { files } = req;
-    const filesUrl = files.map(file => file.path);
-    await product.update({ imageUrl: [...imageUrl, ...filesUrl] });
-    await product.reload();
-
-    return buildResponseMessage(res, 'Upload images products successfully.', 200);
-  } catch (error) {
-    error.statusCode = 400;
-    error.messageErrorAPI = 'Failed to upload product images.';
-    next(error);
-  }
-}
-
 module.exports = {
   getAllProducts,
   addProduct,
   getProductDetails,
   updateProduct,
   deleteProduct,
-  uploadImagesProduct,
 };

@@ -11,9 +11,14 @@ const printRoutes = require('./src/middleware/printRoutes');
 const { buildResponseMessage } = require('./src/routes/shared');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const { registerCronJobs } = require('./src/lib/cronManager');
+
 
 let app = express();
 const PORT = process.env.APP_PORT || 4000;
+
+// Plugin cornManager
+registerCronJobs();
 
 // Cors config
 app.use(cors({

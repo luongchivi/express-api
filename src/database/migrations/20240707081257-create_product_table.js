@@ -42,7 +42,7 @@ module.exports = {
         description: {
           type: DataTypes.TEXT,
         },
-        image_url: {
+        images_url: {
           type: DataTypes.ARRAY(DataTypes.STRING),
           defaultValue: [],
         },
