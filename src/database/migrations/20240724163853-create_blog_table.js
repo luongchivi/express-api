@@ -8,23 +8,35 @@ const {
 module.exports = {
   async up(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
-      await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY), {
+      await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.BLOG), {
         id: {
           type: DataTypes.INTEGER,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
           allowNull: false,
         },
-        name: {
-          type: DataTypes.STRING,
-          unique: true,
+        user_id: {
+          type: DataTypes.INTEGER,
+          references: {
+            model: getTableNameForMigrations(DB_TABLE_NAMES.USER),
+            key: 'id',
+          },
           allowNull: false,
         },
-        description: {
+        title: {
           type: DataTypes.STRING,
+          allowNull: false,
         },
-        icon_image_url: {
+        slug: {
           type: DataTypes.STRING,
+          allowNull: false,
+        },
+        content: {
+          type: DataTypes.TEXT,
+          allowNull: false,
+        },
+        images_url: {
+          type: DataTypes.ARRAY(DataTypes.STRING),
         },
         created_at: {
           type: DataTypes.DATE,
@@ -40,7 +52,7 @@ module.exports = {
 
   async down(queryInterface, _Sequelize) {
     return queryInterface.sequelize.transaction(async t => {
-      await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY), { transaction: t });
+      await queryInterface.dropTable(getTableNameForMigrations(DB_TABLE_NAMES.BLOG), { transaction: t });
     });
   },
 };

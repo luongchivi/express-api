@@ -2,6 +2,7 @@ const Joi = require('joi');
 const {
   createResultsSchemaResponse,
   createMessageSchemaResponse,
+  createSchemaQuery,
 } = require('../shared');
 
 
@@ -42,6 +43,8 @@ const deletePermissionAssignReq = Joi.object({
 
 const deletePermissionAssignRes = createMessageSchemaResponse();
 
+const getAllRolesQuery = createSchemaQuery();
+
 module.exports = {
   createRoleReq,
   createRoleRes,
@@ -53,4 +56,5 @@ module.exports = {
   assignPermissionRes,
   deletePermissionAssignReq,
   deletePermissionAssignRes,
+  getAllRolesQuery,
 };

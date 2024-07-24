@@ -32,6 +32,7 @@ async function getAllProducts(req, res, next) {
       unitsOnOrder: 'number',
       unitsSold: 'number',
       createdAt: 'date',
+      averageRating: 'number',
     };
 
     const { categoryName } = req.query;
@@ -122,7 +123,7 @@ async function addProduct(req, res, next) {
     if (thumbImage) {
       let thumbImageUrl;
       if (thumbImage.length > 0) {
-        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_image');
+        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
       }
       payload.thumbImageUrl = thumbImageUrl;
     }
@@ -243,10 +244,10 @@ async function updateProduct(req, res, next) {
     }
 
     if (thumbImage) {
-      await deleteImage(product.thumbImageUrl, 'ecommerce_products_thumb_image');
+      await deleteImage(product.thumbImageUrl, 'ecommerce_products_thumb_images');
       let thumbImageUrl;
       if (thumbImage.length > 0) {
-        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_image');
+        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
       }
       payload.thumbImageUrl = thumbImageUrl;
     }

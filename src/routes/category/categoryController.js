@@ -1,18 +1,43 @@
 const CategoryModel = require('../../database/models/category');
+const SupplierModel = require('../../database/models/supplier');
+const CategorySupplierModel = require('../../database/models/categorySupplier');
 const {
   buildSuccessResponse,
   buildResponseMessage,
 } = require('../shared');
+const {
+  uploadImage,
+  deleteImage
+} = require('../../lib/cloudinary');
 
 
 async function addCategory(req, res, next) {
+  let iconImageUrl, thumbImageUrl;
   try {
-    const payload = req.body;
+    let payload = req.body;
+    const { iconImage, thumbImage } = req.files;
+
+    if (iconImage) {
+      if (iconImage.length > 0) {
+        iconImageUrl = await uploadImage(...iconImage, 'ecommerce_category_icon_images');
+      }
+      payload.iconImageUrl = iconImageUrl;
+    }
+
+    if (thumbImage) {
+      if (thumbImage.length > 0) {
+        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_category_thumb_images');
+      }
+      payload.thumbImageUrl = thumbImageUrl;
+    }
+
     const newCategory = await CategoryModel.create(payload);
     return buildSuccessResponse(res, 'Add new category successfully.', {
       category: newCategory,
     }, 201);
   } catch (error) {
+    if (iconImageUrl) await deleteImage(iconImageUrl, 'ecommerce_category_icon_images');
+    if (thumbImageUrl) await deleteImage(thumbImageUrl, 'ecommerce_category_thumb_images');
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to add new category.';
     next(error);
@@ -21,7 +46,14 @@ async function addCategory(req, res, next) {
 
 async function getAllCategories(req, res, next) {
   try {
-    const categories = await CategoryModel.findAll();
+    const categories = await CategoryModel.findAll({
+      include: {
+        model: SupplierModel,
+        as: 'suppliers',
+        attributes: { exclude: [CategorySupplierModel] },
+        through: { attributes: [] },
+      },
+    });
     return buildSuccessResponse(res, 'Get all categories successfully.', {
       categories: categories || [],
     }, 200);
@@ -56,6 +88,14 @@ async function deleteCategory(req, res, next) {
     if (!category) {
       return buildResponseMessage(res, 'Category not found.', 404);
     }
+
+    if (category.iconImageUrl) {
+      await deleteImage(category.iconImageUrl, 'ecommerce_category_icon_images');
+    }
+    if (category.thumbImageUrl) {
+      await deleteImage(category.thumbImageUrl, 'ecommerce_category_thumb_images');
+    }
+
     await category.destroy();
     return buildResponseMessage(res, 'Delete category successfully.', 200);
   } catch (error) {
@@ -66,21 +106,113 @@ async function deleteCategory(req, res, next) {
 }
 
 async function updateCategory(req, res, next) {
+  let iconImageUrl, thumbImageUrl;
   try {
     const { categoryId } = req.params;
-    const payload = req.body;
+    let payload = req.body;
     const category = await CategoryModel.findByPk(categoryId);
     if (!category) {
       return buildResponseMessage(res, 'Category not found.', 404);
     }
+
+    const { iconImage, thumbImage } = req.files;
+
+    if (iconImage) {
+      if (category.iconImageUrl) {
+        await deleteImage(category.iconImageUrl, 'ecommerce_category_icon_images');
+      }
+      if (iconImage.length > 0) {
+        iconImageUrl = await uploadImage(...iconImage, 'ecommerce_category_icon_images');
+      }
+      payload.iconImageUrl = iconImageUrl;
+    }
+
+    if (thumbImage) {
+      if (category.thumbImageUrl) {
+        await deleteImage(category.thumbImageUrl, 'ecommerce_category_thumb_images');
+      }
+      if (thumbImage.length > 0) {
+        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_category_thumb_images');
+      }
+      payload.thumbImageUrl = thumbImageUrl;
+    }
+
     await category.update(payload);
     await category.reload();
     return buildSuccessResponse(res, 'Update category successfully.', {
       category,
     }, 200);
   } catch (error) {
+    if (iconImageUrl) await deleteImage(iconImageUrl, 'ecommerce_category_icon_images');
+    if (thumbImageUrl) await deleteImage(thumbImageUrl, 'ecommerce_category_thumb_images');
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to update category.';
+    next(error);
+  }
+}
+
+async function assignSupplier(req, res, next) {
+  try {
+    const { categoryId } = req.params;
+    const { companyName } = req.body;
+    const category = await CategoryModel.findByPk(categoryId);
+    if (!category) {
+      return buildResponseMessage(res, 'Category not found.', 404);
+    }
+
+    const supplier = await SupplierModel.findOne({
+      where: {
+        companyName,
+      },
+    });
+
+    if (!supplier) {
+      return buildResponseMessage(res, 'Supplier not found.', 404);
+    }
+
+    await CategorySupplierModel.create({
+      categoryId: category.id,
+      supplierId: supplier.id,
+    });
+
+    return buildResponseMessage(res, 'Assign new supplier to category successfully.', 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to assign new supplier to category.';
+    next(error);
+  }
+}
+
+async function deleteSupplierAssign(req, res, next) {
+  try {
+    const { categoryId } = req.params;
+    const { companyName } = req.body;
+    const category = await CategoryModel.findByPk(categoryId);
+    if (!category) {
+      return buildResponseMessage(res, 'Category not found.', 404);
+    }
+
+    const supplier = await SupplierModel.findOne({
+      where: {
+        companyName,
+      },
+    });
+
+    if (!supplier) {
+      return buildResponseMessage(res, 'Supplier not found.', 404);
+    }
+
+    await CategorySupplierModel.destroy({
+      where: {
+        categoryId: category.id,
+        supplierId: supplier.id,
+      },
+    });
+
+    return buildResponseMessage(res, 'Delete supplier assign category successfully.', 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to delete supplier assign to category.';
     next(error);
   }
 }
@@ -91,4 +223,6 @@ module.exports = {
   getCategoryDetails,
   deleteCategory,
   updateCategory,
+  assignSupplier,
+  deleteSupplierAssign,
 };

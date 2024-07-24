@@ -18,6 +18,8 @@ tags:
     description: Address info of user
   - name: Products
     description: Products endpoint
+  - name: Categories
+    description: Categories endpoint
   - name: Suppliers
     description: Suppliers endpoint
   - name: Cart
@@ -32,6 +34,8 @@ tags:
     description: Wards endpoint
   - name: Reviews
     description: Reviews endpoint
+  - name: Blogs
+    description: Blogs endpoint
 paths:
   /api/v1/auth/signup:
     post:
@@ -170,6 +174,18 @@ paths:
           schema:
             type: string
           description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -300,6 +316,39 @@ paths:
       tags: [ Roles ]
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -422,6 +471,39 @@ paths:
       tags: [ Permissions ]
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -644,6 +726,18 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -732,6 +826,39 @@ paths:
       tags: [ Suppliers ]
       security:
         - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -1032,6 +1159,18 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -1078,6 +1217,18 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -1124,6 +1275,18 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
       responses:
         200:
           description: Successful response
@@ -1157,6 +1320,198 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddReviewRes'
+  /api/v1/categories:
+    post:
+      summary: Create new category for product
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCategoryRes'
+    get:
+      summary: Get all list categories for product
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllListCategoryRes'
+  /api/v1/categories/{id}:
+    put:
+      summary: Update category by categoryId
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: categoryId of the category to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateCategoryReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCategoryRes'
+    get:
+      summary: Get category detail by categoryId
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: categoryId of the category to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCategoryDetailsRes'
+    delete:
+      summary: Delete category by categoryId
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: categoryId of the category to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteCategoryRes'
+  /api/v1/categories/{categoryId}/supplier:
+    post:
+      summary: Assign new supplier for category
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: categoryId of the category to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignSupplierForCategoryReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignSupplierForCategoryRes'
+    delete:
+      summary: Delete supplier assign for category
+      tags: [ Categories ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: categoryId of the category to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteSupplierAssignCategoryReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSupplierAssignCategoryRes'
+  /api/v1/blogs:
+    post:
+      summary: create new blog
+      tags: [ Blogs ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateBlogReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBlogRes'
 components:
   schemas:
     SignUpReq:
@@ -3216,6 +3571,278 @@ components:
                 productId:
                   type: number
                 feedbackImagesUrl:
+                  type: array
+                  items:
+                    type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    CreateCategoryReq:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        iconImage:
+          type: string
+          format: binary
+          description: Max upload image is 1 file
+        thumbImage:
+          type: string
+          format: binary
+          description: Max upload image is 1 file
+    CreateCategoryRes:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        message:
+          type: string
+        category:
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+            description:
+              type: string
+            iconImageUrl:
+              type: string
+            thumbImageUrl:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    GetAllListCategoryRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  iconImageUrl:
+                    type: string
+                  thumbImageUrl:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  suppliers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        companyName:
+                          type: string
+                        contactName:
+                          type: string
+                        address:
+                          type: string
+                        city:
+                          type: string
+                        region:
+                          type: string
+                        postalCode:
+                          type: string
+                        country:
+                          type: string
+                        phone:
+                          type: string
+                        fax:
+                          type: string
+                        homePage:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+    UpdateCategoryReq:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        iconImage:
+          type: string
+          format: binary
+          description: Max upload image is 1 file
+        thumbImage:
+          type: string
+          format: binary
+          description: Max upload image is 1 file
+    UpdateCategoryRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            category:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                description:
+                  type: string
+                iconImageUrl:
+                  type: string
+                thumbImageUrl:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    GetCategoryDetailsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            category:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+                description:
+                  type: string
+                iconImageUrl:
+                  type: string
+                thumbImageUrl:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    DeleteCategoryRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    AssignSupplierForCategoryReq:
+      type: object
+      properties:
+        companyName:
+          type: string
+    AssignSupplierForCategoryRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    DeleteSupplierAssignCategoryReq:
+      type: object
+      properties:
+        companyName:
+          type: string
+    DeleteSupplierAssignCategoryRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    CreateBlogReq:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: Max upload image is 10 files
+    CreateBlogRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            blog:
+              type: object
+              properties:
+                id:
+                  type: number
+                title:
+                  type: string
+                slug:
+                  type: string
+                userId:
+                  type: number
+                imagesUrl:
                   type: array
                   items:
                     type: string

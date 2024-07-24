@@ -14,6 +14,7 @@ const {
   validateRequest,
   validateResponse,
   validateParams,
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
   createRoleReq,
@@ -26,6 +27,7 @@ const {
   assignPermissionRes,
   deletePermissionAssignReq,
   deletePermissionAssignRes,
+  getAllRolesQuery,
 } = require('./roleSchema');
 const {
   verifyPermission,
@@ -40,6 +42,7 @@ router.get(
   verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
+  validateQuery(getAllRolesQuery),
   validateResponse(getAllRolesRes),
   getAllRoles,
 );

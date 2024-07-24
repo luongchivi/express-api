@@ -12,6 +12,7 @@ const {
   validateRequest,
   validateResponse,
   validateParams,
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
   addPermissionReq,
@@ -20,6 +21,7 @@ const {
   permissionIdParam,
   getPermissionDetailsRes,
   deletePermissionRes,
+  getAllPermissionsQuery,
 } = require('./permissionSchema');
 const {
   verifyPermission,
@@ -34,6 +36,7 @@ router.get(
   verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
+  validateQuery(getAllPermissionsQuery),
   validateResponse(getAllPermissionsRes),
   getAllPermissions,
 );

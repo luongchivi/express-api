@@ -4,7 +4,8 @@
       "id": 1,
       "name": "Smartphone (9)",
       "link": "https://digital-world-2.myshopify.com/collections/smartphone",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/smartphone.png?v=117726531047959052161628340889",
+      "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/mobile-devices_300x.jpg?v=1613166682",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/smartphone.png?v=117726531047959052161628340889",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -12,7 +13,8 @@
       "id": 2,
       "name": "Tablet (9)",
       "link": "https://digital-world-2.myshopify.com/collections/tablet",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/tablet.png?v=130474220186500652041628340891",
+      "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/pc-1_300x.jpg?v=1613166682",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/tablet.png?v=130474220186500652041628340891",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -20,7 +22,8 @@
       "id": 3,
       "name": "Laptop (8)",
       "link": "https://digital-world-2.myshopify.com/collections/laptop",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/laptop.png?v=60805008396908785021628340873",
+      "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/laptop_300x.jpg?v=1613166811",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/laptop.png?v=60805008396908785021628340873",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -28,7 +31,8 @@
       "id": 4,
       "name": "Camera (8)",
       "link": "https://digital-world-2.myshopify.com/collections/camera",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/camera.png?v=45506051278225345681628340856",
+      "thumb_image_url": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTN7PiqtsqGr4kp9_ZWnADFV600-O6AWduUH7bUIvdHrBqBU0b-lEvIP7t_Px2qFjzwTXIDmI0TqMClOqtIy0vpRnlfRnObfWJa9tnd4_tH_sctT88Ww3j5R4XKbg&usqp=CAc",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/camera.png?v=45506051278225345681628340856",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -36,7 +40,8 @@
       "id": 5,
       "name": "Printer (8)",
       "link": "https://digital-world-2.myshopify.com/collections/printer",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/printer.png?v=23285734919403820961628340879",
+      "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/printer_300x.jpg?v=1613166810",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/printer.png?v=23285734919403820961628340879",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -44,7 +49,8 @@
       "id": 6,
       "name": "Speaker (8)",
       "link": "https://digital-world-2.myshopify.com/collections/speaker",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/speaker.png?v=35005791092559111231628340890",
+      "thumb_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP6aaLX4tG4gVBjyPBhxn3mTxRbcIlKKCIog&usqp=CAU",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/speaker.png?v=35005791092559111231628340890",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -52,7 +58,8 @@
       "id": 7,
       "name": "Accessories (8)",
       "link": "https://digital-world-2.myshopify.com/collections/accessories",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/accessories.png?v=67538387381806079151628340853",
+      "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/headphone_8467ba67-70c7-4977-b57e-8847d56549c6_300x.jpg?v=1613166811",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/accessories.png?v=67538387381806079151628340853",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     },
@@ -60,7 +67,8 @@
       "id": 8,
       "name": "Television (8)",
       "link": "https://digital-world-2.myshopify.com/collections/television",
-      "images_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/television.png?v=181021438730403792141628340895",
+      "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/television_300x.jpg?v=1613166810",
+      "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/television.png?v=181021438730403792141628340895",
       "created_at": "2024-07-21T14:53:40.333Z",
       "updated_at": "2024-07-21T14:53:40.333Z"
     }

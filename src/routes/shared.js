@@ -93,8 +93,8 @@ function createMessageSchemaResponse() {
 
 function createSchemaQuery(schema = {}) {
   return Joi.object({
-    page: Joi.number().optional(),
-    pageSize: Joi.number().optional(),
+    page: Joi.number().optional().min(1),
+    pageSize: Joi.number().optional().min(1),
     sortBy: Joi.string().optional(),
     sortOrder: Joi.string().optional(),
     ...schema,

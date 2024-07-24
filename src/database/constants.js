@@ -21,6 +21,9 @@ const DB_TABLE_NAMES = Object.freeze({
   DISTRICT: 'district',
   PROVINCE: 'province',
   REVIEW: 'review',
+  CATEGORY_SUPPLIER: 'category_supplier',
+  BLOG: 'blog',
+  COMMENT: 'comment',
 });
 
 // inflection.pluralize(tableName): Chuyển đổi tên bảng từ dạng số ít sang số nhiều.

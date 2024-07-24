@@ -34,7 +34,7 @@ router.post(
   '/products',
   verifyToken,
   verifyRole(['Admin', 'User']),
-  verifyPermission('read'),
+  verifyPermission('write'),
   validateRequest(addToCartReq),
   validateResponse(addToCartRes),
   addToCart,

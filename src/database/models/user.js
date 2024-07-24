@@ -10,6 +10,8 @@ const Address = require('./address');
 const Role = require('./role');
 const UserRole = require('./userRole');
 const Cart = require('./cart');
+const Blog = require('./blog');
+const Comment = require('./comment');
 
 
 const User = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.USER), {
@@ -109,5 +111,13 @@ User.prototype.createPasswordChangeToken = function () {
   this.passwordResetTokenExpires = Date.now() + parseInt(process.env.PASSWORD_RESET_EXPIRES, 10);
   return resetToken;
 };
+
+// One to Many, User và Blog, 1 User có 1 hoặc nhiều Blog
+User.hasMany(Blog, { foreignKey: 'userId', as: 'blogs' });
+Blog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// One to Many, User và Comment, 1 User có 1 hoặc nhiều Comments
+User.hasMany(Comment, { foreignKey: 'userId', as: 'comments' });
+Comment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 module.exports = User;

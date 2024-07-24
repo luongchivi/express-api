@@ -3,6 +3,7 @@ const {
   createResultsSchemaResponse,
   createListResultsSchemaResponse,
   createMessageSchemaResponse,
+  createSchemaQuery,
 } = require('../shared');
 
 
@@ -54,6 +55,8 @@ const updateSupplierRes = createResultsSchemaResponse({
   supplier: Joi.object().required(),
 });
 
+const getAllSuppliersQuery = createSchemaQuery();
+
 module.exports = {
   getAllSuppliersRes,
   addSupplierReq,
@@ -63,4 +66,5 @@ module.exports = {
   deleteSupplierRes,
   updateSupplierReq,
   updateSupplierRes,
+  getAllSuppliersQuery,
 };

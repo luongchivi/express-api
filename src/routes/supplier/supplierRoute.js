@@ -12,6 +12,7 @@ const {
   validateResponse,
   validateRequest,
   validateParams,
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
   addSupplier,
@@ -29,6 +30,7 @@ const {
   deleteSupplierRes,
   updateSupplierReq,
   updateSupplierRes,
+  getAllSuppliersQuery,
 } = require('./supplierSchema');
 
 
@@ -38,6 +40,7 @@ router.get(
   verifyToken,
   verifyRole(['Admin']),
   verifyPermission('read'),
+  validateQuery(getAllSuppliersQuery),
   validateResponse(getAllSuppliersRes),
   getAllSuppliers,
 );
