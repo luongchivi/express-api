@@ -39,13 +39,13 @@ const updateCategoryRes = createResultsSchemaResponse({
 });
 
 const assignSupplierReq = Joi.object({
-  "companyName": Joi.string().required(),
+  companyName: Joi.string().required(),
 });
 
 const assignSupplierRes = createMessageSchemaResponse();
 
 const deleteSupplierAssignReq = Joi.object({
-  "companyName": Joi.string().required(),
+  companyName: Joi.string().required(),
 });
 
 const deleteSupplierAssignRes = createMessageSchemaResponse();

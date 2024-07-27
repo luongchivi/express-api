@@ -22,8 +22,9 @@ registerCronJobs();
 
 // Cors config
 app.use(cors({
-  origin: process.env.URL_SERVER,
+  origin: process.env.URL_SERVER_FE,
   methods: ['*'],
+  credentials: true,
 }));
 app.use(cookieParser());
 app.use(express.json());

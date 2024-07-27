@@ -12,6 +12,46 @@ function errorHandler(err, req, res, _next) {
     }, 400);
   }
 
+  if (err.name.startsWith('Sequelize')) {
+    // Handle Sequelize-specific errors
+    switch (err.name) {
+      case 'SequelizeUniqueConstraintError':
+        return buildErrorResponse(res, err?.errors[0]?.message || 'Unique constraint error.', {
+          errorStack: restError,
+          messageErrorAPI,
+          errorEndpoint: req.url,
+        }, 400);
+
+      case 'SequelizeValidationError':
+        return buildErrorResponse(res, err?.errors[0]?.message || 'Validation error.', {
+          errorStack: restError,
+          messageErrorAPI,
+          errorEndpoint: req.url,
+        }, 400);
+
+      case 'SequelizeForeignKeyConstraintError':
+        return buildErrorResponse(res, err?.errors[0]?.message || 'Foreign key constraint error.', {
+          errorStack: restError,
+          messageErrorAPI,
+          errorEndpoint: req.url,
+        }, 400);
+
+      case 'SequelizeDatabaseError':
+        return buildErrorResponse(res, err?.message || 'Database error.', {
+          errorStack: restError,
+          messageErrorAPI,
+          errorEndpoint: req.url,
+        }, 400);
+
+      default:
+        return buildErrorResponse(res, err.message || 'Internal Server Error.', {
+          errorStack: restError,
+          messageErrorAPI,
+          errorEndpoint: req.url,
+        }, 500);
+    }
+  }
+
   return buildErrorResponse(res, err.message || 'Internal Server Error.', {
     errorStack: restError,
     messageErrorAPI,

@@ -8,6 +8,8 @@ const {
   refreshToken,
   forgotPassword,
   resetPassword,
+  verifyEmail,
+  resendVerifyEmail,
 } = require('./authController');
 const {
   signUpReq,
@@ -20,7 +22,10 @@ const {
   forgotPasswordRes,
   resetPasswordReq,
   resetPasswordRes,
-  resetPasswordParam,
+  verifyEmailParam,
+  verifyEmailRes,
+  resendVerifyEmailReq,
+  resendVerifyEmailRes,
 } = require('./authSchema');
 const {
   validateRequest,
@@ -35,6 +40,22 @@ router.post(
   validateRequest(signUpReq),
   validateResponse(signUpRes),
   signUp,
+);
+
+// GET /api/v1/auth/verify-email/{verifyEmailToken}
+router.get(
+  '/verify-email/:verifyEmailToken',
+  validateParams(verifyEmailParam),
+  validateResponse(verifyEmailRes),
+  verifyEmail,
+);
+
+// POST /api/v1/auth/resend-verify-email/{verifyEmailToken}
+router.post(
+  '/resend-verify-email',
+  validateResponse(resendVerifyEmailReq),
+  validateResponse(resendVerifyEmailRes),
+  resendVerifyEmail,
 );
 
 // POST /api/v1/auth/login
@@ -61,10 +82,9 @@ router.post(
   forgotPassword,
 );
 
-// POST /api/v1/auth/reset-password/{resetToken}
+// POST /api/v1/auth/reset-password
 router.post(
-  '/reset-password/:resetToken',
-  validateParams(resetPasswordParam),
+  '/reset-password',
   validateRequest(resetPasswordReq),
   validateResponse(resetPasswordRes),
   resetPassword,

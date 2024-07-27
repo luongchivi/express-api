@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `${process.cwd()}/.env` });
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
@@ -36,7 +37,7 @@ const User = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.USER), {
   },
   isActive: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true,
+    defaultValue: false,
   },
   refreshToken: {
     type: DataTypes.STRING,
@@ -50,6 +51,16 @@ const User = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.USER), {
     allowNull: true,
   },
   passwordChangedAt: {
+    type: DataTypes.DATE,
+  },
+  hasVerifiedEmail: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  verifyEmailToken: {
+    type: DataTypes.STRING,
+  },
+  verifyEmailTokenExpires: {
     type: DataTypes.DATE,
   },
   createdAt: {
@@ -108,6 +119,7 @@ Cart.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 User.prototype.createPasswordChangeToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  console.log('Log PasswordResetTokenExpires: ', Date.now() + parseInt(process.env.PASSWORD_RESET_EXPIRES, 10));
   this.passwordResetTokenExpires = Date.now() + parseInt(process.env.PASSWORD_RESET_EXPIRES, 10);
   return resetToken;
 };

@@ -105,17 +105,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/forgotPasswordRes'
-  /api/v1/auth/reset-password/{resetToken}:
+  /api/v1/auth/reset-password:
     post:
       summary: Request reset password
       tags: [ Auth ]
-      parameters:
-        - name: resetToken
-          in: path
-          required: true
-          description: resetToken for verify reset password
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -129,6 +122,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/resetPasswordRes'
+  /api/v1/auth/verify-email/{verifyEmailToken}:
+    get:
+      summary: Request verify email sending to email and redirecting to login page
+      tags: [ Auth ]
+      parameters:
+        - name: verifyEmailToken
+          in: path
+          required: true
+          description: verifyEmailToken token for verify email
+          schema:
+            type: integer
+            example: cbxj5sd3clz2xsi5s
+      responses:
+        '302':
+          description: Email verified successfully. Redirecting to login.
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+                example: http://localhost:3000/login
+  /api/v1/auth/resend-verify-email:
+    post:
+      summary: Request resend verify email
+      tags: [ Auth ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resendVerifyEmailReq'
+      responses:
+        200:
+          description: Successful reset password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resendVerifyEmailRes'
   /api/v1/users:
     get:
       summary: Get all list users
@@ -1512,6 +1543,83 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateBlogRes'
+    get:
+      summary: Get all list blogs
+      tags: [ Blogs ]
+      parameters:
+        - in: query
+          name: title
+          required: false
+          schema:
+            type: string
+            default: 1
+          description: Filter blog by title
+        - in: query
+          name: userId
+          required: false
+          schema:
+            type: number
+            default: 1
+          description: Filter blog by userId
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllBlogsRes'
+  /api/v1/blogs/{blogId}:
+      post:
+        summary: Get blog details by blogId
+        tags: [ Blogs ]
+        security:
+          - bearerAuth: [ ]
+        parameters:
+          - name: blogId
+            in: path
+            required: true
+            description: blogId of the blog to retrieve
+            schema:
+              type: integer
+        responses:
+          200:
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/GetBlogDetailsRes'
 components:
   schemas:
     SignUpReq:
@@ -1592,6 +1700,25 @@ components:
               type: string
             refreshToken:
               type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: number
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                isActive:
+                  type: boolean
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
     RefreshTokenReq:
       type: object
       required:
@@ -3249,6 +3376,8 @@ components:
       properties:
         newPassword:
           type: string
+        resetToken:
+          type: string
     resetPasswordRes:
       type: object
       properties:
@@ -3852,6 +3981,104 @@ components:
                 updatedAt:
                   type: string
                   format: date-time
+    GetBlogDetailsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            blog:
+              type: object
+              properties:
+                id:
+                  type: number
+                title:
+                  type: string
+                slug:
+                  type: string
+                userId:
+                  type: number
+                imagesUrl:
+                  type: array
+                  items:
+                    type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    email:
+                      type: string
+                    isActive:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+    GetAllBlogsRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            blogs:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  title:
+                    type: string
+                  slug:
+                    type: string
+                  userId:
+                    type: number
+                  imagesUrl:
+                    type: array
+                    items:
+                      type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+    resendVerifyEmailReq:
+      type: object
+      properties:
+        email:
+          type: string
+    resendVerifyEmailRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
   securitySchemes:
     bearerAuth:
       type: http

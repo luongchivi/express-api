@@ -1,7 +1,9 @@
+require('dotenv').config({ path: `${process.cwd()}/.env` });
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { Op } = require('sequelize');
+const uniqid = require('uniqid');
 const UserModel = require('../../database/models/user');
 const UserRoleModel = require('../../database/models/userRole');
 const RoleModel = require('../../database/models/role');
@@ -13,7 +15,7 @@ const {
   buildResponseMessage,
   buildSuccessResponse,
 } = require('../shared');
-const sendMail = require('../../lib/sendMail');
+const EmailService = require('../../lib/EmailService');
 
 
 async function signUp(req, res, next) {
@@ -37,15 +39,7 @@ async function signUp(req, res, next) {
       roleId: userRole.id,
     });
 
-    const {
-      id,
-      email,
-    } = newUser;
-    const {
-      password: _,
-      deletedAt: _deleteAt,
-      ...rest
-    } = newUser.dataValues;
+    const { id, email } = newUser;
 
     const accessToken = generateAccessToken({
       userId: id,
@@ -55,6 +49,37 @@ async function signUp(req, res, next) {
       userId: id,
       email,
     });
+    await newUser.update({ refreshToken });
+    await newUser.reload();
+
+    const verifyEmailToken = uniqid();
+
+    // Send email for verify email signup
+    const emailService = new EmailService();
+    const result = await emailService.sendMail('verifyEmail', { email, verifyEmailToken });
+    if (!result.accepted && result.accepted.length !== 0) {
+      return buildResponseMessage(res, 'Failed to send email to verify.', 400);
+    }
+
+    // save verifyEmailToken for later check in /api/v1/auth/verify-email/{verifyEmailToken}
+    newUser.verifyEmailToken = verifyEmailToken;
+    newUser.verifyEmailTokenExpires = Date.now() + parseInt(process.env.VERIFY_EMAIL_TOKEN_EXPIRES, 10);
+    await newUser.save();
+    await newUser.reload();
+
+    const {
+      password: _password,
+      deletedAt: _deleteAt,
+      isActive: _isActive,
+      refreshToken: _refreshToken,
+      passwordResetToken: _passwordResetToken,
+      passwordResetTokenExpires: _passwordResetTokenExpires,
+      passwordChangedAt: _passwordChangedAt,
+      hasVerifiedEmail: _hasVerifiedEmail,
+      verifyEmailToken: _verifyEmailToken,
+      verifyEmailTokenExpires: _verifyEmailTokenExpires,
+      ...rest
+    } = newUser.dataValues;
 
     return buildSuccessResponse(res, 'SignUp successfully.', {
       user: rest,
@@ -68,18 +93,91 @@ async function signUp(req, res, next) {
   }
 }
 
+async function verifyEmail(req, res, next) {
+  try {
+    const { verifyEmailToken } = req.params;
+
+    const user = await UserModel.findOne({
+      where: {
+        verifyEmailToken,
+        verifyEmailTokenExpires: {
+          [Op.gt]: new Date(), // Check that the token has not expired
+          [Op.not]: null,
+        },
+      },
+    });
+
+    // Check if user exists and token is valid
+    if (!user) {
+      return buildResponseMessage(res, 'Invalid or expired verification token.', 400);
+    }
+
+    // Check if the email is already verified
+    if (user.hasVerifiedEmail) {
+      return buildResponseMessage(res, 'Email already verified.', 400);
+    }
+
+    // Update the user's verification status
+    user.hasVerifiedEmail = true;
+    user.verifyEmailToken = null;
+    user.verifyEmailTokenExpires = null;
+    user.isActive = true;
+    await user.save();
+
+    return res.redirect(`${process.env.URL_SERVER_FE}/login`);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to verify email.';
+    next(error);
+  }
+}
+
+async function resendVerifyEmail(req, res, next) {
+  try {
+    const { email } = req.body;
+
+    const user = await UserModel.findOne({
+      where: {
+        email,
+        isActive: false,
+        hasVerifiedEmail: false,
+      },
+    });
+
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const { verifyEmailToken } = user;
+
+    // Resend email to verify
+    const emailService = new EmailService();
+    const result = await emailService.sendMail('verifyEmail', { email, verifyEmailToken });
+    if (!result.accepted && result.accepted.length !== 0) {
+      return buildResponseMessage(res, 'Failed to send email to verify.', 400);
+    }
+    return buildResponseMessage(res, 'Resend verification successfully.', 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to resend verify email.';
+    next(error);
+  }
+}
+
 async function login(req, res, next) {
   try {
-    const {
-      email,
-      password,
-    } = req.body;
+    const { email, password } = req.body;
     const user = await UserModel.findOne({
       where: { email },
     });
 
     if (!user) {
       return buildResponseMessage(res, 'User does not exist.', 404);
+    }
+
+    // Check if the user's email is verified
+    if (!user.hasVerifiedEmail || !user.isActive) {
+      return buildResponseMessage(res, 'Email not verified. Please verify your email before logging in.', 401);
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
@@ -109,9 +207,20 @@ async function login(req, res, next) {
       },
     );
 
+    const {
+      password: _password,
+      passwordResetToken: _passwordResetToken,
+      passwordResetTokenExpires: _passwordResetTokenExpires,
+      passwordChangedAt: _passwordChangedAt,
+      deletedAt: _deletedAt,
+      refreshToken: _refreshToken,
+      ...rest
+    } = user.dataValues;
+
     return buildSuccessResponse(res, 'Login successfully.', {
       accessToken,
       refreshToken,
+      user: rest,
     }, 200);
   } catch (error) {
     error.statusCode = 400;
@@ -165,20 +274,12 @@ async function forgotPassword(req, res, next) {
     const resetToken = user.createPasswordChangeToken();
     await user.save();
 
-    const html = `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-      <h2 style="color: #333;">Ecommerce Store Password Reset Request</h2>
-      <p>Please click the link below to reset your password. This link will expire in 15 minutes.</p>
-      <a href="${process.env.URL_SERVER}/api/user/reset-password/${resetToken}" style="display: inline-block; padding: 10px 20px; margin: 10px 0; font-size: 16px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 5px;">Reset Password</a>
-      <p>If you did not request a password reset, please ignore this email.</p>
-    </div>
-    `;
-
-    const result = await sendMail(email, html);
-    if (result && result.accepted && result.accepted.length > 0) {
-      return buildResponseMessage(res, 'Send mail for reset password successfully.', 200);
+    const emailService = new EmailService();
+    const result = await emailService.sendMail('forgotPassword', { email, resetToken });
+    if (!result.accepted && !result.accepted.length > 0) {
+      return buildResponseMessage(res, 'Failed to send reset password email.', 500);
     }
-    return buildResponseMessage(res, 'Failed to send reset password email.', 500);
+    return buildResponseMessage(res, 'Send mail for reset password successfully.', 200);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Request forgot password failed.';
@@ -188,8 +289,7 @@ async function forgotPassword(req, res, next) {
 
 async function resetPassword(req, res, next) {
   try {
-    const { resetToken } = req.params;
-    const { newPassword } = req.body;
+    const { newPassword, resetToken } = req.body;
 
     const passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
@@ -204,12 +304,12 @@ async function resetPassword(req, res, next) {
     });
 
     if (!user) {
-      return buildResponseMessage(res, 'User does not exist or resetToken is expire.', 404);
+      return buildResponseMessage(res, 'Request link for reset password expires.', 400);
     }
 
     user.password = newPassword;
-    user.passwordResetToken = null; //  2 thường này không set về null làm sao để set về null torng database
-    user.passwordResetTokenExpires = null; //
+    user.passwordResetToken = null;
+    user.passwordResetTokenExpires = null;
     user.passwordChangedAt = Date.now();
     await user.save();
     return buildSuccessResponse(res, 'Password reset successfully.', 200);
@@ -222,8 +322,10 @@ async function resetPassword(req, res, next) {
 
 module.exports = {
   signUp,
+  verifyEmail,
   login,
   refreshToken,
   forgotPassword,
   resetPassword,
+  resendVerifyEmail,
 };

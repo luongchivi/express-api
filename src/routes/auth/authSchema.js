@@ -26,6 +26,7 @@ const loginReq = Joi.object({
 const loginRes = createResultsSchemaResponse({
   accessToken: Joi.string().required(),
   refreshToken: Joi.string().required(),
+  user: Joi.object().required(),
 });
 
 const refreshTokenReq = Joi.object({
@@ -43,14 +44,24 @@ const forgotPasswordReq = Joi.object({
 const forgotPasswordRes = createMessageSchemaResponse();
 
 const resetPasswordReq = Joi.object({
+  resetToken: Joi.string().required(),
   newPassword: Joi.string().required(),
 });
 
 const resetPasswordRes = createMessageSchemaResponse();
 
-const resetPasswordParam = Joi.object({
-  resetToken: Joi.string().required(),
+const verifyEmailParam = Joi.object({
+  verifyEmailToken: Joi.string().required(),
 });
+
+const verifyEmailRes = createMessageSchemaResponse();
+
+const resendVerifyEmailReq = Joi.object({
+  email: Joi.string().required(),
+});
+
+const resendVerifyEmailRes = createMessageSchemaResponse();
+
 
 module.exports = {
   signUpReq,
@@ -63,5 +74,8 @@ module.exports = {
   forgotPasswordRes,
   resetPasswordReq,
   resetPasswordRes,
-  resetPasswordParam,
+  verifyEmailParam,
+  verifyEmailRes,
+  resendVerifyEmailReq,
+  resendVerifyEmailRes,
 };

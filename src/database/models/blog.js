@@ -47,7 +47,7 @@ const Blog = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.BLOG), {
 });
 
 // One to Many, Blog và Comment, 1 Blog có 1 hoặc nhiều Comments
-Blog.hasMany(Comment, { foreignKey: 'blogId', as: 'comments' })
+Blog.hasMany(Comment, { foreignKey: 'blogId', as: 'comments' });
 Comment.belongsTo(Blog, { foreignKey: 'blogId', as: 'blog' });
 
 module.exports = Blog;

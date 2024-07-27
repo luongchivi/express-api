@@ -6,7 +6,6 @@ const {
 } = require('../constants');
 
 
-
 const Comment = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.COMMENT), {
   id: {
     type: DataTypes.INTEGER,

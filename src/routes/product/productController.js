@@ -88,6 +88,8 @@ async function getAllProducts(req, res, next) {
 }
 
 async function addProduct(req, res, next) {
+  let imagesUrl = [];
+  let thumbImageUrl;
   try {
     const payload = req.body;
     const { categoryId, supplierId, name } = payload;
@@ -113,7 +115,6 @@ async function addProduct(req, res, next) {
     const { thumbImage, images } = req.files;
 
     if (images) {
-      let imagesUrl = [];
       if (images.length > 0) {
         imagesUrl = await uploadImages(images, 'ecommerce_products_images');
       }
@@ -121,7 +122,6 @@ async function addProduct(req, res, next) {
     }
 
     if (thumbImage) {
-      let thumbImageUrl;
       if (thumbImage.length > 0) {
         thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
       }
@@ -134,6 +134,8 @@ async function addProduct(req, res, next) {
       product,
     }, 200);
   } catch (error) {
+    if (imagesUrl) { await deleteImages(imagesUrl, 'ecommerce_products_images'); }
+    if (thumbImageUrl) { await deleteImage(thumbImageUrl, 'ecommerce_products_thumb_images'); }
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to create new product.';
     next(error);

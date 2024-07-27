@@ -4,17 +4,20 @@ const CategorySupplierModel = require('../../database/models/categorySupplier');
 const {
   buildSuccessResponse,
   buildResponseMessage,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 const {
   uploadImage,
-  deleteImage
+  deleteImage,
 } = require('../../lib/cloudinary');
 
 
 async function addCategory(req, res, next) {
-  let iconImageUrl, thumbImageUrl;
+  let iconImageUrl; let
+    thumbImageUrl;
   try {
-    let payload = req.body;
+    const payload = req.body;
     const { iconImage, thumbImage } = req.files;
 
     if (iconImage) {
@@ -36,8 +39,8 @@ async function addCategory(req, res, next) {
       category: newCategory,
     }, 201);
   } catch (error) {
-    if (iconImageUrl) await deleteImage(iconImageUrl, 'ecommerce_category_icon_images');
-    if (thumbImageUrl) await deleteImage(thumbImageUrl, 'ecommerce_category_thumb_images');
+    if (iconImageUrl) { await deleteImage(iconImageUrl, 'ecommerce_category_icon_images'); }
+    if (thumbImageUrl) { await deleteImage(thumbImageUrl, 'ecommerce_category_thumb_images'); }
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to add new category.';
     next(error);
@@ -46,7 +49,24 @@ async function addCategory(req, res, next) {
 
 async function getAllCategories(req, res, next) {
   try {
-    const categories = await CategoryModel.findAll({
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
+
+    const filterableFields = {};
+
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    const categories = await CategoryModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+      attributes: { exclude: ['password', 'deletedAt'] },
       include: {
         model: SupplierModel,
         as: 'suppliers',
@@ -54,9 +74,22 @@ async function getAllCategories(req, res, next) {
         through: { attributes: [] },
       },
     });
-    return buildSuccessResponse(res, 'Get all categories successfully.', {
-      categories: categories || [],
-    }, 200);
+
+    const totalItemsFiltered = categories.count;
+    const totalItemsUnfiltered = await CategoryModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all users successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        categories: categories.rows,
+      },
+      200,
+    );
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get all categories.';
@@ -106,10 +139,11 @@ async function deleteCategory(req, res, next) {
 }
 
 async function updateCategory(req, res, next) {
-  let iconImageUrl, thumbImageUrl;
+  let iconImageUrl; let
+    thumbImageUrl;
   try {
     const { categoryId } = req.params;
-    let payload = req.body;
+    const payload = req.body;
     const category = await CategoryModel.findByPk(categoryId);
     if (!category) {
       return buildResponseMessage(res, 'Category not found.', 404);
@@ -143,8 +177,8 @@ async function updateCategory(req, res, next) {
       category,
     }, 200);
   } catch (error) {
-    if (iconImageUrl) await deleteImage(iconImageUrl, 'ecommerce_category_icon_images');
-    if (thumbImageUrl) await deleteImage(thumbImageUrl, 'ecommerce_category_thumb_images');
+    if (iconImageUrl) { await deleteImage(iconImageUrl, 'ecommerce_category_icon_images'); }
+    if (thumbImageUrl) { await deleteImage(thumbImageUrl, 'ecommerce_category_thumb_images'); }
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to update category.';
     next(error);
