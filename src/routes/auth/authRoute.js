@@ -53,7 +53,7 @@ router.get(
 // POST /api/v1/auth/resend-verify-email/{verifyEmailToken}
 router.post(
   '/resend-verify-email',
-  validateResponse(resendVerifyEmailReq),
+  validateRequest(resendVerifyEmailReq),
   validateResponse(resendVerifyEmailRes),
   resendVerifyEmail,
 );

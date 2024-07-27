@@ -38,7 +38,7 @@ const refreshTokenRes = createResultsSchemaResponse({
 });
 
 const forgotPasswordReq = Joi.object({
-  email: Joi.string().required(),
+  email: Joi.string().email().required(),
 });
 
 const forgotPasswordRes = createMessageSchemaResponse();
@@ -57,7 +57,7 @@ const verifyEmailParam = Joi.object({
 const verifyEmailRes = createMessageSchemaResponse();
 
 const resendVerifyEmailReq = Joi.object({
-  email: Joi.string().required(),
+  email: Joi.string().email().required(),
 });
 
 const resendVerifyEmailRes = createMessageSchemaResponse();
