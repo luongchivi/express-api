@@ -67,6 +67,7 @@ const getAllProductsQuery = createSchemaQuery({
   unitsSold: Joi.number().optional(),
   createdAt: Joi.string().optional(),
   averageRating: Joi.number().optional(),
+  categoryName: Joi.string().optional(),
 });
 
 const formDataFieldsUploadConfig = [

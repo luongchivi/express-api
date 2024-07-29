@@ -3,6 +3,7 @@ const {
   createResultsSchemaResponse,
   createMessageSchemaResponse,
   createSchemaQuery,
+  createListResultsSchemaResponse,
 } = require('../shared');
 
 
@@ -15,7 +16,7 @@ const addCategoryRes = createResultsSchemaResponse({
   category: Joi.object().required(),
 });
 
-const getAllCategoriesRes = createResultsSchemaResponse({
+const getAllCategoriesRes = createListResultsSchemaResponse({
   categories: Joi.array(),
 });
 
