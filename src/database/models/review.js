@@ -4,6 +4,8 @@ const {
   DB_TABLE_NAMES,
   getTableNameForMigrations,
 } = require('../constants');
+const User = require('./user');
+const Product = require('./product');
 
 
 const Review = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.REVIEW), {
@@ -50,14 +52,14 @@ const Review = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.REVIEW)
   underscored: true,
 });
 
-// // One to Many, User và Review
-// User.hasMany(Review, { foreignKey: 'userId', as: 'reviews' });
-// Review.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-//
-// // One to Many, Product và Review
-// Product.hasMany(Review, { foreignKey: 'productId', as: 'reviews' });
-// Review.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
-//
+// One to Many, User và Review
+User.hasMany(Review, { foreignKey: 'userId', as: 'reviews' });
+Review.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// One to Many, Product và Review
+Product.hasMany(Review, { foreignKey: 'productId', as: 'reviews' });
+Review.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+
 // // One to One, Review và Product
 // Review.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 // Review.belongsTo(Product, { foreignKey: 'productId', as: 'product' });

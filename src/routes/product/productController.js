@@ -32,7 +32,7 @@ async function getAllProducts(req, res, next) {
       unitsOnOrder: 'number',
       unitsSold: 'number',
       createdAt: 'date',
-      averageRating: 'number',
+      averageRating: 'array',
     };
 
     const { categoryName } = req.query;

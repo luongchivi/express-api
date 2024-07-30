@@ -163,6 +163,13 @@ function parseQueryParams(query, filterableFields = {}) {
             throw new Error('Invalid date format');
           }
           break;
+        case 'array':
+          const filter = [];
+          for (const item of query[field].split(',')) {
+            filter.push(item);
+          }
+          where[field] = { [Op.in]: filter };
+          break;
         // Add more cases as needed
         default:
           break;

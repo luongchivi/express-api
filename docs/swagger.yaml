@@ -152,14 +152,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/resendVerifyEmailReq'
+              $ref: '#/components/schemas/ResendVerifyEmailReq'
       responses:
         200:
           description: Successful reset password
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resendVerifyEmailRes'
+                $ref: '#/components/schemas/ResendVerifyEmailRes'
   /api/v1/users:
     get:
       summary: Get all list users
@@ -704,9 +704,14 @@ paths:
     get:
       summary: Get all list products
       tags: [ Products ]
-      security:
-        - bearerAuth: [ ]
       parameters:
+        - in: query
+          name: averageRating
+          required: false
+          schema:
+            type: string
+          description: Filter product by averageRating
+          example: 1,2,3,4,5
         - in: query
           name: name
           required: false
@@ -717,8 +722,9 @@ paths:
           name: unitPrice
           required: false
           schema:
-            type: number
+            type: string
           description: Filter product by unitPrice
+          example: Filter product by range unitPrice split by comma '0,37902253'
         - in: query
           name: unitsInStock
           required: false
@@ -742,7 +748,7 @@ paths:
           required: false
           schema:
             type: string
-          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+          description: Filter product by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
         - in: query
           name: page
           required: false
@@ -1351,6 +1357,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddReviewRes'
+  /api/v1/reviews/{productId}/product:
+    get:
+      summary: Get reviews star from product
+      tags: [ Reviews ]
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: productId of the product to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReviewStarProductRes'
   /api/v1/categories:
     post:
       summary: Create new category for product
@@ -2720,6 +2744,25 @@ components:
                 updatedAt:
                   type: string
                   format: date-time
+                category:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    iconImageUrl:
+                      type: string
+                    thumbImageUrl:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
     GetAllProductsRes:
       type: object
       properties:
@@ -4064,12 +4107,12 @@ components:
                   updatedAt:
                     type: string
                     format: date-time
-    resendVerifyEmailReq:
+    ResendVerifyEmailReq:
       type: object
       properties:
         email:
           type: string
-    resendVerifyEmailRes:
+    ResendVerifyEmailRes:
       type: object
       properties:
         results:
@@ -4079,6 +4122,30 @@ components:
               type: number
             message:
               type: string
+    GetReviewStarProductRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            totalReviews:
+              type: number
+            totalZeroStar:
+              type: number
+            totalOneStar:
+              type: number
+            totalTwoStar:
+              type: number
+            totalThreeStar:
+              type: number
+            totalFourStar:
+              type: number
+            totalFiveStar:
+              type: number
   securitySchemes:
     bearerAuth:
       type: http

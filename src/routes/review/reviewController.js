@@ -5,8 +5,13 @@ const ProductModel = require('../../database/models/product');
 const {
   buildResponseMessage,
   buildSuccessResponse,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 const { uploadImages } = require('../../lib/cloudinary');
+const { Op } = require('sequelize');
+const CategoryModel = require('../../database/models/category');
+const SupplierModel = require('../../database/models/supplier');
 
 
 async function addReviewProduct(req, res, next) {
@@ -41,7 +46,7 @@ async function addReviewProduct(req, res, next) {
     const payload = req.body;
     const { feedbackImages } = req.files;
     let imagesUrl = [];
-    if (feedbackImages.length > 0) {
+    if (feedbackImages) {
       imagesUrl = await uploadImages(feedbackImages, 'ecommerce_reviews_images');
     }
 
@@ -63,6 +68,40 @@ async function addReviewProduct(req, res, next) {
   }
 }
 
+async function getCountReviewStarProduct(req, res, next) {
+  try {
+    const productId  = parseInt(req.params.productId, 10);
+
+    const totalReviews = await ReviewModel.count({ where: { productId}});
+    const totalZeroStar = await ReviewModel.count({ where: { productId, rating: 0 }});
+    const totalOneStar = await ReviewModel.count({ where: { productId, rating: 1 }});
+    const totalTwoStar = await ReviewModel.count({ where: { productId, rating: 2 }});
+    const totalThreeStar = await ReviewModel.count({ where: { productId, rating: 3 }});
+    const totalFourStar = await ReviewModel.count({ where: { productId, rating: 4 }});
+    const totalFiveStar = await ReviewModel.count({ where: { productId, rating: 5 }});
+
+    return buildSuccessResponse(
+      res,
+      'Get count star reviews from product successfully.',
+      {
+        totalReviews,
+        totalZeroStar,
+        totalOneStar,
+        totalTwoStar,
+        totalThreeStar,
+        totalFourStar,
+        totalFiveStar,
+      },
+      200,
+    );
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get all list reviews from product.';
+    next(error);
+  }
+}
+
 module.exports = {
   addReviewProduct,
+  getCountReviewStarProduct,
 };

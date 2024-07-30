@@ -19,7 +19,7 @@ module.exports = async () => {
 
       if (reviews.length > 0) {
         const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-        const averageRating = totalRating / reviews.length;
+        const averageRating = Math.round(totalRating / reviews.length);
 
         await product.update({ averageRating });
       }

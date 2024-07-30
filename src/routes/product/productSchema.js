@@ -61,12 +61,14 @@ const deleteProductRes = createMessageSchemaResponse();
 
 const getAllProductsQuery = createSchemaQuery({
   name: Joi.string().optional(),
-  unitPrice: Joi.number().optional(),
+  unitPrice: Joi.string().optional(),
   unitsInStock: Joi.number().optional(),
   unitsOnOrder: Joi.number().optional(),
   unitsSold: Joi.number().optional(),
   createdAt: Joi.string().optional(),
-  averageRating: Joi.number().optional(),
+  averageRating: Joi.string().pattern(/^[1-5](,[1-5]){0,4}$/).optional().messages({
+    'string.pattern.base': 'must be a string containing numbers from 1 to 5, separated by commas, and up to 5 numbers',
+  }),
   categoryName: Joi.string().optional(),
 });
 
