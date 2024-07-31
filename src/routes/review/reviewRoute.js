@@ -25,9 +25,9 @@ const formDataFields = require('../../middleware/formDataHandler');
 
 const router = express.Router();
 
-// POST /api/v1/reviews/{productId}
+// POST /api/v1/reviews/{productId}/product
 router.post(
-  '/:productId',
+  '/:productId/product',
   verifyToken,
   verifyRole(['Admin', 'User']),
   verifyPermission('write'),

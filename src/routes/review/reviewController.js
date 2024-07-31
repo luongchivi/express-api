@@ -5,18 +5,14 @@ const ProductModel = require('../../database/models/product');
 const {
   buildResponseMessage,
   buildSuccessResponse,
-  parseQueryParams,
-  buildResultListResponse,
 } = require('../shared');
 const { uploadImages } = require('../../lib/cloudinary');
-const { Op } = require('sequelize');
-const CategoryModel = require('../../database/models/category');
-const SupplierModel = require('../../database/models/supplier');
 
 
 async function addReviewProduct(req, res, next) {
   try {
     const { userId, email } = req.userInfo;
+    const { productId } = req.params;
     const user = await UserModel.findOne({
       where: {
         id: userId,
@@ -30,6 +26,7 @@ async function addReviewProduct(req, res, next) {
     const isReviewed = await ReviewModel.findOne({
       where: {
         userId: user.id,
+        productId,
       },
     });
 
@@ -37,17 +34,18 @@ async function addReviewProduct(req, res, next) {
       return buildResponseMessage(res, 'You has already give review on this product.', 400);
     }
 
-    const { productId } = req.params;
     const product = await ProductModel.findByPk(productId);
     if (!product) {
       return buildResponseMessage(res, 'Product not found.', 404);
     }
 
     const payload = req.body;
-    const { feedbackImages } = req.files;
     let imagesUrl = [];
-    if (feedbackImages) {
-      imagesUrl = await uploadImages(feedbackImages, 'ecommerce_reviews_images');
+    if (req.files) {
+      const { feedbackImages } = req.files;
+      if (feedbackImages) {
+        imagesUrl = await uploadImages(feedbackImages, 'ecommerce_reviews_images');
+      }
     }
 
     // Create the review

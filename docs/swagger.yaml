@@ -1331,7 +1331,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAllWardsRes'
-  /api/v1/reviews/{productId}:
+  /api/v1/reviews/{productId}/product:
     post:
       summary: Add new reviews for product
       tags: [ Reviews ]
@@ -1357,7 +1357,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddReviewRes'
-  /api/v1/reviews/{productId}/product:
     get:
       summary: Get reviews star from product
       tags: [ Reviews ]
