@@ -8,10 +8,12 @@ const {
   validateRequest,
   validateResponse,
   validateParams,
+  validateQuery,
 } = require('../../middleware/validationHandler');
 const {
   addReviewProduct,
   getCountReviewStarProduct,
+  getReviewsProduct,
 } = require('./reviewController');
 const {
   addReviewProductReq,
@@ -19,6 +21,8 @@ const {
   productIdParam,
   formDataFieldsUploadConfig,
   getCountReviewStarProductRes,
+  getReviewsProductRes,
+  getReviewsProductQuery,
 } = require('./reviewSchema');
 const formDataFields = require('../../middleware/formDataHandler');
 
@@ -41,6 +45,15 @@ router.post(
 // GET /api/v1/reviews/{productId}/product
 router.get(
   '/:productId/product',
+  validateParams(productIdParam),
+  validateQuery(getReviewsProductQuery),
+  validateResponse(getReviewsProductRes),
+  getReviewsProduct,
+);
+
+// GET /api/v1/reviews/{productId}/count-review-star-product
+router.get(
+  '/:productId/count-review-star-product',
   validateParams(productIdParam),
   validateResponse(getCountReviewStarProductRes),
   getCountReviewStarProduct,

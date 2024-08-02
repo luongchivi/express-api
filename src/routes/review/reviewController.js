@@ -5,8 +5,11 @@ const ProductModel = require('../../database/models/product');
 const {
   buildResponseMessage,
   buildSuccessResponse,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
 const { uploadImages } = require('../../lib/cloudinary');
+const { Op } = require('sequelize');
 
 
 async function addReviewProduct(req, res, next) {
@@ -68,7 +71,7 @@ async function addReviewProduct(req, res, next) {
 
 async function getCountReviewStarProduct(req, res, next) {
   try {
-    const productId  = parseInt(req.params.productId, 10);
+    const productId  = req.params.productId;
 
     const totalReviews = await ReviewModel.count({ where: { productId}});
     const totalZeroStar = await ReviewModel.count({ where: { productId, rating: 0 }});
@@ -99,7 +102,70 @@ async function getCountReviewStarProduct(req, res, next) {
   }
 }
 
+async function getReviewsProduct(req, res, next) {
+  try {
+    const { productId }  = req.params;
+
+    const product = await ProductModel.findByPk(productId);
+    if (!product) {
+      return buildResponseMessage(res, 'Product not found.', 404);
+    }
+
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
+
+    const filterableFields = {};
+
+    let {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    where.productId = {
+      [Op.eq]: productId,
+    }
+
+    const reviews = await ReviewModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+      attributes: { exclude: ['password', 'deletedAt'] },
+      include: [
+        {
+          model: UserModel,
+          as: 'user',
+          attributes: ['firstName', 'lastName'],
+        }
+      ]
+    });
+
+    const totalItemsFiltered = reviews.count;
+    const totalItemsUnfiltered = await ReviewModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all reviews of product successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        reviews: reviews.rows,
+      },
+      200,
+    );
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get all list reviews from product.';
+    next(error);
+  }
+}
+
 module.exports = {
   addReviewProduct,
   getCountReviewStarProduct,
+  getReviewsProduct,
 };

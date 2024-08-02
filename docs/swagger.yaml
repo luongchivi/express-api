@@ -1357,8 +1357,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AddReviewRes'
+  /api/v1/reviews/{productId}/count-review-star-product:
     get:
-      summary: Get reviews star from product
+      summary: Count reviews star from product
       tags: [ Reviews ]
       parameters:
         - name: productId

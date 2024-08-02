@@ -1,5 +1,8 @@
 const Joi = require('joi');
-const { createResultsSchemaResponse } = require('../shared');
+const { createResultsSchemaResponse,
+  createListResultsSchemaResponse,
+  createSchemaQuery
+} = require('../shared');
 
 
 const productIdParam = Joi.object({
@@ -27,7 +30,13 @@ const getCountReviewStarProductRes = createResultsSchemaResponse({
   totalThreeStar: Joi.number().required(),
   totalFourStar: Joi.number().required(),
   totalFiveStar: Joi.number().required(),
-})
+});
+
+const getReviewsProductRes = createListResultsSchemaResponse({
+  reviews: Joi.array().items(Joi.object().required()).required(),
+});
+
+const getReviewsProductQuery = createSchemaQuery();
 
 module.exports = {
   productIdParam,
@@ -35,4 +44,6 @@ module.exports = {
   addReviewProductRes,
   formDataFieldsUploadConfig,
   getCountReviewStarProductRes,
+  getReviewsProductRes,
+  getReviewsProductQuery,
 };

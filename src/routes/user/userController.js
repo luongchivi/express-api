@@ -223,8 +223,16 @@ async function getCurrentUser(req, res, next) {
         email,
       },
       attributes: {
-        exclude: ['password', 'deletedAt'],
+        exclude: [
+          'password', 'deletedAt', 'passwordResetToken', 'verifyEmailTokenExpires', 'hasVerifiedEmail',
+          'passwordResetTokenExpires', 'passwordChangedAt','verifyEmailToken'],
       },
+      include: [
+        {
+          model: RoleModel,
+          as: 'roles',
+        }
+      ]
     });
 
     if (!user) {
