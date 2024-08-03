@@ -37,6 +37,12 @@ async function getAllUsers(req, res, next) {
       limit,
       offset,
       attributes: { exclude: ['password', 'deletedAt'] },
+      include: [
+        {
+          model: RoleModel,
+          as: 'roles',
+        }
+      ]
     });
 
     const totalItemsFiltered = users.count;

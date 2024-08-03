@@ -112,27 +112,29 @@ async function addProduct(req, res, next) {
       }
     }
 
-    const { thumbImage, images } = req.files;
+    if (req.files) {
+      const { thumbImage, images } = req.files;
 
-    if (images) {
-      if (images.length > 0) {
-        imagesUrl = await uploadImages(images, 'ecommerce_products_images');
+      if (images) {
+        if (images.length > 0) {
+          imagesUrl = await uploadImages(images, 'ecommerce_products_images');
+        }
+        payload.imagesUrl = imagesUrl;
       }
-      payload.imagesUrl = imagesUrl;
-    }
 
-    if (thumbImage) {
-      if (thumbImage.length > 0) {
-        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
+      if (thumbImage) {
+        if (thumbImage.length > 0) {
+          thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
+        }
+        payload.thumbImageUrl = thumbImageUrl;
       }
-      payload.thumbImageUrl = thumbImageUrl;
     }
 
     const product = await ProductModel.create(payload);
 
     return buildSuccessResponse(res, 'Create new product successfully.', {
       product,
-    }, 200);
+    }, 201);
   } catch (error) {
     if (imagesUrl) { await deleteImages(imagesUrl, 'ecommerce_products_images'); }
     if (thumbImageUrl) { await deleteImage(thumbImageUrl, 'ecommerce_products_thumb_images'); }
