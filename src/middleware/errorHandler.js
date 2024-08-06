@@ -16,21 +16,21 @@ function errorHandler(err, req, res, _next) {
     // Handle Sequelize-specific errors
     switch (err.name) {
       case 'SequelizeUniqueConstraintError':
-        return buildErrorResponse(res, err?.errors[0]?.message || 'Unique constraint error.', {
+        return buildErrorResponse(res, err?.message || 'Unique constraint error.', {
           errorStack: restError,
           messageErrorAPI,
           errorEndpoint: req.url,
         }, 400);
 
       case 'SequelizeValidationError':
-        return buildErrorResponse(res, err?.errors[0]?.message || 'Validation error.', {
+        return buildErrorResponse(res, err?.message || 'Validation error.', {
           errorStack: restError,
           messageErrorAPI,
           errorEndpoint: req.url,
         }, 400);
 
       case 'SequelizeForeignKeyConstraintError':
-        return buildErrorResponse(res, err?.errors[0]?.message || 'Foreign key constraint error.', {
+        return buildErrorResponse(res, err?.message || 'Foreign key constraint error.', {
           errorStack: restError,
           messageErrorAPI,
           errorEndpoint: req.url,

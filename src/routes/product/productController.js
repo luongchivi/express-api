@@ -181,6 +181,16 @@ async function deleteProduct(req, res, next) {
 
     const product = await ProductModel.findByPk(productId);
 
+    const { thumbImageUrl, imagesUrl } = product;
+
+    if (imagesUrl) {
+      await deleteImages(imagesUrl, 'ecommerce_products_images');
+    }
+
+    if (thumbImageUrl) {
+      await deleteImage(thumbImageUrl, 'ecommerce_products_thumb_images');
+    }
+
     if (!product) {
       return buildResponseMessage(res, 'Not found product.', 404);
     }
@@ -197,7 +207,8 @@ async function deleteProduct(req, res, next) {
 
 async function updateProduct(req, res, next) {
   const transaction = await sequelize.transaction();
-
+  let imagesUrl = [];
+  let thumbImageUrl;
   try {
     const { productId } = req.params;
     const payload = req.body;
@@ -207,16 +218,24 @@ async function updateProduct(req, res, next) {
       payload.slug = slugify(name.toLowerCase());
     }
 
-    const category = await CategoryModel.findByPk(categoryId);
+    if (categoryId !== 'null') {
+      const category = await CategoryModel.findByPk(categoryId);
 
-    if (!category && categoryId) {
-      return buildResponseMessage(res, 'Not found category.', 404);
+      if (!category && categoryId) {
+        return buildResponseMessage(res, 'Not found category.', 404);
+      }
+    } else {
+      payload.categoryId = null;
     }
 
-    const supplier = await SupplierModel.findByPk(supplierId);
+    if (supplierId !== 'null') {
+      const supplier = await SupplierModel.findByPk(supplierId);
 
-    if (!supplier && supplierId) {
-      return buildResponseMessage(res, 'Not found supplier.', 404);
+      if (!supplier && supplierId) {
+        return buildResponseMessage(res, 'Not found supplier.', 404);
+      }
+    } else {
+      payload.supplierId = null;
     }
 
     const product = await ProductModel.findByPk(productId, {
@@ -237,23 +256,23 @@ async function updateProduct(req, res, next) {
     }
 
     // Update image in cloudinary
-    const { thumbImage, images } = req.files;
-    if (images) {
-      await deleteImages(product.imagesUrl, 'ecommerce_products_images');
-      let imagesUrl = [];
-      if (images.length > 0) {
-        imagesUrl = await uploadImages(images, 'ecommerce_products_images');
+    if (req.files) {
+      const { thumbImage, images } = req.files;
+      if (images) {
+        await deleteImages(product.imagesUrl, 'ecommerce_products_images');
+        if (images.length > 0) {
+          imagesUrl = await uploadImages(images, 'ecommerce_products_images');
+        }
+        payload.imagesUrl = imagesUrl;
       }
-      payload.imagesUrl = imagesUrl;
-    }
 
-    if (thumbImage) {
-      await deleteImage(product.thumbImageUrl, 'ecommerce_products_thumb_images');
-      let thumbImageUrl;
-      if (thumbImage.length > 0) {
-        thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
+      if (thumbImage) {
+        await deleteImage(product.thumbImageUrl, 'ecommerce_products_thumb_images');
+        if (thumbImage.length > 0) {
+          thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_products_thumb_images');
+        }
+        payload.thumbImageUrl = thumbImageUrl;
       }
-      payload.thumbImageUrl = thumbImageUrl;
     }
 
     await product.update(payload, { transaction });
@@ -302,6 +321,8 @@ async function updateProduct(req, res, next) {
     }, 200);
   } catch (error) {
     await transaction.rollback();
+    if (imagesUrl) { await deleteImages(imagesUrl, 'ecommerce_products_images'); }
+    if (thumbImageUrl) { await deleteImage(thumbImageUrl, 'ecommerce_products_thumb_images'); }
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to update product.';
     next(error);

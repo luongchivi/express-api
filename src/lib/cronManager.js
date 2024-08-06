@@ -10,8 +10,8 @@ const registerCronJobs = () => {
   // cron.schedule('*/2 * * * *', calculateAverageRating);
   // console.log('Registered cron job: calculateAverageRating every 2 minutes');
 
-  setInterval(calculateAverageRating, 10000);
-  console.log('Registered cron job: calculateAverageRating every 30 seconds');
+  // setInterval(calculateAverageRating, 10000);
+  // console.log('Registered cron job: calculateAverageRating every 30 seconds');
 
   // Đăng ký các cron job khác ở đây
 };

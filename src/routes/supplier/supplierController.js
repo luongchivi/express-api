@@ -3,7 +3,11 @@ const ProductModel = require('../../database/models/product');
 const {
   buildSuccessResponse,
   buildResponseMessage,
+  parseQueryParams,
+  buildResultListResponse,
 } = require('../shared');
+const { Op } = require('sequelize');
+const CategoryModel = require('../../database/models/category');
 
 
 async function addSupplier(req, res, next) {
@@ -22,10 +26,35 @@ async function addSupplier(req, res, next) {
 
 async function getAllSuppliers(req, res, next) {
   try {
-    const suppliers = await SupplierModel.findAll();
-    return buildSuccessResponse(res, 'Get all list suppliers successfully.', {
-      suppliers: suppliers || [],
-    }, 200);
+    const currentPage = parseInt(req.query.page);
+    const pageSize = parseInt(req.query.pageSize);
+
+    const filterableFields = {};
+
+    const { where, order, limit, offset } = parseQueryParams(req.query, filterableFields);
+
+    const suppliers = await SupplierModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+    });
+
+    const totalItemsFiltered = suppliers.count;
+    const totalItemsUnfiltered = await SupplierModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all list suppliers successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        suppliers: suppliers.rows,
+      },
+      200,
+    );
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get all list suppliers.';

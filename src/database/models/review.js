@@ -57,11 +57,8 @@ User.hasMany(Review, { foreignKey: 'userId', as: 'reviews' });
 Review.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 // One to Many, Product và Review
-Product.hasMany(Review, { foreignKey: 'productId', as: 'reviews' });
+Product.hasMany(Review, { foreignKey: 'productId', as: 'reviews', onDelete: 'CASCADE' });
 Review.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 
-// // One to One, Review và Product
-// Review.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-// Review.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 
 module.exports = Review;

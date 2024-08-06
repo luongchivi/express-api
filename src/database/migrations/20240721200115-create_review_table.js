@@ -29,6 +29,7 @@ module.exports = {
             model: getTableNameForMigrations(DB_TABLE_NAMES.PRODUCT),
             key: 'id',
           },
+          onDelete: 'CASCADE',
           allowNull: false,
         },
         rating: {

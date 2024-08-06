@@ -2,7 +2,7 @@
   "categories": [
     {
       "id": 1,
-      "name": "Smartphone (9)",
+      "name": "Smartphone",
       "link": "https://digital-world-2.myshopify.com/collections/smartphone",
       "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/mobile-devices_300x.jpg?v=1613166682",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/smartphone.png?v=117726531047959052161628340889",
@@ -11,7 +11,7 @@
     },
     {
       "id": 2,
-      "name": "Tablet (9)",
+      "name": "Tablet",
       "link": "https://digital-world-2.myshopify.com/collections/tablet",
       "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/pc-1_300x.jpg?v=1613166682",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/tablet.png?v=130474220186500652041628340891",
@@ -20,7 +20,7 @@
     },
     {
       "id": 3,
-      "name": "Laptop (8)",
+      "name": "Laptop",
       "link": "https://digital-world-2.myshopify.com/collections/laptop",
       "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/laptop_300x.jpg?v=1613166811",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/laptop.png?v=60805008396908785021628340873",
@@ -29,7 +29,7 @@
     },
     {
       "id": 4,
-      "name": "Camera (8)",
+      "name": "Camera",
       "link": "https://digital-world-2.myshopify.com/collections/camera",
       "thumb_image_url": "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcTN7PiqtsqGr4kp9_ZWnADFV600-O6AWduUH7bUIvdHrBqBU0b-lEvIP7t_Px2qFjzwTXIDmI0TqMClOqtIy0vpRnlfRnObfWJa9tnd4_tH_sctT88Ww3j5R4XKbg&usqp=CAc",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/camera.png?v=45506051278225345681628340856",
@@ -38,7 +38,7 @@
     },
     {
       "id": 5,
-      "name": "Printer (8)",
+      "name": "Printer",
       "link": "https://digital-world-2.myshopify.com/collections/printer",
       "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/printer_300x.jpg?v=1613166810",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/printer.png?v=23285734919403820961628340879",
@@ -47,7 +47,7 @@
     },
     {
       "id": 6,
-      "name": "Speaker (8)",
+      "name": "Speaker",
       "link": "https://digital-world-2.myshopify.com/collections/speaker",
       "thumb_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP6aaLX4tG4gVBjyPBhxn3mTxRbcIlKKCIog&usqp=CAU",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/speaker.png?v=35005791092559111231628340890",
@@ -56,7 +56,7 @@
     },
     {
       "id": 7,
-      "name": "Accessories (8)",
+      "name": "Accessories",
       "link": "https://digital-world-2.myshopify.com/collections/accessories",
       "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/headphone_8467ba67-70c7-4977-b57e-8847d56549c6_300x.jpg?v=1613166811",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/accessories.png?v=67538387381806079151628340853",
@@ -65,7 +65,7 @@
     },
     {
       "id": 8,
-      "name": "Television (8)",
+      "name": "Television",
       "link": "https://digital-world-2.myshopify.com/collections/television",
       "thumb_image_url": "https://digital-world-2.myshopify.com/cdn/shop/files/television_300x.jpg?v=1613166810",
       "icon_image_url": "https://digital-world-2.myshopify.com/cdn/shop/t/26/assets/television.png?v=181021438730403792141628340895",

@@ -17,9 +17,11 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
   },
   supplierId: {
     type: DataTypes.INTEGER,
+    allowNull: true,
   },
   categoryId: {
     type: DataTypes.INTEGER,
+    allowNull: true,
   },
   name: {
     type: DataTypes.STRING,
@@ -113,8 +115,8 @@ const Product = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.PRODUC
 });
 
 // Many to One, Product và Supplier nhiều sản phẩn cùng cung cấp tại 1 nhà phân phối
-Product.belongsTo(Supplier, { foreignKey: 'supplierId', as: 'supplier' });
-Supplier.hasMany(Product, { foreignKey: 'supplierId', as: 'products' });
+Product.belongsTo(Supplier, { foreignKey: 'supplierId', as: 'supplier', onDelete: 'SET NULL' });
+Supplier.hasMany(Product, { foreignKey: 'supplierId', as: 'products', onDelete: 'SET NULL' });
 
 // Many to One, Product và Category nhiều sản phẩm ứng với 1 danh mục
 Product.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });

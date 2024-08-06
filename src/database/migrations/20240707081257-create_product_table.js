@@ -21,6 +21,7 @@ module.exports = {
             model: getTableNameForMigrations(DB_TABLE_NAMES.SUPPLIER),
             key: 'id',
           },
+          onDelete: 'SET NULL',
         },
         category_id: {
           type: DataTypes.INTEGER,
@@ -28,6 +29,7 @@ module.exports = {
             model: getTableNameForMigrations(DB_TABLE_NAMES.CATEGORY),
             key: 'id',
           },
+          onDelete: 'SET NULL',
         },
         name: {
           type: DataTypes.STRING,
