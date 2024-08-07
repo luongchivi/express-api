@@ -96,20 +96,24 @@ async function addProduct(req, res, next) {
     payload.slug = slugify(name.toLowerCase());
     payload.name = name.trim();
 
-    if (categoryId) {
+    if (categoryId !== 'null') {
       const category = await CategoryModel.findByPk(categoryId);
 
-      if (!category) {
+      if (!category && categoryId) {
         return buildResponseMessage(res, 'Not found category.', 404);
       }
+    } else {
+      payload.categoryId = null;
     }
 
-    if (supplierId) {
+    if (supplierId !== 'null') {
       const supplier = await SupplierModel.findByPk(supplierId);
 
-      if (!supplier) {
+      if (!supplier && supplierId) {
         return buildResponseMessage(res, 'Not found supplier.', 404);
       }
+    } else {
+      payload.supplierId = null;
     }
 
     if (req.files) {
