@@ -15,6 +15,8 @@ const {
   createBlog,
   getBlog,
   getAllBlog,
+  deleteBlog,
+  updateBlog,
 } = require('./blogController');
 const {
   createBlogReq,
@@ -24,6 +26,7 @@ const {
   formDataFieldsUploadConfig,
   getAllBlogQuery,
   getAllBlogRes,
+  deleteBlogRes,
 } = require('./blogSchema');
 const formDataFields = require('../../middleware/formDataHandler');
 
@@ -56,6 +59,29 @@ router.get(
   validateQuery(getAllBlogQuery),
   validateResponse(getAllBlogRes),
   getAllBlog,
+);
+
+// DELETE /api/v1/blogs/{blogId}
+router.delete(
+  '/:blogId',
+  verifyToken,
+  verifyRole(['Admin']),
+  verifyPermission('delete'),
+  validateParams(blogIdParam),
+  validateResponse(deleteBlogRes),
+  deleteBlog,
+);
+
+// PUT /api/v1/blogs/{blogId}
+router.put(
+  '/:blogId',
+  verifyToken,
+  verifyRole(['Admin']),
+  verifyPermission('update'),
+  validateParams(blogIdParam),
+  formDataFields(formDataFieldsUploadConfig),
+  validateResponse(deleteBlogRes),
+  updateBlog,
 );
 
 module.exports = router;

@@ -35,8 +35,9 @@ module.exports = {
           type: DataTypes.TEXT,
           allowNull: false,
         },
-        images_url: {
-          type: DataTypes.ARRAY(DataTypes.STRING),
+        thumb_image_url: {
+          type: DataTypes.STRING,
+          defaultValue: '',
         },
         created_at: {
           type: DataTypes.DATE,

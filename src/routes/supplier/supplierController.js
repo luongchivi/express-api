@@ -6,8 +6,6 @@ const {
   parseQueryParams,
   buildResultListResponse,
 } = require('../shared');
-const { Op } = require('sequelize');
-const CategoryModel = require('../../database/models/category');
 
 
 async function addSupplier(req, res, next) {
@@ -29,7 +27,9 @@ async function getAllSuppliers(req, res, next) {
     const currentPage = parseInt(req.query.page);
     const pageSize = parseInt(req.query.pageSize);
 
-    const filterableFields = {};
+    const filterableFields = {
+      companyName: 'string',
+    };
 
     const { where, order, limit, offset } = parseQueryParams(req.query, filterableFields);
 

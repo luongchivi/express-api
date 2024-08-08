@@ -3,6 +3,7 @@ const {
   createResultsSchemaResponse,
   createListResultsSchemaResponse,
   createSchemaQuery,
+  createMessageSchemaResponse,
 } = require('../shared');
 
 
@@ -16,7 +17,7 @@ const createBlogRes = createResultsSchemaResponse({
 });
 
 const formDataFieldsUploadConfig = [
-  { name: 'images', maxCount: 10 },
+  { name: 'thumbImage', maxCount: 1 },
 ];
 
 const blogIdParam = Joi.object({
@@ -37,6 +38,8 @@ const getAllBlogRes = createListResultsSchemaResponse({
   blogs: Joi.array().required(),
 });
 
+const deleteBlogRes = createMessageSchemaResponse();
+
 module.exports = {
   createBlogReq,
   createBlogRes,
@@ -45,4 +48,5 @@ module.exports = {
   getBlogRes,
   getAllBlogQuery,
   getAllBlogRes,
+  deleteBlogRes,
 };

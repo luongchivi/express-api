@@ -180,10 +180,13 @@ async function getProductDetails(req, res, next) {
 }
 
 async function deleteProduct(req, res, next) {
+  const transaction = await sequelize.transaction();
   try {
     const { productId } = req.params;
 
-    const product = await ProductModel.findByPk(productId);
+    const product = await ProductModel.findByPk(productId, {
+      transaction,
+    });
 
     const { thumbImageUrl, imagesUrl } = product;
 
@@ -198,11 +201,13 @@ async function deleteProduct(req, res, next) {
     if (!product) {
       return buildResponseMessage(res, 'Not found product.', 404);
     }
-    await product.destroy();
+    await product.destroy({ transaction });
+    await transaction.commit();
     return buildSuccessResponse(res, 'Delete product successfully.', {
       product,
     }, 200);
   } catch (error) {
+    await transaction.rollback();
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to delete product.';
     next(error);

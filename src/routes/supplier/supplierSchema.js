@@ -55,7 +55,9 @@ const updateSupplierRes = createResultsSchemaResponse({
   supplier: Joi.object().required(),
 });
 
-const getAllSuppliersQuery = createSchemaQuery();
+const getAllSuppliersQuery = createSchemaQuery({
+  companyName: Joi.string().optional(),
+});
 
 module.exports = {
   getAllSuppliersRes,

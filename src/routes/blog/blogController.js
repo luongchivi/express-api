@@ -6,15 +6,19 @@ const {
   buildErrorResponse,
   parseQueryParams,
   buildResultListResponse,
+  buildSuccessResponse,
 } = require('../shared');
 const {
   uploadImages,
   deleteImages,
+  uploadImage,
+  deleteImage,
 } = require('../../lib/cloudinary');
+const sequelize = require('../../../config/database');
 
 
 async function createBlog(req, res, next) {
-  let imagesUrl;
+  let thumbImageUrl;
   try {
     const {
       userId,
@@ -36,10 +40,14 @@ async function createBlog(req, res, next) {
     payload.slug = slugify(title.toLowerCase());
     payload.userId = user.id;
 
-    const { images } = req.files;
-    if (images) {
-      imagesUrl = await uploadImages(images, 'ecommerce_blog_images');
-      payload.imagesUrl = imagesUrl;
+    if(req.files) {
+      const { thumbImage } = req.files;
+      if (thumbImage) {
+        if (thumbImage.length > 0) {
+          thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_blog_thumb_images');
+        }
+        payload.thumbImageUrl = thumbImageUrl;
+      }
     }
 
     const newBlog = await BlogModel.create(payload);
@@ -47,9 +55,7 @@ async function createBlog(req, res, next) {
       blog: newBlog,
     }, 201);
   } catch (error) {
-    if (imagesUrl) {
-      await deleteImages(imagesUrl, 'ecommerce_blog_images');
-    }
+    if (thumbImageUrl) { await deleteImage(thumbImageUrl, 'ecommerce_blog_thumb_images'); }
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to create new blog.';
     next(error);
@@ -66,9 +72,7 @@ async function getBlog(req, res, next) {
         include: {
           model: UserModel,
           as: 'user',
-          attributes: {
-            exclude: ['password', 'deletedAt', 'refreshToken', 'passwordResetToken', 'passwordResetTokenExpires', 'passwordChangedAt'],
-          },
+          attributes: ["firstName", "lastName"],
         },
       },
     );
@@ -79,7 +83,7 @@ async function getBlog(req, res, next) {
 
     return buildErrorResponse(res, 'Get blog successfully.', {
       blog,
-    }, 201);
+    }, 200);
   } catch (error) {
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to get blog.';
@@ -88,12 +92,40 @@ async function getBlog(req, res, next) {
 }
 
 async function updateBlog(req, res, next) {
+  const transaction = await sequelize.transaction();
+  let thumbImageUrl;
   try {
-    //
+    const { blogId } = req.params;
+    const payload = req.body;
 
+    const blog = await BlogModel.findByPk(blogId, {
+      transaction,
+    });
+
+    if (!blog) {
+      return buildResponseMessage(res, 'Not found blog.', 404);
+    }
+
+    // Update image in cloudinary
+    if (req.files) {
+      const { thumbImage } = req.files;
+      if (thumbImage) {
+        await deleteImage(blog.thumbImageUrl, 'ecommerce_blog_thumb_images');
+        if (thumbImage.length > 0) {
+          thumbImageUrl = await uploadImage(...thumbImage, 'ecommerce_blog_thumb_images');
+        }
+        payload.thumbImageUrl = thumbImageUrl;
+      }
+    }
+
+    await blog.update(payload,{ transaction });
+    await transaction.commit();
+    return buildSuccessResponse(res, 'Update blog successfully.',{
+      blog,
+    }, 200);
   } catch (error) {
     error.statusCode = 400;
-    error.messageErrorAPI = 'Failed to get blog.';
+    error.messageErrorAPI = 'Failed to update blog.';
     next(error);
   }
 }
@@ -121,6 +153,13 @@ async function getAllBlog(req, res, next) {
       order,
       limit,
       offset,
+      include: [
+        {
+          model: UserModel,
+          as: 'user',
+          attributes: ["firstName", "lastName"],
+        }
+      ]
     });
 
     const totalItemsFiltered = blogs.count;
@@ -145,9 +184,40 @@ async function getAllBlog(req, res, next) {
   }
 }
 
+async function deleteBlog(req, res, next) {
+  const transaction = await sequelize.transaction();
+  try {
+    const { blogId } = req.params;
+
+    const blog = await BlogModel.findByPk(blogId, {
+      transaction,
+    });
+
+    if (!blog) {
+      return buildResponseMessage(res, 'Not found blog.', 404);
+    }
+
+    const { thumbImageUrl } = blog;
+
+    if (thumbImageUrl) {
+      await deleteImage(thumbImageUrl, 'ecommerce_blog_thumb_images');
+    }
+
+    await blog.destroy({ transaction });
+    await transaction.commit();
+    return buildResponseMessage(res, 'Delete blog successfully.', 200);
+  } catch (error) {
+    await transaction.rollback();
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to delete blogs.';
+    next(error);
+  }
+}
+
 module.exports = {
   createBlog,
   getBlog,
   updateBlog,
   getAllBlog,
+  deleteBlog,
 };

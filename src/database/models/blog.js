@@ -30,8 +30,8 @@ const Blog = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.BLOG), {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  imagesUrl: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+  thumbImageUrl: {
+    type: DataTypes.STRING,
   },
   createdAt: {
     type: DataTypes.DATE,
