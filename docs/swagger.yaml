@@ -244,7 +244,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetUserDetailsRes'
-    patch:
+    put:
       summary: Update user by id
       tags: [ Users ]
       security:
@@ -1625,7 +1625,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetAllBlogsRes'
   /api/v1/blogs/{blogId}:
-      post:
+      get:
         summary: Get blog details by blogId
         tags: [ Blogs ]
         security:
@@ -1644,6 +1644,50 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/GetBlogDetailsRes'
+      put:
+        summary: Update blog by blogId
+        tags: [ Blogs ]
+        security:
+          - bearerAuth: [ ]
+        parameters:
+          - name: blogId
+            in: path
+            required: true
+            description: blogId of the blog to retrieve
+            schema:
+              type: integer
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                $ref: '#/components/schemas/UpdateBlogReq'
+        responses:
+          200:
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UpdateBlogRes'
+      delete:
+        summary: Delete blog by blogId
+        tags: [ Blogs ]
+        security:
+          - bearerAuth: [ ]
+        parameters:
+          - name: blogId
+            in: path
+            required: true
+            description: blogId of the blog to retrieve
+            schema:
+              type: integer
+        responses:
+          200:
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/DeleteBlogRes'
 components:
   schemas:
     SignUpReq:
@@ -1875,6 +1919,18 @@ components:
           type: string
         lastName:
           type: string
+        address:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        provinceId:
+          type: string
+        districtId:
+          type: string
+        wardId:
+          type: string
     UpdateUserRes:
       type: object
       properties:
@@ -1905,6 +1961,29 @@ components:
                 updatedAt:
                   type: string
                   format: date-time
+                refreshToken:
+                  type: string
+                address:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    userId:
+                      type: number
+                    address:
+                      type: string
+                    wardId:
+                      type: number
+                    districtId:
+                      type: number
+                    provinceId:
+                      type: number
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
     DeleteUserRes:
       type: object
       properties:
@@ -3987,12 +4066,10 @@ components:
           type: string
         content:
           type: string
-        images:
-          type: array
-          items:
-            type: string
-            format: binary
-            description: Max upload image is 10 files
+        thumbImage:
+          type: string
+          format: binary
+          description: Max upload image is 1 file
     CreateBlogRes:
       type: object
       properties:
@@ -4012,12 +4089,54 @@ components:
                   type: string
                 slug:
                   type: string
+                content:
+                  type: string
                 userId:
                   type: number
-                imagesUrl:
-                  type: array
-                  items:
-                    type: string
+                thumbImageUrl:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+    UpdateBlogReq:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        thumbImage:
+          type: string
+          format: binary
+          description: Max upload image is 1 file
+    UpdateBlogRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            blog:
+              type: object
+              properties:
+                id:
+                  type: number
+                title:
+                  type: string
+                slug:
+                  type: string
+                content:
+                  type: string
+                userId:
+                  type: number
+                thumbImageUrl:
+                  type: string
                 createdAt:
                   type: string
                   format: date-time
@@ -4146,6 +4265,16 @@ components:
               type: number
             totalFiveStar:
               type: number
+    DeleteBlogRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
   securitySchemes:
     bearerAuth:
       type: http

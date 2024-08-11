@@ -20,8 +20,14 @@ const getAllUsersRes = createListResultsSchemaResponse({
 });
 
 const updateUserReq = Joi.object({
-  firstName: Joi.string().optional(),
+  firstName: Joi.string().max(50).optional(),
   lastName: Joi.string().optional(),
+  email: Joi.string().optional(),
+  address: Joi.string().optional(),
+  districtId: Joi.number().optional(),
+  wardId: Joi.number().optional(),
+  provinceId: Joi.number().optional(),
+  phone: Joi.string().optional(),
 });
 
 const updateUserRes = createResultsSchemaResponse({

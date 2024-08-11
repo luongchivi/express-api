@@ -191,6 +191,12 @@ const validateDate = dateString => {
   }
 };
 
+const sanitizeUserResponse = (user) => {
+  const { password, deletedAt, passwordResetToken, verifyEmailTokenExpires, hasVerifiedEmail,
+    passwordResetTokenExpires, passwordChangedAt, verifyEmailToken, ...sanitizedUser } = user.toJSON();
+  return sanitizedUser;
+};
+
 module.exports = {
   buildResponseMessage,
   buildSuccessResponse,
@@ -202,4 +208,5 @@ module.exports = {
   createSchemaQuery,
   buildResultListResponse,
   validateDate,
+  sanitizeUserResponse,
 };

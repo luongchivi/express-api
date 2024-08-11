@@ -70,8 +70,8 @@ router.get(
   getUserDetails,
 );
 
-// PATCH /api/v1/users/{id}
-router.patch(
+// PUT /api/v1/users/{id}
+router.put(
   '/:id',
   verifyToken,
   verifyRole(['Admin', 'User']),

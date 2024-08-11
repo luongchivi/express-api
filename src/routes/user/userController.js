@@ -1,14 +1,20 @@
+require('dotenv').config({ path: `${process.cwd()}/.env` });
 const UserModel = require('../../database/models/user');
 const RoleModel = require('../../database/models/role');
 const PermissionModel = require('../../database/models/permission');
 const UserRoleModel = require('../../database/models/userRole');
 const RolePermissionModel = require('../../database/models/rolePermission');
+const AddressModel = require('../../database/models/address');
+const sequelize = require('../../../config/database');
 const {
   buildSuccessResponse,
   buildResponseMessage,
   parseQueryParams,
   buildResultListResponse,
+  sanitizeUserResponse,
 } = require('../shared');
+const EmailService = require('../../lib/EmailService');
+const uniqid = require('uniqid');
 
 
 async function getAllUsers(req, res, next) {
@@ -36,7 +42,12 @@ async function getAllUsers(req, res, next) {
       order,
       limit,
       offset,
-      attributes: { exclude: ['password', 'deletedAt'] },
+      attributes: {
+        exclude: [
+          'password', 'deletedAt', 'refreshToken', 'passwordResetToken',
+          'passwordResetTokenExpires', 'verifyEmailTokenExpires', 'verifyEmailToken',
+        ],
+      },
       include: [
         {
           model: RoleModel,
@@ -104,25 +115,76 @@ async function getUserDetails(req, res, next) {
 }
 
 async function updateUser(req, res, next) {
+  const transaction = await sequelize.transaction();
   try {
     const { id } = req.params;
-    const payload = req.body;
+    const { firstName, lastName, email, ...payloadAddress } = req.body;
+
+    if (email) {
+      const existedEmail = await UserModel.findOne({
+        where: {
+          email,
+        },
+        transaction,
+      })
+
+      if (existedEmail) {
+        await transaction.rollback();
+        return buildResponseMessage(res, 'This email already existed.', 400);
+      }
+    }
 
     const user = await UserModel.findByPk(id, {
-      attributes: {
-        exclude: ['password', 'deletedAt'],
-      },
+      include: [
+        {
+          model: AddressModel,
+          as: 'address',
+        }
+      ],
+      transaction,
     });
+
     if (!user) {
+      await transaction.rollback();
       return buildResponseMessage(res, 'User not found.', 404);
     }
 
-    await user.update(payload);
-    await user.reload();
+    if (email && email !== user.email) {
+      const verifyEmailToken = uniqid();
+      const emailService = new EmailService();
+      const result = await emailService.sendMail('verifyEmail', { email, verifyEmailToken });
+      if (!result.accepted && result.accepted.length !== 0) {
+        return buildResponseMessage(res, 'Failed to send email to verify.', 400);
+      }
+
+      await user.update({
+        firstName,
+        lastName,
+        email,
+        isActive: false,
+        hasVerifiedEmail: false,
+        verifyEmailToken,
+        verifyEmailTokenExpires: Date.now() + parseInt(process.env.VERIFY_EMAIL_TOKEN_EXPIRES, 10),
+      }, { transaction });
+    }  else {
+      await user.update({ firstName, lastName }, { transaction });
+      await user.address.update(payloadAddress, { transaction });
+    }
+
+    if (!user.address) {
+      await AddressModel.create({ ...payloadAddress, userId: user.id }, { transaction });
+    } else {
+      await user.address.update(payloadAddress, { transaction });
+    }
+
+    await transaction.commit();
+    await user.reload({ include: { model: AddressModel, as: 'address' } });
+    const sanitizedUser = sanitizeUserResponse(user);
     return buildSuccessResponse(res, 'Update user successfully.', {
-      user,
+      user: sanitizedUser,
     }, 200);
   } catch (error) {
+    await transaction.rollback();
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to update user.';
     next(error);
@@ -231,12 +293,16 @@ async function getCurrentUser(req, res, next) {
       attributes: {
         exclude: [
           'password', 'deletedAt', 'passwordResetToken', 'verifyEmailTokenExpires', 'hasVerifiedEmail',
-          'passwordResetTokenExpires', 'passwordChangedAt','verifyEmailToken'],
+          'passwordResetTokenExpires', 'passwordChangedAt', 'verifyEmailToken'],
       },
       include: [
         {
           model: RoleModel,
           as: 'roles',
+        },
+        {
+          model: AddressModel,
+          as: 'address',
         }
       ]
     });

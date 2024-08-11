@@ -38,7 +38,7 @@ module.exports = {
           type: DataTypes.INTEGER,
           references: {
             model: getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT),
-            key: 'id',
+            key: 'code',
           },
           allowNull: false,
         },
@@ -46,7 +46,7 @@ module.exports = {
           type: DataTypes.INTEGER,
           references: {
             model: getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE),
-            key: 'id',
+            key: 'code',
           },
           allowNull: false,
         },

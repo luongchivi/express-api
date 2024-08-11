@@ -289,6 +289,10 @@ async function getCurrentCart(req, res, next) {
       include: {
         model: CartItemModel,
         as: 'items',
+        include: {
+          model: ProductModel,
+          as: 'product',
+        }
       },
     });
 
