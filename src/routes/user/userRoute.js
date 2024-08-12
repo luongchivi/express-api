@@ -63,7 +63,7 @@ router.get(
 router.get(
   '/:id',
   verifyToken,
-  verifyRole(['Admin', 'User']),
+  verifyRole(['Admin']),
   verifyPermission('read'),
   validateParams(idParam),
   validateResponse(getUserDetailsRes),

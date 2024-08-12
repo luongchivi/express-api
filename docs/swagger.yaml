@@ -3249,6 +3249,56 @@ components:
                       updatedAt:
                         type: string
                         format: date-time
+                      product:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          name:
+                            type: string
+                          slug:
+                            type: string
+                          description:
+                            type: string
+                          thumbImage:
+                            type: string
+                            format: binary
+                          images:
+                            type: array
+                            items:
+                              type: string
+                              format: binary
+                          unitPrice:
+                            type: number
+                          unitsInStock:
+                            type: number
+                          unitsSold:
+                            type: number
+                          unitsOnOrder:
+                            type: number
+                          supplierId:
+                            type: number
+                          categoryId:
+                            type: number
+                          weight:
+                            type: number
+                          length:
+                            type: number
+                          width:
+                            type: number
+                          height:
+                            type: number
+                          createdAt:
+                            type: string
+                            format: date-time
+                          updatedAt:
+                            type: string
+                            format: date-time
+                          category:
+                            type: object
+                            properties:
+                              name:
+                                type: string
     UpdateQuantityProductInCartReq:
       type: object
       properties:

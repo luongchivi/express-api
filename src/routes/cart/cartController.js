@@ -2,6 +2,7 @@ const UserModel = require('../../database/models/user');
 const ProductModel = require('../../database/models/product');
 const CartModel = require('../../database/models/cart');
 const CartItemModel = require('../../database/models/cartItem');
+const CategoryModel = require('../../database/models/category');
 const sequelize = require('../../../config/database');
 const {
   buildResponseMessage,
@@ -292,6 +293,11 @@ async function getCurrentCart(req, res, next) {
         include: {
           model: ProductModel,
           as: 'product',
+          include: {
+            model: CategoryModel,
+            as: 'category',
+            attributes: ['name'],
+          },
         }
       },
     });

@@ -168,13 +168,11 @@ async function updateUser(req, res, next) {
       }, { transaction });
     }  else {
       await user.update({ firstName, lastName }, { transaction });
-      await user.address.update(payloadAddress, { transaction });
-    }
-
-    if (!user.address) {
-      await AddressModel.create({ ...payloadAddress, userId: user.id }, { transaction });
-    } else {
-      await user.address.update(payloadAddress, { transaction });
+      if (user.address) {
+        await user.address.update(payloadAddress, { transaction });
+      } else {
+        await AddressModel.create({ userId: user.id, ...payloadAddress }, { transaction })
+      }
     }
 
     await transaction.commit();
