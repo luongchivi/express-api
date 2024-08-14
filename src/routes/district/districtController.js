@@ -11,9 +11,10 @@ async function getAllDistricts(req, res, next) {
     const pageSize = parseInt(req.query.pageSize, 10);
 
     const filterableFields = {
-      provinceId: 'number',
+      provinceId: 'eq',
       name: 'string',
-      code: 'number',
+      code: 'eq',
+      id: 'eq',
     };
 
     const {

@@ -27,26 +27,26 @@ module.exports = {
           type: DataTypes.STRING,
         },
         ward_id: {
-          type: DataTypes.INTEGER,
-          // references: {
-          //   model: getTableNameForMigrations(DB_TABLE_NAMES.WARD),
-          //   key: 'code',
-          // },
-          // allowNull: false,
+          type: DataTypes.STRING,
+          references: {
+            model: getTableNameForMigrations(DB_TABLE_NAMES.WARD),
+            key: 'id',
+          },
+          allowNull: false,
         },
         district_id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           references: {
             model: getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT),
-            key: 'code',
+            key: 'id',
           },
           allowNull: false,
         },
         province_id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           references: {
             model: getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE),
-            key: 'code',
+            key: 'id',
           },
           allowNull: false,
         },

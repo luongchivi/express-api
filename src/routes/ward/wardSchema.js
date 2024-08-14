@@ -10,9 +10,10 @@ const getAllWardsRes = createListResultsSchemaResponse({
 });
 
 const getAllWardsQuery = createSchemaQuery({
-  districtId: Joi.number().optional(),
+  districtId: Joi.string().optional(),
   name: Joi.string().optional(),
-  code: Joi.number().optional(),
+  code: Joi.string().optional(),
+  id: Joi.string().optional(),
 });
 
 module.exports = {

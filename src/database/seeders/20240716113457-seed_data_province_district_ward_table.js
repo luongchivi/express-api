@@ -1,6 +1,6 @@
 const { DB_TABLE_NAMES, getTableNameForMigrations } = require('../constants');
 const GHNExpress = require('../../lib/GHNExpress');
-
+const { v4: uuidv4 } = require('uuid');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -10,17 +10,17 @@ module.exports = {
         const newGHNExpress = new GHNExpress();
         const resultGetProvince = await newGHNExpress.getProvince();
         const { data } = resultGetProvince;
-        const dataProvincesBulkInsert = data.map((item, index) => ({
-          id: index,
+        const dataProvincesBulkInsert = data.map(item => ({
+          id: item.ProvinceID, // uuid
           name: item.ProvinceName,
-          code: item.ProvinceID,
+          code: item.Code,
           created_at: new Date(),
           updated_at: new Date(),
         }));
 
         await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE), dataProvincesBulkInsert, { transaction: t });
 
-        const provinceIds = dataProvincesBulkInsert.map(item => item.code);
+        const provinceIds = dataProvincesBulkInsert.map(item => item.id);
         const dataDistrictsBulkInsert = [];
         const districtIds = [];
         for (const provinceId of provinceIds) {
@@ -31,9 +31,10 @@ module.exports = {
           const dataDistricts = data.map(item => {
             districtIds.push(item.DistrictID);
             return {
+              id: item.DistrictID, // uuid
               name: item.DistrictName,
-              code: item.DistrictID,
-              province_id: item.ProvinceID,
+              code: item?.Code || 'null',
+              province_id: provinceId,
               created_at: new Date(),
               updated_at: new Date(),
             };
@@ -41,10 +42,7 @@ module.exports = {
           dataDistrictsBulkInsert.push(...dataDistricts);
         }
 
-        await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT), dataDistrictsBulkInsert.map((item, index) => ({
-          id: index,
-          ...item,
-        })), { transaction: t });
+        await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT), dataDistrictsBulkInsert, { transaction: t });
 
         const dataWardsBulkInsert = [];
         for (const districtId of districtIds) {
@@ -57,8 +55,9 @@ module.exports = {
           console.log(data);
           if (data) {
             const dataWards = data.map(item => ({
+              id: uuidv4(),
               name: item.WardName,
-              code: parseInt(item.WardCode, 10),
+              code: item.WardCode,
               district_id: item.DistrictID,
               created_at: new Date(),
               updated_at: new Date(),
@@ -67,12 +66,10 @@ module.exports = {
           }
         }
 
-        await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.WARD), dataWardsBulkInsert.map((item, index) => ({
-          id: index,
-          ...item,
-        })), { transaction: t });
+        await queryInterface.bulkInsert(getTableNameForMigrations(DB_TABLE_NAMES.WARD), dataWardsBulkInsert, { transaction: t });
       } catch (e) {
         console.log(e);
+        throw e; // Ensure the transaction is rolled back on error
       }
     });
   },

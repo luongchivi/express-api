@@ -24,6 +24,7 @@ const DB_TABLE_NAMES = Object.freeze({
   CATEGORY_SUPPLIER: 'category_supplier',
   BLOG: 'blog',
   COMMENT: 'comment',
+  TRANSACTION_PAYPAL: 'transaction_paypal',
 });
 
 // inflection.pluralize(tableName): Chuyển đổi tên bảng từ dạng số ít sang số nhiều.

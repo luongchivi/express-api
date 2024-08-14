@@ -48,7 +48,7 @@ const OrderItem = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDE
 });
 
 // Product và OrderItem, One to Many,
-OrderItem.belongsTo(Product, { foreignKey: 'orderId', as: 'product' });
+OrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
 Product.hasMany(OrderItem, { foreignKey: 'productId', as: 'orderItems' });
 
 module.exports = OrderItem;

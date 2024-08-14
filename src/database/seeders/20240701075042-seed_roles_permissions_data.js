@@ -51,6 +51,10 @@ const permissionsOfUserAndAdmin = [
     permission_id: 3, // 'update'
   },
   {
+    role_id: 2, // 'User'
+    permission_id: 4, // 'delete'
+  },
+  {
     role_id: 1, // 'Admin'
     permission_id: 1, // 'read'
   },

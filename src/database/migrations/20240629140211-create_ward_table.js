@@ -10,8 +10,7 @@ module.exports = {
     return queryInterface.sequelize.transaction(async t => {
       await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.WARD), {
         id: {
-          type: DataTypes.INTEGER,
-          autoIncrement: true,
+          type: DataTypes.STRING,
           primaryKey: true,
           allowNull: false,
         },
@@ -20,14 +19,14 @@ module.exports = {
           allowNull: false,
         },
         code: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           allowNull: false,
         },
         district_id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           references: {
             model: getTableNameForMigrations(DB_TABLE_NAMES.DISTRICT),
-            key: 'code',
+            key: 'id',
           },
           allowNull: false,
         },

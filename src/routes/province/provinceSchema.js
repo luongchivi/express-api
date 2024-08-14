@@ -11,7 +11,8 @@ const getAllProvincesRes = createListResultsSchemaResponse({
 
 const getAllProvincesQuery = createSchemaQuery({
   name: Joi.string().optional(),
-  code: Joi.number().optional(),
+  id: Joi.string().optional(),
+  code: Joi.string().optional(),
 });
 
 

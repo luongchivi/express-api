@@ -14,6 +14,7 @@ const wardRouter = require('./ward/wardRoute');
 const districtRouter = require('./district/districtRoute');
 const reviewRouter = require('./review/reviewRoute');
 const blogRouter = require('./blog/blogRoute');
+const transactionRouter = require('./transaction/transactionRoute');
 
 
 function routes(app) {
@@ -38,6 +39,7 @@ function routes(app) {
   app.use('/api/v1/wards', wardRouter);
   app.use('/api/v1/reviews', reviewRouter);
   app.use('/api/v1/blogs', blogRouter);
+  app.use('/api/v1/transactions', transactionRouter);
 
   return app;
 }

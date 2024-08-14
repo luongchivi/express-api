@@ -12,7 +12,8 @@ async function getAllProvinces(req, res, next) {
 
     const filterableFields = {
       name: 'string',
-      code: 'number',
+      code: 'eq',
+      id: 'eq',
     };
 
     const {

@@ -11,9 +11,10 @@ const getAllDistrictsRes = createListResultsSchemaResponse({
 
 
 const getAllDistrictsQuery = createSchemaQuery({
-  provinceId: Joi.number().optional(),
+  provinceId: Joi.string().optional(),
   name: Joi.string().optional(),
-  code: Joi.number().optional(),
+  code: Joi.string().optional(),
+  id: Joi.string().optional(),
 });
 
 module.exports = {

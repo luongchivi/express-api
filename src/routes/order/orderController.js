@@ -6,6 +6,7 @@ const CartItemModel = require('../../database/models/cartItem');
 const OrderModel = require('../../database/models/order');
 const OrderItemModel = require('../../database/models/orderItem');
 const ProductModel = require('../../database/models/product');
+const CategoryModel = require('../../database/models/category');
 const {
   buildResponseMessage,
   buildSuccessResponse,
@@ -13,7 +14,7 @@ const {
   buildResultListResponse,
 } = require('../shared');
 const sequelize = require('../../../config/database');
-const { orderStatus } = require('./orderSchema');
+const { orderStatus, paymentType: paymentTypeEnum  } = require('./orderSchema');
 const GHNExpress = require('../../lib/GHNExpress');
 const AddressModel = require('../../database/models/address');
 const ProvinceModel = require('../../database/models/province');
@@ -67,7 +68,7 @@ async function checkoutOrder(req, res, next) {
     });
 
     if (!address) {
-      return buildResponseMessage(res, 'Address not found', 404);
+      return buildResponseMessage(res, 'Address not found, please update your address before check out.', 404);
     }
 
     const cart = await CartModel.findOne({
@@ -83,6 +84,10 @@ async function checkoutOrder(req, res, next) {
 
     if (!cart) {
       return buildResponseMessage(res, 'Cart is empty.', 400);
+    }
+
+    if (cart.totalPrice > 1000000 && paymentType === 'COD') {
+      return buildResponseMessage(res, 'Cash on delivery is only accepted when the total price is less than or equal to 1,000,000 VND.', 400);
     }
 
     // Kiểm tra số lượng tồn kho cho từng sản phẩm trong giỏ hàng
@@ -120,12 +125,20 @@ async function checkoutOrder(req, res, next) {
 
     // tạo mới newOrder và orderItems
     const totalAmount = cart.totalPrice;
-    const newOrder = await OrderModel.create({
+    let payloadCreateNewOrder = {
       userId,
-      paymentType,
       totalAmount,
-      orderStatus: orderStatus.PROCESSING,
-    }, { transaction });
+    };
+
+    if (paymentType === 'Cash on Delivery') {
+      payloadCreateNewOrder.orderStatus = orderStatus.PROCESSING;
+      payloadCreateNewOrder.paymentType = paymentTypeEnum.CASH_ON_DELIVERY;
+    } else if (paymentType === 'PayPal') {
+      payloadCreateNewOrder.orderStatus = orderStatus.PROCESSING;
+      payloadCreateNewOrder.paymentType = paymentTypeEnum.PAYPAL;
+    }
+
+    const newOrder = await OrderModel.create(payloadCreateNewOrder, { transaction });
 
     const orderItems = cart.items.map(item => ({
       orderId: newOrder.id,
@@ -139,7 +152,7 @@ async function checkoutOrder(req, res, next) {
 
     // Tạo đơn shipping tới địa chỉ của khách hàng
     const newGHNExpress = new GHNExpress();
-    const createOrderShipment = {
+    let createOrderShipment = {
       from_name: 'Ecommerce Store',
       from_phone: process.env.GHN_EXPRESS_CLIENT_PHONE,
       from_ward_name: process.env.GHN_EXPRESS_CLIENT_WARD_NAME,
@@ -156,10 +169,16 @@ async function checkoutOrder(req, res, next) {
       width: parseInt(widthPacket.toFixed()) || 15,
       length: parseInt(lengthPacket.toFixed()) || 15,
       service_type_id: 5, // Chuyển phát truyền thống
-      payment_type_id: 2, // Người mua/Người nhận
       required_note: 'KHONGCHOXEMHANG',
       items: items || [],
     };
+
+    if (paymentType === 'Cash on Delivery') {
+      createOrderShipment.cod_amount = totalAmount;
+      createOrderShipment.payment_type_id = 2 // Người mua/Người nhận
+    } else if (paymentType === 'PayPal') {
+      createOrderShipment.payment_type_id = 1 // Người bán/Người gửi
+    }
 
     const resultCreateShipment = await newGHNExpress.createShipment(createOrderShipment);
     const { data } = resultCreateShipment;
@@ -200,6 +219,122 @@ async function checkoutOrder(req, res, next) {
     await transaction.rollback();
     error.statusCode = 400;
     error.messageErrorAPI = 'Failed to checkout order.';
+    next(error);
+  }
+}
+
+async function getShippingFeeOrder(req, res, next) {
+  try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const address = await AddressModel.findOne({
+      where: {
+        userId: user.id,
+      },
+      include: [
+        {
+          model: UserModel,
+          as: 'user',
+          attributes: {
+            exclude: ['password', 'deletedAt'],
+          },
+        },
+        {
+          model: ProvinceModel,
+          as: 'province',
+        },
+        {
+          model: DistrictModel,
+          as: 'district',
+        },
+        {
+          model: WardModel,
+          as: 'ward',
+        },
+      ],
+    });
+
+    if (!address) {
+      return buildResponseMessage(res, 'Address not found, please update your address before check out.', 404);
+    }
+
+    const cart = await CartModel.findOne({
+      where: {
+        userId,
+      },
+      include: {
+        model: CartItemModel,
+        as: 'items',
+      },
+    });
+
+    if (!cart) {
+      return buildResponseMessage(res, 'Cart is empty.', 400);
+    }
+
+    let totalWeightPacket = 0.0;
+    let totalHeightPacket = 0.0;
+    const allLengthOfItems = [];
+    const allWidthOfItems = [];
+    const items = [];
+    for (const item of cart.items) {
+      const product = await ProductModel.findByPk(item.productId);
+      if (!product) {
+        return buildResponseMessage(res, `Product with ID ${item.productId} not found.`, 404);
+      }
+      totalWeightPacket += product.weight * item.quantity;
+      totalHeightPacket += product.height * item.quantity;
+      allLengthOfItems.push(product.length);
+      allWidthOfItems.push(product.width);
+      items.push({
+        name: product.name,
+        quantity: item.quantity,
+        height: parseInt(product.height.toFixed()) || 1,
+        weight: parseInt(product.weight.toFixed()) || 1,
+        length: parseInt(product.length.toFixed()) || 15,
+        width: parseInt(product.width.toFixed()) || 15,
+      });
+    }
+
+    const lengthPacket = allLengthOfItems.length > 0 ? Math.max(...allLengthOfItems) : 0;
+    const widthPacket = allWidthOfItems.length > 0 ? Math.max(...allWidthOfItems) : 0;
+
+    const newGHNExpress = new GHNExpress();
+    const payloadCalculateShippingFee = {
+      service_type_id: 5, // Chuyển phát truyền thống
+      from_district_id: parseInt(process.env.GHN_EXPRESS_CLIENT_DISTRICT_ID, 10),
+      from_ward_code: process.env.GHN_EXPRESS_CLIENT_WARD_CODE,
+      to_district_id: parseInt(address.districtId, 10),
+      to_ward_code: `${address.ward.code}`,
+      weight: parseInt(totalWeightPacket.toFixed()) || 1,
+      height: parseInt(totalHeightPacket.toFixed()) || 1,
+      width: parseInt(widthPacket.toFixed()) || 15,
+      length: parseInt(lengthPacket.toFixed()) || 15,
+      cod_value: cart.totalPrice,
+      items: items || [],
+      name: items.map(product => product.name).join(', '),
+    }
+
+    const responseGetShippingFee = await newGHNExpress.calculateShippingFee(payloadCalculateShippingFee)
+    if (responseGetShippingFee.code !== 200) {
+      return buildResponseMessage(res, 'Error at calculate shipping fee.', 400);
+    }
+    const {data} =  responseGetShippingFee;
+    return buildSuccessResponse(res, 'Get Shipping Fee Successfully.', {
+      shippingFee: data,
+    }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get shipping fee order.';
     next(error);
   }
 }
@@ -269,11 +404,29 @@ async function getAllOrderOfUser(req, res, next) {
 async function cancelOrder(req, res, next) {
   const transaction = await sequelize.transaction();
   try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
     const { orderId } = req.params;
-    const order = await OrderModel.findByPk(orderId, { transaction });
+    const order = await OrderModel.findOne({
+      where: {
+        id: orderId,
+        userId,
+      },
+      transaction,
+    });
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);
     }
+
     const { shippingOrderId } = order;
     // Cancel order shipping from GHN
     const newGHNExpress = new GHNExpress();
@@ -302,11 +455,28 @@ async function cancelOrder(req, res, next) {
 
 async function getOrderShippingDetails(req, res, next) {
   try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
     const { orderId } = req.params;
-    const order = await OrderModel.findByPk(orderId);
+    const order = await OrderModel.findOne({
+      where: {
+        id: orderId,
+        userId,
+      }
+    });
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);
     }
+
     const { shippingOrderId } = order;
 
     const newGHNExpress = new GHNExpress();
@@ -328,9 +498,125 @@ async function getOrderShippingDetails(req, res, next) {
   }
 }
 
+async function getOrderDetailUser(req, res, next) {
+  try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const { orderId } = req.params;
+    const order = await OrderModel.findOne({
+      where: {
+        id: orderId,
+        userId,
+      },
+      include: [
+        {
+          model: OrderItemModel,
+          as: 'orderItems',
+          include: [
+            {
+              model: ProductModel,
+              as: 'product',
+              include: [
+                {
+                  model: CategoryModel,
+                  as: 'category',
+                  attributes: ['name'],
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: UserModel,
+          as: 'user',
+          attributes: ['firstName', 'lastName', 'email'],
+          include: [
+            {
+              model: AddressModel,
+              as: 'address',
+              attributes: ['address', 'phone'],
+            }
+          ]
+        }
+      ]
+    });
+    if (!order) {
+      return buildResponseMessage(res, 'Order not found.', 404);
+    }
+
+    return buildSuccessResponse(res, 'Get order details successfully.', {
+      order,
+    }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get order details.';
+    next(error);
+  }
+}
+
+async function updateStatusOrder(req, res, next) {
+  try {
+    const { userId, email } = req.userInfo;
+    const user = await UserModel.findOne({
+      where: {
+        id: userId,
+        email,
+      },
+    });
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const { orderId } = req.params;
+    const order = await OrderModel.findOne({
+      where: {
+        id: orderId,
+        userId,
+      },
+      include: [
+        {
+          model: OrderItemModel,
+          as: 'orderItems',
+          include: [
+            {
+              model: ProductModel,
+              as: 'product',
+            }
+          ]
+        },
+      ]
+    });
+    if (!order) {
+      return buildResponseMessage(res, 'Order not found.', 404);
+    }
+
+    await order.update({ orderStatus: orderStatus.PAID });
+
+    return buildSuccessResponse(res, 'Get order details successfully.', {
+      order,
+    }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to update order status.';
+    next(error);
+  }
+}
+
 module.exports = {
   getAllOrderOfUser,
   checkoutOrder,
   cancelOrder,
   getOrderShippingDetails,
+  getShippingFeeOrder,
+  getOrderDetailUser,
+  updateStatusOrder,
 };

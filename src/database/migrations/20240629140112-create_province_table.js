@@ -10,8 +10,7 @@ module.exports = {
     return queryInterface.sequelize.transaction(async t => {
       await queryInterface.createTable(getTableNameForMigrations(DB_TABLE_NAMES.PROVINCE), {
         id: {
-          type: DataTypes.INTEGER,
-          autoIncrement: true,
+          type: DataTypes.STRING,
           primaryKey: true,
           allowNull: false,
         },
@@ -20,7 +19,7 @@ module.exports = {
           allowNull: false,
         },
         code: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           allowNull: false,
           unique: true,
         },

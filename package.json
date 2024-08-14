@@ -45,7 +45,8 @@
     "superagent": "^9.0.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "uniqid": "^5.4.0"
+    "uniqid": "^5.4.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

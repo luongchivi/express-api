@@ -12,8 +12,9 @@ async function getAllWards(req, res, next) {
 
     const filterableFields = {
       name: 'string',
-      code: 'number',
-      districtId: 'number',
+      code: 'eq',
+      districtId: 'eq',
+      id: 'eq',
     };
 
     const {

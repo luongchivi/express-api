@@ -1,5 +1,7 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
-const { DataTypes } = require('sequelize');
+const { DataTypes,
+  Transaction
+} = require('sequelize');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const sequelize = require('../../../config/database');
@@ -13,6 +15,7 @@ const UserRole = require('./userRole');
 const Cart = require('./cart');
 const Blog = require('./blog');
 const Comment = require('./comment');
+const TransactionPaypal = require('./transactionPaypal');
 
 
 const User = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.USER), {
@@ -131,5 +134,9 @@ Blog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 // One to Many, User và Comment, 1 User có 1 hoặc nhiều Comments
 User.hasMany(Comment, { foreignKey: 'userId', as: 'comments' });
 Comment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
+// One to Many, User và TransactionPaypal, 1 User có 1 hoặc nhiều TransactionPaypal
+User.hasMany(TransactionPaypal, { foreignKey: 'userId', as: 'transactionPaypal' });
+TransactionPaypal.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 module.exports = User;

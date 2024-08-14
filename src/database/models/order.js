@@ -10,6 +10,7 @@ const {
 } = require('../../routes/order/orderSchema');
 const User = require('./user');
 const OrderItem = require('./orderItem');
+const TransactionPaypal = require('./transactionPaypal');
 
 
 const Order = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ORDER), {
@@ -65,5 +66,9 @@ User.hasMany(Order, { foreignKey: 'userId', as: 'orders' });
 // One to Many, Order và OrderItem, 1 Order có thể có 1 hoặc nhiều OrderItem
 OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
 Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'orderItems' });
+
+// Many to One, Product và Category nhiều sản phẩm ứng với 1 danh mục
+// TransactionPaypal.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
+// Order.hasMany(TransactionPaypal, { foreignKey: 'orderId', as: 'transactionPayPals' });
 
 module.exports = Order;

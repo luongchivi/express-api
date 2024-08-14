@@ -24,9 +24,9 @@ const updateUserReq = Joi.object({
   lastName: Joi.string().optional(),
   email: Joi.string().optional(),
   address: Joi.string().optional(),
-  districtId: Joi.number().optional(),
-  wardId: Joi.number().optional(),
-  provinceId: Joi.number().optional(),
+  districtId: Joi.string().optional(),
+  wardId: Joi.string().optional(),
+  provinceId: Joi.string().optional(),
   phone: Joi.string().optional(),
 });
 

@@ -18,6 +18,9 @@ const {
   checkoutOrder,
   cancelOrder,
   getOrderShippingDetails,
+  getShippingFeeOrder,
+  getOrderDetailUser,
+  updateStatusOrder,
 } = require('./orderController');
 const {
   checkoutOrderReq,
@@ -27,6 +30,8 @@ const {
   orderIdParam,
   cancelOrderRes,
   getOrderShippingDetailsRes,
+  getOrderDetailUserRes,
+  updateStatusOrderRes,
 } = require('./orderSchema');
 
 
@@ -72,6 +77,37 @@ router.post(
   validateParams(orderIdParam),
   validateResponse(getOrderShippingDetailsRes),
   getOrderShippingDetails,
+);
+
+// GET /api/v1/orders/calculate-shipping-fee
+router.get(
+  '/calculate-shipping-fee',
+  verifyToken,
+  verifyRole(['Admin', 'User']),
+  verifyPermission('read'),
+  getShippingFeeOrder,
+);
+
+// GET /api/v1/orders/{orderId}/user
+router.get(
+  '/:orderId/user',
+  verifyToken,
+  verifyRole(['Admin', 'User']),
+  verifyPermission('read'),
+  validateParams(orderIdParam),
+  validateResponse(getOrderDetailUserRes),
+  getOrderDetailUser,
+);
+
+// PUT /api/v1/orders/{orderId}/user
+router.put(
+  '/:orderId/user',
+  verifyToken,
+  verifyRole(['Admin', 'User']),
+  verifyPermission('read'),
+  validateParams(orderIdParam),
+  validateResponse(updateStatusOrderRes),
+  updateStatusOrder,
 );
 
 module.exports = router;

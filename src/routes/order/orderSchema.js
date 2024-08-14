@@ -9,14 +9,16 @@ const {
 
 const paymentType = Object.freeze({
   PAYPAL: 'PayPal',
-  BANK_TRANSFER: 'Bank Transfer',
+  // BANK_TRANSFER: 'Bank Transfer',
   CASH_ON_DELIVERY: 'Cash on Delivery',
 });
 
 const orderStatus = Object.freeze({
   CANCELLED: 'Cancelled',
   PROCESSING: 'Processing',
-  SUCCEEDED: 'Succeeded',
+  PAID: 'Paid',
+  SHIPPING: 'Shipping',
+  COMPLETED: 'completed',
 });
 
 const checkoutOrderReq = Joi.object({
@@ -47,6 +49,14 @@ const getOrderShippingDetailsRes = createResultsSchemaResponse({
   shippingOrder: Joi.object().required(),
 });
 
+const getOrderDetailUserRes = createResultsSchemaResponse({
+  order: Joi.object().required(),
+});
+
+const updateStatusOrderRes = createResultsSchemaResponse({
+  order: Joi.object().required(),
+});
+
 module.exports = {
   paymentType,
   orderStatus,
@@ -57,4 +67,6 @@ module.exports = {
   orderIdParam,
   cancelOrderRes,
   getOrderShippingDetailsRes,
+  getOrderDetailUserRes,
+  updateStatusOrderRes,
 };

@@ -50,14 +50,14 @@ const Address = sequelize.define(getTableNameForMigrations(DB_TABLE_NAMES.ADDRES
 
 // Thiết lập mối quan hệ giữa Address và Province
 Address.belongsTo(Province, { foreignKey: 'provinceId', as: 'province' });
-Province.hasOne(Address, { foreignKey: 'provinceId', as: 'addresses' });
+Province.hasOne(Address, { foreignKey: 'provinceId', as: 'address' });
 
 // Thiết lập mối quan hệ giữa Address và District
 Address.belongsTo(District, { foreignKey: 'districtId', as: 'district' });
-District.hasMany(Address, { foreignKey: 'districtId', as: 'addresses' });
+District.hasMany(Address, { foreignKey: 'districtId', as: 'address' });
 
 // Thiết lập mối quan hệ giữa Address và Ward
 Address.belongsTo(Ward, { foreignKey: 'wardId', as: 'ward' });
-Ward.hasMany(Address, { foreignKey: 'wardId', as: 'addresses' });
+Ward.hasMany(Address, { foreignKey: 'wardId', as: 'address' });
 
 module.exports = Address;

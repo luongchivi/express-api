@@ -117,6 +117,7 @@ function parseQueryParams(query, filterableFields = {}) {
       const fieldType = filterableFields[field];
       switch (fieldType) {
         case 'enum':
+        case 'eq':
           where[field] = { [Op.eq]: `${query[field]}` };
           break;
         case 'string':

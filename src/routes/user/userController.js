@@ -5,6 +5,9 @@ const PermissionModel = require('../../database/models/permission');
 const UserRoleModel = require('../../database/models/userRole');
 const RolePermissionModel = require('../../database/models/rolePermission');
 const AddressModel = require('../../database/models/address');
+const ProvinceModel = require('../../database/models/province');
+const DistrictModel = require('../../database/models/district');
+const WardModel = require('../../database/models/ward');
 const sequelize = require('../../../config/database');
 const {
   buildSuccessResponse,
@@ -301,6 +304,20 @@ async function getCurrentUser(req, res, next) {
         {
           model: AddressModel,
           as: 'address',
+          include: [
+            {
+              model: ProvinceModel,
+              as: 'province',
+            },
+            {
+              model: DistrictModel,
+              as: 'district',
+            },
+            {
+              model: WardModel,
+              as: 'ward',
+            }
+          ]
         }
       ]
     });
