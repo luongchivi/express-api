@@ -303,7 +303,13 @@ async function getCurrentCart(req, res, next) {
     });
 
     if (!cart) {
-      return buildResponseMessage(res, 'Cart is empty.', 400);
+      return buildSuccessResponse(res, 'Cart is empty.', {
+        cart: {
+          items: [],
+          totalItems: 0,
+          totalPrice: 0,
+        }
+      },200);
     }
 
     return buildSuccessResponse(res, 'Get current cart successfully.', {

@@ -168,7 +168,7 @@ async function checkoutOrder(req, res, next) {
       height: parseInt(totalHeightPacket.toFixed()) || 1,
       width: parseInt(widthPacket.toFixed()) || 15,
       length: parseInt(lengthPacket.toFixed()) || 15,
-      service_type_id: 5, // Chuyển phát truyền thống
+      service_id: 53320, // giao hàng nhẹ
       required_note: 'KHONGCHOXEMHANG',
       items: items || [],
     };
@@ -310,7 +310,8 @@ async function getShippingFeeOrder(req, res, next) {
 
     const newGHNExpress = new GHNExpress();
     const payloadCalculateShippingFee = {
-      service_type_id: 5, // Chuyển phát truyền thống
+      service_id: 53320,
+      service_type_id: 5,
       from_district_id: parseInt(process.env.GHN_EXPRESS_CLIENT_DISTRICT_ID, 10),
       from_ward_code: process.env.GHN_EXPRESS_CLIENT_WARD_CODE,
       to_district_id: parseInt(address.districtId, 10),
