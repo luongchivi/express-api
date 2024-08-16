@@ -10,6 +10,7 @@ const {
   softDelete,
   assignRole,
   deleteRoleAssign,
+  updateStatusUser,
 } = require('./userController');
 const {
   validateParams,
@@ -30,6 +31,8 @@ const {
   deleteRoleAssignRes,
   getAllUsersQuery,
   getCurrentUserRes,
+  updateStatusUserReq,
+  updateStatusUserRes,
 } = require('./userSchema');
 const {
   verifyPermission,
@@ -115,6 +118,18 @@ router.delete(
   validateRequest(deleteRoleAssignReq),
   validateResponse(deleteRoleAssignRes),
   deleteRoleAssign,
+);
+
+// PUT /api/v1/users/{id}/admin
+router.put(
+  '/:id/admin',
+  verifyToken,
+  verifyRole(['Admin']),
+  verifyPermission('write'),
+  validateParams(idParam),
+  validateRequest(updateStatusUserReq),
+  validateResponse(updateStatusUserRes),
+  updateStatusUser,
 );
 
 module.exports = router;

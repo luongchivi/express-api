@@ -20,6 +20,7 @@ const AddressModel = require('../../database/models/address');
 const ProvinceModel = require('../../database/models/province');
 const DistrictModel = require('../../database/models/district');
 const WardModel = require('../../database/models/ward');
+const RoleModel = require('../../database/models/role');
 
 
 async function checkoutOrder(req, res, next) {
@@ -564,7 +565,7 @@ async function getOrderDetailUser(req, res, next) {
   }
 }
 
-async function updateStatusOrder(req, res, next) {
+async function updateStatusOrderUser(req, res, next) {
   try {
     const { userId, email } = req.userInfo;
     const user = await UserModel.findOne({
@@ -602,7 +603,90 @@ async function updateStatusOrder(req, res, next) {
 
     await order.update({ orderStatus: orderStatus.PAID });
 
-    return buildSuccessResponse(res, 'Get order details successfully.', {
+    return buildSuccessResponse(res, 'Update order status to PAID successfully.', {
+      order,
+    }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to update order status.';
+    next(error);
+  }
+}
+
+async function getAllOrders(req, res, next) {
+  try {
+    const currentPage = parseInt(req.query.page, 10);
+    const pageSize = parseInt(req.query.pageSize, 10);
+
+    const filterableFields = {
+      id: 'eq',
+    };
+
+    const {
+      where,
+      order,
+      limit,
+      offset,
+    } = parseQueryParams(req.query, filterableFields);
+
+    const orders = await OrderModel.findAndCountAll({
+      where,
+      order,
+      limit,
+      offset,
+      include: [
+        {
+          model: UserModel,
+          as: 'user',
+          attributes: ['firstName', 'lastName']
+        }
+      ]
+    });
+
+    const totalItemsFiltered = orders.count;
+    const totalItemsUnfiltered = await OrderModel.count();
+
+    return buildResultListResponse(
+      res,
+      'Get all orders successfully.',
+      currentPage,
+      pageSize,
+      totalItemsFiltered,
+      totalItemsUnfiltered,
+      {
+        orders: orders.rows,
+      },
+      200,
+    );
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to get all orders.';
+    next(error);
+  }
+}
+
+async function updateStatusOrder(req, res, next) {
+  try {
+    const { orderId } = req.params;
+    const { orderStatus } = req.body;
+    const order = await OrderModel.findOne({
+      where: {
+        id: orderId,
+      },
+      include: [
+        {
+          model: OrderItemModel,
+          as: 'orderItems',
+        },
+      ]
+    });
+    if (!order) {
+      return buildResponseMessage(res, 'Order not found.', 404);
+    }
+
+    await order.update({ orderStatus: orderStatus });
+
+    return buildSuccessResponse(res, 'Update order status successfully.', {
       order,
     }, 200);
   } catch (error) {
@@ -619,5 +703,7 @@ module.exports = {
   getOrderShippingDetails,
   getShippingFeeOrder,
   getOrderDetailUser,
+  updateStatusOrderUser,
+  getAllOrders,
   updateStatusOrder,
 };

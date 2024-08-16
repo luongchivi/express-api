@@ -35,7 +35,6 @@ const TransactionPaypal = sequelize.define(getTableNameForMigrations(DB_TABLE_NA
   },
   currencyCode: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   value: {
     type: DataTypes.DECIMAL(10, 2),
@@ -43,43 +42,33 @@ const TransactionPaypal = sequelize.define(getTableNameForMigrations(DB_TABLE_NA
   },
   emailAddress: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   merchantId: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   fullName: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   addressLineOne: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   adminAreaTwo: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   adminAreaOne: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   postalCode: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   countryCode: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   payerId: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   phoneNumber: {
     type: DataTypes.STRING,
-    allowNull: false,
   },
   rawResponse: {
     type: DataTypes.JSON,

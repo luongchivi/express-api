@@ -18,7 +18,7 @@ const orderStatus = Object.freeze({
   PROCESSING: 'Processing',
   PAID: 'Paid',
   SHIPPING: 'Shipping',
-  COMPLETED: 'completed',
+  COMPLETED: 'Completed',
 });
 
 const checkoutOrderReq = Joi.object({
@@ -53,9 +53,25 @@ const getOrderDetailUserRes = createResultsSchemaResponse({
   order: Joi.object().required(),
 });
 
-const updateStatusOrderRes = createResultsSchemaResponse({
+const updateStatusOrderUserRes = createResultsSchemaResponse({
   order: Joi.object().required(),
 });
+
+const getAllOrdersQuery = createSchemaQuery({
+  id: Joi.number().optional(),
+});
+
+const getAllOrdersRes = createListResultsSchemaResponse({
+  orders: Joi.object().required(),
+})
+
+const updateStatusOrderReq = Joi.object({
+  orderStatus: Joi.string().valid(...Object.values(orderStatus)).required(),
+});
+
+const updateStatusOrderRes = createResultsSchemaResponse({
+  order: Joi.object().required(),
+})
 
 module.exports = {
   paymentType,
@@ -68,5 +84,9 @@ module.exports = {
   cancelOrderRes,
   getOrderShippingDetailsRes,
   getOrderDetailUserRes,
+  updateStatusOrderUserRes,
+  getAllOrdersRes,
+  getAllOrdersQuery,
+  updateStatusOrderReq,
   updateStatusOrderRes,
 };

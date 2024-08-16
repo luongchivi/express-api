@@ -57,39 +57,30 @@ module.exports = {
         },
         merchant_id: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         full_name: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         address_line_one: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         admin_area_two: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         admin_area_one: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         postal_code: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         country_code: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         payer_id: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         phone_number: {
           type: DataTypes.STRING,
-          allowNull: false,
         },
         raw_response: {
           type: DataTypes.JSON,

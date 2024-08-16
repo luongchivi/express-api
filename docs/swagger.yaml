@@ -36,6 +36,10 @@ tags:
     description: Reviews endpoint
   - name: Blogs
     description: Blogs endpoint
+  - name: Transactions
+    description: Transactions endpoint
+  - name: Sales
+    description: Sales endpoint
 paths:
   /api/v1/auth/signup:
     post:
@@ -224,6 +228,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetAllUsersRes'
+  /api/v1/users/current-user:
+    get:
+      summary: Get current user
+      tags: [ Users ]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCurrentUserRes'
+  /api/v1/users/{id}/admin:
+    put:
+      summary: Update status of user by Admin
+      tags: [ Users ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Id of the user to retrieve
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusUserReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateStatusUserRes'
   /api/v1/users/{id}:
     get:
       summary: Get user details by id
@@ -1163,6 +1206,97 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ShippingOrderRes'
+  /api/v1/orders/{orderId}/user:
+    get:
+      summary: Get order details of user
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: orderId of the order to retrieve
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderDetailsOfUserRes'
+  /api/v1/orders:
+    get:
+      summary: Get all lists orders by Admin
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: pageSize
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+        - in: query
+          name: createdAt
+          required: false
+          schema:
+            type: string
+          description: Filter users by creation date and filter in range date split by comma '2024-07-03,2024-07-10'
+        - in: query
+          name: sortOrder
+          required: false
+          schema:
+            type: string
+          description: Direction sort column
+        - in: query
+          name: sortBy
+          required: false
+          schema:
+            type: string
+          description: Sort by column
+        - in: query
+          name: id
+          required: false
+          schema:
+            type: string
+          description: filter by orderId
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllOrdersOfAdminRes'
+  /api/v1/orders/{orderId}:
+    put:
+      summary: Update order status by Admin
+      tags: [ Orders ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOrderStatusRes'
   /api/v1/provinces:
     get:
       summary: Get all list provinces
@@ -1688,6 +1822,38 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/DeleteBlogRes'
+  /api/v1/transactions/paypal:
+    post:
+      summary: Save transaction of PayPal when successfully or error
+      tags: [ Transactions ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SaveTransactionPayPalReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveTransactionPayPalRes'
+  /api/v1/sales/monthly:
+    get:
+      summary: Get number of products sales in month
+      tags: [ Sales ]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSalesMonthRes'
 components:
   schemas:
     SignUpReq:
@@ -4325,6 +4491,679 @@ components:
               type: number
             message:
               type: string
+    GetCurrentUserRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: number
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                isActive:
+                  type: boolean
+                refreshToken:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                roles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      user_roles:
+                        type: object
+                        properties:
+                          userId:
+                            type: number
+                          roleId:
+                            type: number
+                          createdAt:
+                            type: string
+                            format: date-time
+                          updatedAt:
+                            type: string
+                            format: date-time
+                address:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    userId:
+                      type: number
+                    address:
+                      type: string
+                    wardId:
+                      type: string
+                    districtId:
+                      type: string
+                    provinceId:
+                      type: string
+                    phone:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: date-time
+                    updatedAt:
+                      type: string
+                      format: date-time
+                    province:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        code:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                    district:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        code:
+                          type: string
+                        provinceId:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+                    ward:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        code:
+                          type: string
+                        districtId:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        updatedAt:
+                          type: string
+                          format: date-time
+    UpdateStatusUserReq:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+    UpdateStatusUserRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            user:
+              type: object
+              properties:
+                id:
+                  type: number
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                isActive:
+                  type: boolean
+                refreshToken:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                roles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      user_roles:
+                        type: object
+                        properties:
+                          userId:
+                            type: number
+                          roleId:
+                            type: number
+                          createdAt:
+                            type: string
+                            format: date-time
+                          updatedAt:
+                            type: string
+                            format: date-time
+    SaveTransactionPayPalReq:
+      type: object
+      properties:
+        payloadResponsePaypal:
+          type: string
+        orderId:
+          type: number
+    SaveTransactionPayPalRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            transactionPaypal:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                orderId:
+                  type: number
+                paypalId:
+                  type: string
+                intent:
+                  type: string
+                status:
+                  type: string
+                currencyCode:
+                  type: string
+                value:
+                  type: string
+                emailAddress:
+                  type: string
+                merchantId:
+                  type: string
+                fullName:
+                  type: string
+                addressLineOne:
+                  type: string
+                adminAreaTwo:
+                  type: string
+                adminAreaOne:
+                  type: string
+                postalCode:
+                  type: string
+                countryCode:
+                  type: string
+                payerId:
+                  type: string
+                phoneNumber:
+                  type: string
+                rawResponse:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    intent:
+                      type: string
+                    status:
+                      type: string
+                    purchase_units:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          reference_id:
+                            type: string
+                          amount:
+                            type: object
+                            properties:
+                              currency_code:
+                                type: string
+                              value:
+                                type: string
+                          payee:
+                            type: object
+                            properties:
+                              email_address:
+                                type: string
+                              merchant_id:
+                                type: string
+                          shipping:
+                            type: object
+                            properties:
+                              name:
+                                type: object
+                                properties:
+                                  full_name:
+                                    type: string
+                              address:
+                                type: object
+                                properties:
+                                  address_line_1:
+                                    type: string
+                                  admin_area_2:
+                                    type: string
+                                  admin_area_1:
+                                    type: string
+                                  postal_code:
+                                    type: string
+                                  country_code:
+                                    type: string
+                          payments:
+                            type: object
+                            properties:
+                              captures:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: string
+                                    status:
+                                      type: string
+                                    amount:
+                                      type: object
+                                      properties:
+                                        currency_code:
+                                          type: string
+                                        value:
+                                          type: string
+                                    final_capture:
+                                      type: boolean
+                                    disbursement_mode:
+                                      type: string
+                                    seller_protection:
+                                      type: object
+                                      properties:
+                                        status:
+                                          type: string
+                                        dispute_categories:
+                                          type: array
+                                          items:
+                                            type: string
+                                    create_time:
+                                      type: string
+                                      format: date-time
+                                    update_time:
+                                      type: string
+                                      format: date-time
+                    payer:
+                      type: object
+                      properties:
+                        name:
+                          type: object
+                          properties:
+                            given_name:
+                              type: string
+                            surname:
+                              type: string
+                        email_address:
+                          type: string
+                        payer_id:
+                          type: string
+                        phone:
+                          type: object
+                          properties:
+                            phone_number:
+                              type: object
+                              properties:
+                                national_number:
+                                  type: string
+                        address:
+                          type: object
+                          properties:
+                            address_line_1:
+                              type: string
+                            admin_area_2:
+                              type: string
+                            admin_area_1:
+                              type: string
+                            postal_code:
+                              type: string
+                            country_code:
+                              type: string
+                    create_time:
+                      type: string
+                      format: date-time
+                    update_time:
+                      type: string
+                      format: date-time
+                    links:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                          rel:
+                            type: string
+                          method:
+                            type: string
+                updatedAt:
+                  type: string
+                  format: date-time
+                createdAt:
+                  type: string
+                  format: date-time
+    GetSalesMonthRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            sales:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date
+                  itemsSold:
+                    type: string
+    GetOrderDetailsOfUserRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                paymentType:
+                  type: string
+                orderStatus:
+                  type: string
+                totalAmount:
+                  type: number
+                shippingOrderId:
+                  type: string
+                expectedDeliveryTime:
+                  type: string
+                  format: date-time
+                shippingFee:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                orderItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      orderId:
+                        type: number
+                      productId:
+                        type: number
+                      quantity:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      product:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                          supplierId:
+                            type: number
+                            nullable: true
+                          categoryId:
+                            type: number
+                          name:
+                            type: string
+                          slug:
+                            type: string
+                          description:
+                            type: string
+                          thumbImageUrl:
+                            type: string
+                          imagesUrl:
+                            type: array
+                            items:
+                              type: string
+                          unitPrice:
+                            type: number
+                          unitsInStock:
+                            type: number
+                          unitsOnOrder:
+                            type: number
+                          unitsSold:
+                            type: number
+                          weight:
+                            type: number
+                          length:
+                            type: number
+                          width:
+                            type: number
+                          height:
+                            type: number
+                          averageRating:
+                            type: number
+                          createdAt:
+                            type: string
+                            format: date-time
+                          updatedAt:
+                            type: string
+                            format: date-time
+                          category:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                user:
+                  type: object
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    email:
+                      type: string
+                    address:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        phone:
+                          type: string
+    GetAllOrdersOfAdminRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            orders:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  userId:
+                    type: number
+                  paymentType:
+                    type: string
+                  orderStatus:
+                    type: string
+                  totalAmount:
+                    type: number
+                  shippingOrderId:
+                    type: string
+                  expectedDeliveryTime:
+                    type: string
+                    format: date-time
+                  shippingFee:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  user:
+                    type: object
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+    UpdateOrderStatusReq:
+      type: object
+      properties:
+        permissionName:
+          type: string
+          enum:
+            - Cancelled
+            - Processing
+            - Paid
+            - Shipping
+            - Completed
+    UpdateOrderStatusRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: number
+                userId:
+                  type: number
+                paymentType:
+                  type: string
+                orderStatus:
+                  type: string
+                totalAmount:
+                  type: number
+                shippingOrderId:
+                  type: string
+                expectedDeliveryTime:
+                  type: string
+                  format: date-time
+                shippingFee:
+                  type: number
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+                orderItems:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      orderId:
+                        type: number
+                      productId:
+                        type: number
+                      quantity:
+                        type: number
+                      unitPrice:
+                        type: number
+                      totalPrice:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
   securitySchemes:
     bearerAuth:
       type: http

@@ -336,6 +336,48 @@ async function getCurrentUser(req, res, next) {
   }
 }
 
+async function updateStatusUser(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    const user = await UserModel.findOne({
+      where: {
+        id,
+      },
+      attributes: {
+        exclude: [
+          'password', 'deletedAt', 'passwordResetToken', 'verifyEmailTokenExpires', 'hasVerifiedEmail',
+          'passwordResetTokenExpires', 'passwordChangedAt', 'verifyEmailToken'],
+      },
+      include: [
+        {
+          model: RoleModel,
+          as: 'roles',
+        },
+      ],
+    });
+
+    if (!user) {
+      return buildResponseMessage(res, 'User not found.', 404);
+    }
+
+    const roleNames = user.roles.map(role => role.name);
+
+    if (roleNames.includes('Admin')) {
+      return buildResponseMessage(res, 'Cannot disable Admin status.', 400);
+    }
+    await user.update({ isActive });
+
+    return buildSuccessResponse(res, 'Update user status successfully.', { user }, 200);
+  } catch (error) {
+    error.statusCode = 400;
+    error.messageErrorAPI = 'Failed to update user status.';
+    next(error);
+  }
+}
+
+
 module.exports = {
   getAllUsers,
   getUserDetails,
@@ -344,4 +386,5 @@ module.exports = {
   softDelete,
   assignRole,
   deleteRoleAssign,
+  updateStatusUser,
 };

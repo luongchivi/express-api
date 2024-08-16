@@ -59,6 +59,14 @@ const getCurrentUserRes = createResultsSchemaResponse({
   user: Joi.object().required(),
 });
 
+const updateStatusUserReq = Joi.object({
+  isActive: Joi.boolean().required(),
+});
+
+const updateStatusUserRes =createResultsSchemaResponse({
+  user: Joi.object().required(),
+});
+
 module.exports = {
   idParam,
   getUserDetailsRes,
@@ -72,4 +80,6 @@ module.exports = {
   deleteRoleAssignRes,
   getAllUsersQuery,
   getCurrentUserRes,
+  updateStatusUserReq,
+  updateStatusUserRes,
 };

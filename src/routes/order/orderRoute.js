@@ -20,6 +20,8 @@ const {
   getOrderShippingDetails,
   getShippingFeeOrder,
   getOrderDetailUser,
+  updateStatusOrderUser,
+  getAllOrders,
   updateStatusOrder,
 } = require('./orderController');
 const {
@@ -31,6 +33,10 @@ const {
   cancelOrderRes,
   getOrderShippingDetailsRes,
   getOrderDetailUserRes,
+  updateStatusOrderUserRes,
+  getAllOrdersRes,
+  getAllOrdersQuery,
+  updateStatusOrderReq,
   updateStatusOrderRes,
 } = require('./orderSchema');
 
@@ -104,8 +110,31 @@ router.put(
   '/:orderId/user',
   verifyToken,
   verifyRole(['Admin', 'User']),
-  verifyPermission('read'),
+  verifyPermission('update'),
   validateParams(orderIdParam),
+  validateResponse(updateStatusOrderUserRes),
+  updateStatusOrderUser,
+);
+
+// GET /api/v1/orders
+router.get(
+  '/',
+  verifyToken,
+  verifyRole(['Admin']),
+  verifyPermission('read'),
+  validateQuery(getAllOrdersQuery),
+  validateResponse(getAllOrdersRes),
+  getAllOrders,
+);
+
+// PUT /api/v1/orders/{orderId}
+router.put(
+  '/:orderId',
+  verifyToken,
+  verifyRole(['Admin']),
+  verifyPermission('update'),
+  validateParams(orderIdParam),
+  validateRequest(updateStatusOrderReq),
   validateResponse(updateStatusOrderRes),
   updateStatusOrder,
 );
