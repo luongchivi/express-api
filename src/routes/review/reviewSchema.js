@@ -1,7 +1,8 @@
 const Joi = require('joi');
-const { createResultsSchemaResponse,
+const {
+  createResultsSchemaResponse,
   createListResultsSchemaResponse,
-  createSchemaQuery
+  createSchemaQuery,
 } = require('../shared');
 
 

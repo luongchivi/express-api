@@ -14,13 +14,12 @@ const {
   buildResultListResponse,
 } = require('../shared');
 const sequelize = require('../../../config/database');
-const { orderStatus, paymentType: paymentTypeEnum  } = require('./orderSchema');
+const { orderStatus, paymentType: paymentTypeEnum } = require('./orderSchema');
 const GHNExpress = require('../../lib/GHNExpress');
 const AddressModel = require('../../database/models/address');
 const ProvinceModel = require('../../database/models/province');
 const DistrictModel = require('../../database/models/district');
 const WardModel = require('../../database/models/ward');
-const RoleModel = require('../../database/models/role');
 
 
 async function checkoutOrder(req, res, next) {
@@ -124,9 +123,9 @@ async function checkoutOrder(req, res, next) {
     const lengthPacket = allLengthOfItems.length > 0 ? Math.max(...allLengthOfItems) : 0;
     const widthPacket = allWidthOfItems.length > 0 ? Math.max(...allWidthOfItems) : 0;
 
-    // tạo mới newOrder và orderItems
+    // Tạo mới newOrder và orderItems
     const totalAmount = cart.totalPrice;
-    let payloadCreateNewOrder = {
+    const payloadCreateNewOrder = {
       userId,
       totalAmount,
     };
@@ -152,45 +151,52 @@ async function checkoutOrder(req, res, next) {
     await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
 
     // Tạo đơn shipping tới địa chỉ của khách hàng
-    const newGHNExpress = new GHNExpress();
-    let createOrderShipment = {
-      from_name: 'Ecommerce Store',
-      from_phone: process.env.GHN_EXPRESS_CLIENT_PHONE,
-      from_ward_name: process.env.GHN_EXPRESS_CLIENT_WARD_NAME,
-      from_district_name: process.env.GHN_EXPRESS_CLIENT_DISTRICT_NAME,
-      from_province_name: process.env.GHN_EXPRESS_CLIENT_PROVINCE_NAME,
-      to_name: `${user.lastName} ${user.firstName}`,
-      to_phone: address.phone,
-      to_address: address.address,
-      to_ward_name: address.ward.name,
-      to_ward_code: address.ward.code.toString(),
-      to_district_name: address.district.name,
-      weight: parseInt(totalWeightPacket.toFixed()) || 1,
-      height: parseInt(totalHeightPacket.toFixed()) || 1,
-      width: parseInt(widthPacket.toFixed()) || 15,
-      length: parseInt(lengthPacket.toFixed()) || 15,
-      service_id: 53320, // giao hàng nhẹ
-      required_note: 'KHONGCHOXEMHANG',
-      items: items || [],
-    };
+    let shipmentError = null;
+    try {
+      const newGHNExpress = new GHNExpress();
+      const createOrderShipment = {
+        from_name: 'Ecommerce Store',
+        from_phone: process.env.GHN_EXPRESS_CLIENT_PHONE,
+        from_ward_name: process.env.GHN_EXPRESS_CLIENT_WARD_NAME,
+        from_district_name: process.env.GHN_EXPRESS_CLIENT_DISTRICT_NAME,
+        from_province_name: process.env.GHN_EXPRESS_CLIENT_PROVINCE_NAME,
+        to_name: `${user.lastName} ${user.firstName}`,
+        to_phone: address.phone,
+        to_address: address.address,
+        to_ward_name: address.ward.name,
+        to_ward_code: address.ward.code.toString(),
+        to_district_name: address.district.name,
+        weight: parseInt(totalWeightPacket.toFixed()) || 1,
+        height: parseInt(totalHeightPacket.toFixed()) || 1,
+        width: parseInt(widthPacket.toFixed()) || 15,
+        length: parseInt(lengthPacket.toFixed()) || 15,
+        service_id: 53320, // giao hàng nhẹ
+        required_note: 'KHONGCHOXEMHANG',
+        insurance_value: totalAmount < 5000000 ? totalAmount : 5000000,
+        items: items || [],
+      };
 
-    if (paymentType === 'Cash on Delivery') {
-      createOrderShipment.cod_amount = totalAmount;
-      createOrderShipment.payment_type_id = 2 // Người mua/Người nhận
-    } else if (paymentType === 'PayPal') {
-      createOrderShipment.payment_type_id = 1 // Người bán/Người gửi
+      if (paymentType === 'Cash on Delivery') {
+        createOrderShipment.cod_amount = totalAmount;
+        createOrderShipment.payment_type_id = 2; // Người mua/Người nhận
+      } else if (paymentType === 'PayPal') {
+        createOrderShipment.payment_type_id = 1; // Người bán/Người gửi
+      }
+
+      const resultCreateShipment = await newGHNExpress.createShipment(createOrderShipment);
+      const { data } = resultCreateShipment;
+
+      await newOrder.update({
+        totalAmount: totalAmount + data.total_fee,
+        shippingOrderId: data.order_code,
+        shippingFee: data.total_fee,
+        expectedDeliveryTime: data.expected_delivery_time,
+      }, { transaction });
+      await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
+    } catch (error) {
+      shipmentError = 'Failed to create shipment. Please contact support for further assistance.';
+      console.error('Error creating shipment:', error);
     }
-
-    const resultCreateShipment = await newGHNExpress.createShipment(createOrderShipment);
-    const { data } = resultCreateShipment;
-
-    await newOrder.update({
-      totalAmount: totalAmount + data.total_fee,
-      shippingOrderId: data.order_code,
-      shippingFee: data.total_fee,
-      expectedDeliveryTime: data.expected_delivery_time,
-    }, { transaction });
-    await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
 
     // Cập nhật số lượng sản phẩm
     for (const item of cart.items) {
@@ -215,6 +221,7 @@ async function checkoutOrder(req, res, next) {
     await transaction.commit();
     return buildSuccessResponse(res, 'Checkout order successfully.', {
       order: newOrder,
+      shipmentError,
     }, 200);
   } catch (error) {
     await transaction.rollback();
@@ -312,7 +319,6 @@ async function getShippingFeeOrder(req, res, next) {
     const newGHNExpress = new GHNExpress();
     const payloadCalculateShippingFee = {
       service_id: 53320,
-      service_type_id: 5,
       from_district_id: parseInt(process.env.GHN_EXPRESS_CLIENT_DISTRICT_ID, 10),
       from_ward_code: process.env.GHN_EXPRESS_CLIENT_WARD_CODE,
       to_district_id: parseInt(address.districtId, 10),
@@ -321,16 +327,16 @@ async function getShippingFeeOrder(req, res, next) {
       height: parseInt(totalHeightPacket.toFixed()) || 1,
       width: parseInt(widthPacket.toFixed()) || 15,
       length: parseInt(lengthPacket.toFixed()) || 15,
-      cod_value: cart.totalPrice,
+      insurance_value: cart.totalPrice < 5000000 ? cart.totalPrice : 5000000,
       items: items || [],
       name: items.map(product => product.name).join(', '),
-    }
+    };
 
-    const responseGetShippingFee = await newGHNExpress.calculateShippingFee(payloadCalculateShippingFee)
+    const responseGetShippingFee = await newGHNExpress.calculateShippingFee(payloadCalculateShippingFee);
     if (responseGetShippingFee.code !== 200) {
       return buildResponseMessage(res, 'Error at calculate shipping fee.', 400);
     }
-    const {data} =  responseGetShippingFee;
+    const { data } = responseGetShippingFee;
     return buildSuccessResponse(res, 'Get Shipping Fee Successfully.', {
       shippingFee: data,
     }, 200);
@@ -473,7 +479,7 @@ async function getOrderShippingDetails(req, res, next) {
       where: {
         id: orderId,
         userId,
-      }
+      },
     });
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);
@@ -532,10 +538,10 @@ async function getOrderDetailUser(req, res, next) {
                   model: CategoryModel,
                   as: 'category',
                   attributes: ['name'],
-                }
-              ]
-            }
-          ]
+                },
+              ],
+            },
+          ],
         },
         {
           model: UserModel,
@@ -546,10 +552,10 @@ async function getOrderDetailUser(req, res, next) {
               model: AddressModel,
               as: 'address',
               attributes: ['address', 'phone'],
-            }
-          ]
-        }
-      ]
+            },
+          ],
+        },
+      ],
     });
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);
@@ -592,10 +598,10 @@ async function updateStatusOrderUser(req, res, next) {
             {
               model: ProductModel,
               as: 'product',
-            }
-          ]
+            },
+          ],
         },
-      ]
+      ],
     });
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);
@@ -638,9 +644,9 @@ async function getAllOrders(req, res, next) {
         {
           model: UserModel,
           as: 'user',
-          attributes: ['firstName', 'lastName']
-        }
-      ]
+          attributes: ['firstName', 'lastName'],
+        },
+      ],
     });
 
     const totalItemsFiltered = orders.count;
@@ -678,13 +684,13 @@ async function updateStatusOrder(req, res, next) {
           model: OrderItemModel,
           as: 'orderItems',
         },
-      ]
+      ],
     });
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);
     }
 
-    await order.update({ orderStatus: orderStatus });
+    await order.update({ orderStatus });
 
     return buildSuccessResponse(res, 'Update order status successfully.', {
       order,

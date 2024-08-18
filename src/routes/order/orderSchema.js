@@ -63,7 +63,7 @@ const getAllOrdersQuery = createSchemaQuery({
 
 const getAllOrdersRes = createListResultsSchemaResponse({
   orders: Joi.object().required(),
-})
+});
 
 const updateStatusOrderReq = Joi.object({
   orderStatus: Joi.string().valid(...Object.values(orderStatus)).required(),
@@ -71,7 +71,7 @@ const updateStatusOrderReq = Joi.object({
 
 const updateStatusOrderRes = createResultsSchemaResponse({
   order: Joi.object().required(),
-})
+});
 
 module.exports = {
   paymentType,

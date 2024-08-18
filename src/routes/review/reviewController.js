@@ -1,4 +1,5 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
+const { Op } = require('sequelize');
 const ReviewModel = require('../../database/models/review');
 const UserModel = require('../../database/models/user');
 const ProductModel = require('../../database/models/product');
@@ -9,7 +10,6 @@ const {
   buildResultListResponse,
 } = require('../shared');
 const { uploadImages } = require('../../lib/cloudinary');
-const { Op } = require('sequelize');
 
 
 async function addReviewProduct(req, res, next) {
@@ -71,15 +71,15 @@ async function addReviewProduct(req, res, next) {
 
 async function getCountReviewStarProduct(req, res, next) {
   try {
-    const productId  = req.params.productId;
+    const { productId } = req.params;
 
-    const totalReviews = await ReviewModel.count({ where: { productId}});
-    const totalZeroStar = await ReviewModel.count({ where: { productId, rating: 0 }});
-    const totalOneStar = await ReviewModel.count({ where: { productId, rating: 1 }});
-    const totalTwoStar = await ReviewModel.count({ where: { productId, rating: 2 }});
-    const totalThreeStar = await ReviewModel.count({ where: { productId, rating: 3 }});
-    const totalFourStar = await ReviewModel.count({ where: { productId, rating: 4 }});
-    const totalFiveStar = await ReviewModel.count({ where: { productId, rating: 5 }});
+    const totalReviews = await ReviewModel.count({ where: { productId } });
+    const totalZeroStar = await ReviewModel.count({ where: { productId, rating: 0 } });
+    const totalOneStar = await ReviewModel.count({ where: { productId, rating: 1 } });
+    const totalTwoStar = await ReviewModel.count({ where: { productId, rating: 2 } });
+    const totalThreeStar = await ReviewModel.count({ where: { productId, rating: 3 } });
+    const totalFourStar = await ReviewModel.count({ where: { productId, rating: 4 } });
+    const totalFiveStar = await ReviewModel.count({ where: { productId, rating: 5 } });
 
     return buildSuccessResponse(
       res,
@@ -104,7 +104,7 @@ async function getCountReviewStarProduct(req, res, next) {
 
 async function getReviewsProduct(req, res, next) {
   try {
-    const { productId }  = req.params;
+    const { productId } = req.params;
 
     const product = await ProductModel.findByPk(productId);
     if (!product) {
@@ -116,7 +116,7 @@ async function getReviewsProduct(req, res, next) {
 
     const filterableFields = {};
 
-    let {
+    const {
       where,
       order,
       limit,
@@ -125,7 +125,7 @@ async function getReviewsProduct(req, res, next) {
 
     where.productId = {
       [Op.eq]: productId,
-    }
+    };
 
     const reviews = await ReviewModel.findAndCountAll({
       where,
@@ -138,8 +138,8 @@ async function getReviewsProduct(req, res, next) {
           model: UserModel,
           as: 'user',
           attributes: ['firstName', 'lastName'],
-        }
-      ]
+        },
+      ],
     });
 
     const totalItemsFiltered = reviews.count;

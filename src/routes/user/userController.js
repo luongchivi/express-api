@@ -1,4 +1,5 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
+const uniqid = require('uniqid');
 const UserModel = require('../../database/models/user');
 const RoleModel = require('../../database/models/role');
 const PermissionModel = require('../../database/models/permission');
@@ -17,7 +18,6 @@ const {
   sanitizeUserResponse,
 } = require('../shared');
 const EmailService = require('../../lib/EmailService');
-const uniqid = require('uniqid');
 
 
 async function getAllUsers(req, res, next) {
@@ -55,8 +55,8 @@ async function getAllUsers(req, res, next) {
         {
           model: RoleModel,
           as: 'roles',
-        }
-      ]
+        },
+      ],
     });
 
     const totalItemsFiltered = users.count;
@@ -129,7 +129,7 @@ async function updateUser(req, res, next) {
           email,
         },
         transaction,
-      })
+      });
 
       if (existedEmail) {
         await transaction.rollback();
@@ -142,7 +142,7 @@ async function updateUser(req, res, next) {
         {
           model: AddressModel,
           as: 'address',
-        }
+        },
       ],
       transaction,
     });
@@ -169,12 +169,12 @@ async function updateUser(req, res, next) {
         verifyEmailToken,
         verifyEmailTokenExpires: Date.now() + parseInt(process.env.VERIFY_EMAIL_TOKEN_EXPIRES, 10),
       }, { transaction });
-    }  else {
+    } else {
       await user.update({ firstName, lastName }, { transaction });
       if (user.address) {
         await user.address.update(payloadAddress, { transaction });
       } else {
-        await AddressModel.create({ userId: user.id, ...payloadAddress }, { transaction })
+        await AddressModel.create({ userId: user.id, ...payloadAddress }, { transaction });
       }
     }
 
@@ -316,10 +316,10 @@ async function getCurrentUser(req, res, next) {
             {
               model: WardModel,
               as: 'ward',
-            }
-          ]
-        }
-      ]
+            },
+          ],
+        },
+      ],
     });
 
     if (!user) {

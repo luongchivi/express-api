@@ -298,7 +298,7 @@ async function getCurrentCart(req, res, next) {
             as: 'category',
             attributes: ['name'],
           },
-        }
+        },
       },
     });
 
@@ -308,8 +308,8 @@ async function getCurrentCart(req, res, next) {
           items: [],
           totalItems: 0,
           totalPrice: 0,
-        }
-      },200);
+        },
+      }, 200);
     }
 
     return buildSuccessResponse(res, 'Get current cart successfully.', {

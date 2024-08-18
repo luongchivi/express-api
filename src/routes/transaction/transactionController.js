@@ -17,8 +17,8 @@ async function saveTransactionPaypal(req, res, next) {
       where: {
         id: orderId,
         userId,
-      }
-    })
+      },
+    });
 
     if (!order) {
       return buildResponseMessage(res, 'Order not found.', 404);

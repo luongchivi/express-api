@@ -9,8 +9,6 @@ const {
   buildSuccessResponse,
 } = require('../shared');
 const {
-  uploadImages,
-  deleteImages,
   uploadImage,
   deleteImage,
 } = require('../../lib/cloudinary');
@@ -40,7 +38,7 @@ async function createBlog(req, res, next) {
     payload.slug = slugify(title.toLowerCase());
     payload.userId = user.id;
 
-    if(req.files) {
+    if (req.files) {
       const { thumbImage } = req.files;
       if (thumbImage) {
         if (thumbImage.length > 0) {
@@ -72,7 +70,7 @@ async function getBlog(req, res, next) {
         include: {
           model: UserModel,
           as: 'user',
-          attributes: ["firstName", "lastName"],
+          attributes: ['firstName', 'lastName'],
         },
       },
     );
@@ -118,9 +116,9 @@ async function updateBlog(req, res, next) {
       }
     }
 
-    await blog.update(payload,{ transaction });
+    await blog.update(payload, { transaction });
     await transaction.commit();
-    return buildSuccessResponse(res, 'Update blog successfully.',{
+    return buildSuccessResponse(res, 'Update blog successfully.', {
       blog,
     }, 200);
   } catch (error) {
@@ -157,9 +155,9 @@ async function getAllBlog(req, res, next) {
         {
           model: UserModel,
           as: 'user',
-          attributes: ["firstName", "lastName"],
-        }
-      ]
+          attributes: ['firstName', 'lastName'],
+        },
+      ],
     });
 
     const totalItemsFiltered = blogs.count;

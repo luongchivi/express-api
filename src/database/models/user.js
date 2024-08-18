@@ -1,6 +1,6 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
-const { DataTypes,
-  Transaction
+const {
+  DataTypes,
 } = require('sequelize');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');

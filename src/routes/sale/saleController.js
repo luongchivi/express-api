@@ -1,12 +1,12 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
 const { Op } = require('sequelize');
+const moment = require('moment');
 const OrderModel = require('../../database/models/order');
 const OrderItemModel = require('../../database/models/orderItem');
 const {
   buildSuccessResponse,
 } = require('../shared');
 const sequelize = require('../../../config/database');
-const moment = require('moment');
 
 
 async function getSalesMonthly(req, res, next) {

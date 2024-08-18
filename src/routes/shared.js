@@ -192,9 +192,12 @@ const validateDate = dateString => {
   }
 };
 
-const sanitizeUserResponse = (user) => {
-  const { password, deletedAt, passwordResetToken, verifyEmailTokenExpires, hasVerifiedEmail,
-    passwordResetTokenExpires, passwordChangedAt, verifyEmailToken, ...sanitizedUser } = user.toJSON();
+const sanitizeUserResponse = user => {
+  const {
+    password: _password, deletedAt: _deletedAt, passwordResetToken: _passwordResetToken, verifyEmailTokenExpires: _verifyEmailTokenExpires,
+    hasVerifiedEmail: _hasVerifiedEmail, passwordResetTokenExpires: _passwordResetTokenExpires,
+    passwordChangedAt: _passwordChangedAt, verifyEmailToken: _verifyEmailToken, ...sanitizedUser
+  } = user.toJSON();
   return sanitizedUser;
 };
 

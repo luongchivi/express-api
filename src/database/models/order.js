@@ -68,7 +68,7 @@ OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
 Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'orderItems' });
 
 // Many to One, Product và Category nhiều sản phẩm ứng với 1 danh mục
-// TransactionPaypal.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
-// Order.hasMany(TransactionPaypal, { foreignKey: 'orderId', as: 'transactionPayPals' });
+TransactionPaypal.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
+Order.hasMany(TransactionPaypal, { foreignKey: 'orderId', as: 'transactionPayPals' });
 
 module.exports = Order;

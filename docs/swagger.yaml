@@ -40,6 +40,8 @@ tags:
     description: Transactions endpoint
   - name: Sales
     description: Sales endpoint
+  - name: Wishlists
+    description: Wishlists endpoint
 paths:
   /api/v1/auth/signup:
     post:
@@ -1854,6 +1856,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetSalesMonthRes'
+  /api/v1/wishlists:
+    post:
+      summary: Add product to wishlist
+      tags: [ Wishlists ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddProductToWishlistReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddProductToWishlistRes'
+    delete:
+      summary: Delete product from wishlist
+      tags: [ Wishlists ]
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeleteProductFromWishlistReq'
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteProductFromWishlistRes'
+  /api/v1/wishlists/user:
+    get:
+      summary: Get all list products from wishlist of user
+      tags: [ Wishlists ]
+      security:
+        - bearerAuth: [ ]
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllProductsFromWishlistOfUserRes'
 components:
   schemas:
     SignUpReq:
@@ -5164,6 +5216,130 @@ components:
                       updatedAt:
                         type: string
                         format: date-time
+    AddProductToWishlistReq:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            productId:
+              type: number
+    AddProductToWishlistRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    DeleteProductFromWishlistReq:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            productId:
+              type: number
+    DeleteProductFromWishlistRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+    GetAllProductsFromWishlistOfUserRes:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            statusCode:
+              type: number
+            message:
+              type: string
+            currentPage:
+              type: number
+            pageSize:
+              type: number
+            totalPages:
+              type: number
+            totalItemsFiltered:
+              type: number
+            totalItemsUnfiltered:
+              type: number
+            wishlists:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  userId:
+                    type: number
+                  productId:
+                    type: number
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  product:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      supplierId:
+                        type: number
+                        nullable: true
+                      categoryId:
+                        type: number
+                      name:
+                        type: string
+                      slug:
+                        type: string
+                      description:
+                        type: string
+                      thumbImageUrl:
+                        type: string
+                      imagesUrl:
+                        type: array
+                        items:
+                          type: string
+                      unitPrice:
+                        type: number
+                      unitsInStock:
+                        type: number
+                      unitsOnOrder:
+                        type: number
+                      unitsSold:
+                        type: number
+                      weight:
+                        type: number
+                      length:
+                        type: number
+                      width:
+                        type: number
+                      height:
+                        type: number
+                      averageRating:
+                        type: number
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                      category:
+                        type: object
+                        properties:
+                          name:
+                            type: string
   securitySchemes:
     bearerAuth:
       type: http

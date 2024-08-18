@@ -1,6 +1,6 @@
+const { v4: uuidv4 } = require('uuid');
 const { DB_TABLE_NAMES, getTableNameForMigrations } = require('../constants');
 const GHNExpress = require('../../lib/GHNExpress');
-const { v4: uuidv4 } = require('uuid');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {

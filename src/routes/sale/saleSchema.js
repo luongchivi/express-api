@@ -6,8 +6,8 @@ const {
 
 const getAllOrderOfUserRes = createResultsSchemaResponse({
   sales: Joi.array().required(),
-})
+});
 
 module.exports = {
-  getAllOrderOfUserRes
+  getAllOrderOfUserRes,
 };

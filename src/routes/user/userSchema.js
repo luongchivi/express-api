@@ -63,7 +63,7 @@ const updateStatusUserReq = Joi.object({
   isActive: Joi.boolean().required(),
 });
 
-const updateStatusUserRes =createResultsSchemaResponse({
+const updateStatusUserRes = createResultsSchemaResponse({
   user: Joi.object().required(),
 });
 
