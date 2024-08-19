@@ -1,17 +1,17 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
 const express = require('express');
 const morgan = require('morgan');
-const routes = require('./src/routes/index');
-const errorHandler = require('./src/middleware/errorHandler');
-const paginationDefaults = require('./src/middleware/paginationDefaults');
+const routes = require('./routes');
+const errorHandler = require('./middleware/errorHandler');
+const paginationDefaults = require('./middleware/paginationDefaults');
 const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
 const yaml = require('js-yaml');
-const printRoutes = require('./src/middleware/printRoutes');
-const { buildResponseMessage } = require('./src/routes/shared');
+const printRoutes = require('./middleware/printRoutes');
+const { buildResponseMessage } = require('./routes/shared');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const { registerCronJobs } = require('./src/lib/cronManager');
+const { registerCronJobs } = require('./lib/cronManager');
 
 
 let app = express();
