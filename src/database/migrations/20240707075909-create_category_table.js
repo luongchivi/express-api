@@ -25,6 +25,7 @@ module.exports = {
         },
         icon_image_url: {
           type: DataTypes.STRING,
+          defaultValue: '',
         },
         created_at: {
           type: DataTypes.DATE,

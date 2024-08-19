@@ -68,6 +68,7 @@ const getAllProductsQuery = createSchemaQuery({
     'string.pattern.base': 'must be a string containing numbers from 1 to 5, separated by commas, and up to 5 numbers',
   }),
   categoryName: Joi.string().optional(),
+  supplierName: Joi.string().optional(),
 });
 
 const formDataFieldsUploadConfig = [

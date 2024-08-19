@@ -14,8 +14,7 @@ const {
 
 
 async function addCategory(req, res, next) {
-  let iconImageUrl; let
-    thumbImageUrl;
+  let iconImageUrl; let thumbImageUrl;
   try {
     const payload = req.body;
     const { iconImage, thumbImage } = req.files;
@@ -66,16 +65,15 @@ async function getAllCategories(req, res, next) {
       order,
       limit,
       offset,
-      attributes: { exclude: ['password', 'deletedAt'] },
       include: {
         model: SupplierModel,
         as: 'suppliers',
-        attributes: { exclude: [CategorySupplierModel] },
+        attributes: ['companyName'],
         through: { attributes: [] },
       },
     });
 
-    const totalItemsFiltered = categories.count;
+    const totalItemsFiltered = await CategoryModel.count({ where });
     const totalItemsUnfiltered = await CategoryModel.count();
 
     return buildResultListResponse(
@@ -100,7 +98,14 @@ async function getAllCategories(req, res, next) {
 async function getCategoryDetails(req, res, next) {
   try {
     const { categoryId } = req.params;
-    const category = await CategoryModel.findByPk(categoryId);
+    const category = await CategoryModel.findByPk(categoryId, {
+      include: {
+        model: SupplierModel,
+        as: 'suppliers',
+        attributes: ['companyName'],
+        through: { attributes: [] },
+      },
+    });
     if (!category) {
       return buildResponseMessage(res, 'Category not found.', 404);
     }

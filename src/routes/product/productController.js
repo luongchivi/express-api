@@ -35,13 +35,21 @@ async function getAllProducts(req, res, next) {
       averageRating: 'array',
     };
 
-    const { categoryName } = req.query;
+    const { categoryName, supplierName } = req.query;
 
     let categoryFilter;
     if (categoryName) {
       categoryFilter = {};
       categoryFilter.name = {
         [Op.iLike]: `%${categoryName}%`,
+      };
+    }
+
+    let supplierFilter;
+    if (supplierName) {
+      supplierFilter = {};
+      supplierFilter.companyName = {
+        [Op.iLike]: `%${supplierName}%`,
       };
     }
 
@@ -61,6 +69,7 @@ async function getAllProducts(req, res, next) {
         {
           model: SupplierModel,
           as: 'supplier',
+          where: supplierFilter,
         },
       ],
     });
