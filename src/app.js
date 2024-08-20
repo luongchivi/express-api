@@ -1,16 +1,16 @@
 require('dotenv').config({ path: `${process.cwd()}/.env` });
 const express = require('express');
 const morgan = require('morgan');
-const routes = require('./routes');
-const errorHandler = require('./middleware/errorHandler');
-const paginationDefaults = require('./middleware/paginationDefaults');
 const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
 const yaml = require('js-yaml');
-const printRoutes = require('./middleware/printRoutes');
-const { buildResponseMessage } = require('./routes/shared');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const routes = require('./routes');
+const errorHandler = require('./middleware/errorHandler');
+const paginationDefaults = require('./middleware/paginationDefaults');
+const printRoutes = require('./middleware/printRoutes');
+const { buildResponseMessage } = require('./routes/shared');
 const { registerCronJobs } = require('./lib/cronManager');
 
 
@@ -45,9 +45,7 @@ const swaggerDocument = yaml.load(fs.readFileSync('./docs/swagger.yaml', 'utf8')
 // Swagger setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use('*', (req, res, _next) => {
-  return buildResponseMessage(res,'Resource Not Found.', 404);
-});
+app.use('*', (req, res, _next) => buildResponseMessage(res, 'Resource Not Found.', 404));
 
 // Error handler middleware
 app.use(errorHandler);

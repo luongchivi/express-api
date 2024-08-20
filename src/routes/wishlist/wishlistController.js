@@ -162,12 +162,12 @@ async function wishlistStatistics(req, res, next) {
       offset,
       attributes: [
         'product_id',
-        [sequelize.fn('COUNT', sequelize.col('product_id')), 'wishCount']
+        [sequelize.fn('COUNT', sequelize.col('product_id')), 'wishCount'],
       ],
       include: {
         model: ProductModel,
         as: 'product',
-        attributes: ['id', 'name', 'description', 'thumb_image_url']
+        attributes: ['id', 'name', 'description', 'thumb_image_url'],
       },
       group: ['product_id', 'product.id'],
     });
