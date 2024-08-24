@@ -20,14 +20,17 @@ const AddressModel = require('../../database/models/address');
 const ProvinceModel = require('../../database/models/province');
 const DistrictModel = require('../../database/models/district');
 const WardModel = require('../../database/models/ward');
+const EmailService = require('../../lib/EmailService');
 
 
 async function checkoutOrder(req, res, next) {
   const transaction = await sequelize.transaction();
+  let orderInformation;
+  let user;
   try {
     const { userId, email } = req.userInfo;
     const { paymentType } = req.body;
-    const user = await UserModel.findOne({
+    user = await UserModel.findOne({
       where: {
         id: userId,
         email,
@@ -192,7 +195,7 @@ async function checkoutOrder(req, res, next) {
         shippingFee: data.total_fee,
         expectedDeliveryTime: data.expected_delivery_time,
       }, { transaction });
-      await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
+      orderInformation = await newOrder.reload({ include: [{ model: OrderItemModel, as: 'orderItems' }], transaction });
     } catch (error) {
       shipmentError = 'Failed to create shipment. Please contact support for further assistance.';
       console.error('Error creating shipment:', error);
@@ -219,6 +222,30 @@ async function checkoutOrder(req, res, next) {
     await cart.destroy({ transaction });
 
     await transaction.commit();
+
+    const orderItemsInformation = await OrderItemModel.findAll({
+      where: { orderId: newOrder.id },
+      include: [
+        {
+          model: ProductModel,
+          as: 'product',
+        },
+      ],
+    });
+
+    const emailService = new EmailService();
+    const result = await emailService.sendMail('checkOut', {
+      email,
+      name: `${user.firstName} ${user.lastName}`,
+      orderItemsInformation,
+      totalAmount: orderInformation.totalAmount,
+      shippingFee: orderInformation.shippingFee,
+      expectedDeliveryTime: orderInformation.expectedDeliveryTime,
+    });
+    if (!result.accepted && result.accepted.length !== 0) {
+      return buildResponseMessage(res, 'Failed to send email to verify.', 400);
+    }
+
     return buildSuccessResponse(res, 'Checkout order successfully.', {
       order: newOrder,
       shipmentError,

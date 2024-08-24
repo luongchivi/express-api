@@ -201,6 +201,8 @@ const sanitizeUserResponse = user => {
   return sanitizedUser;
 };
 
+const formatMoney = number => Number(number?.toFixed(1)).toLocaleString();
+
 module.exports = {
   buildResponseMessage,
   buildSuccessResponse,
@@ -213,4 +215,5 @@ module.exports = {
   buildResultListResponse,
   validateDate,
   sanitizeUserResponse,
+  formatMoney,
 };
