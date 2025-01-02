@@ -19,7 +19,7 @@ Follow these steps to set up and run the application:
 
 2. **Create database Express:**
    ```bash
-   yarn db:migrate
+   yarn db:create
 
 3. **Create database tables in database Express:**
    ```bash
